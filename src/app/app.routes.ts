@@ -6,7 +6,7 @@ import { NgModule } from '@angular/core';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'quan-ly-hien-mau',
+    redirectTo: 'thong_ke',
     pathMatch: 'full'
   },
   {
@@ -26,15 +26,15 @@ export const routes: Routes = [
     },
     canActivate: [AuthGuard],
     children: [
-      // {
-      //   path: 'thong_ke',
-      //   canActivate: [AuthGuard],
-      //   loadChildren: () => import('./dashboard/routes').then((m) => m.routes),
-      //   data:{
-      //     title: 'Thống kê',
-      //     roles: ['']
-      //   }
-      // },
+      {
+        path: 'thong_ke',
+        canActivate: [AuthGuard],
+        loadChildren: () => import('./dashboard/routes').then((m) => m.routes),
+        data:{
+          title: 'Thống kê',
+          roles: ['']
+        }
+      },
       // {
       //   path: 'quan-ly-hien-mau',
       //   canActivate: [AuthGuard],

@@ -1,0 +1,68 @@
+<c-card class="mx-4">
+  <c-card-body>
+    <c-row>
+      <c-col sm="7">
+        <c-row>
+          <c-col sm="6">
+            <h4 class="card-title mb-0" id="traffic">Thống kê số lần hiến máu năm: </h4>
+          </c-col>
+          <c-col sm="4" class="float-start">
+            <select2 id="dotHM" [data]="namList" [value]="namSelected" styleMode="default" placeholder="Chọn năm"
+              (update)="updateNam($event)">
+            </select2>
+          </c-col>
+        </c-row>
+      </c-col>
+      <c-col class="d-none d-md-block" sm="5">
+
+        <form [formGroup]="trafficRadioGroup">
+          <button cButton class="float-end" color="primary" aria-label="Download">
+            <svg cIcon name="cilCloudDownload"></svg>
+          </button>
+          <c-button-group class="float-end me-3" role="group">
+            <input class="btn-check" formControlName="trafficRadio" type="radio" value="Dot" id="radioDot" />
+            <label (click)="setTrafficPeriod('Dot')" cButton cFormCheckLabel color="secondary" variant="outline"
+              for="radioDot">
+              Đợt HM
+            </label>
+            <input class="btn-check" formControlName="trafficRadio" type="radio" value="Thang" id="radioThang" />
+            <label (click)="setTrafficPeriod('Thang')" cButton cFormCheckLabel color="secondary" variant="outline"
+              for="radioThang">
+              Tháng
+            </label>
+          </c-button-group>
+        </form>
+      </c-col>
+    </c-row>
+    <c-chart [data]="mainChart.data" [height]="300" [ngStyle]="{ 'marginTop.px': 40 }" [options]="mainChart.options"
+      [type]="mainChart.type">
+      Main chart
+    </c-chart>
+  </c-card-body>
+  <c-card-footer>
+    <c-row class="text-center mb-2" [xl]="3" [lg]="3" [sm]="2" [xs]="1" [gutter]="4">
+      <c-col>
+        <div class="text-body-secondary">Tổng số người đăng kí</div>
+        <strong>{{mainChart['TongSoNguoiDangKy']}} Người</strong>
+        <c-progress class="mt-2" thin color="info" value="100" aria-label="User visits" />
+      </c-col>
+      <c-col>
+        <div class="text-body-secondary">Số người đi hiến</div>
+        <div class="fw-semibold text-truncate">{{mainChart['TongSoNguoiHienMau']}} Người
+          ({{mainChart['TongSoNguoiHienMau']/mainChart['TongSoNguoiDangKy']*100 | number:'1.2-2'}}%)</div>
+        <c-progress class="mt-2" thin color="success"
+          value="{{mainChart['TongSoNguoiHienMau']/mainChart['TongSoNguoiDangKy']*100}}"
+          aria-label="Unique users" />
+      </c-col>
+      <c-col>
+        <div class="text-body-secondary">Số người không đi</div>
+        <div class="fw-semibold text-truncate">{{mainChart['TongSoNguoiDangKy']-mainChart['TongSoNguoiHienMau']}} Người
+          ({{(mainChart['TongSoNguoiDangKy']-mainChart['TongSoNguoiHienMau'])/mainChart['TongSoNguoiDangKy']*100 |
+          number:'1.2-2'}}%)</div>
+        <c-progress class="mt-2" thin color="danger"
+          value="{{(mainChart['TongSoNguoiDangKy']-mainChart['TongSoNguoiHienMau'])/mainChart['TongSoNguoiDangKy']*100}}"
+          aria-label="Page views" />
+      </c-col>
+    </c-row>
+  </c-card-footer>
+</c-card>

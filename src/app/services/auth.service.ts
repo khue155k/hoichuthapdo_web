@@ -61,7 +61,7 @@ export class AuthService {
     // } else {
     //   this.router.navigate(['/thong-tin-ca-nhan']);
     // }
-    this.router.navigate(['/quan-ly-hien-mau']);
+    this.router.navigate(['/thong_ke']);
   }
 
   changePassword(username: string, oldPassword: string, newPassword: string): Observable<boolean> {
