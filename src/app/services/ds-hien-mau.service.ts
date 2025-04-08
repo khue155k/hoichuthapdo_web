@@ -52,42 +52,44 @@ export class DsHienMauService {
   }
 }
 export interface TTHienMau {
-  MaTT: number;
-  MaDot: number;
-  HoTen: string;
-  NgaySinh: string;
-  GioiTinh: string | null;
-  NgheNghiep: string | null;
-  MaDV: number;
-  CCCD: string;
-  SoDienThoai: string;
-  Email: string | null;
-  NoiO: string | null;
-  SoLanHien: number;
-  MaTheTich: number;
-  KetQua: string;
-  TinhThanh: string | null;
-  QuanHuyen: string | null;
-  PhuongXa: string | null;
+  maTT: number;
+  maDot: number;
+  hoTen: string;
+  ngaySinh: string;
+  gioiTinh: string | null;
+  ngheNghiep: string | null;
+  maDV: number;
+  cccd: string;
+  soDienThoai: string;
+  email: string | null;
+  noiO: string | null;
+  soLanHien: number;
+  maTheTich: number;
+  ketQua: string;
+  tinhThanh: string | null;
+  quanHuyen: string | null;
+  phuongXa: string | null;
 }
+
 export interface TTHienMauDto {
-  MaTT: number;
-  HoTen: string;
-  NgaySinh: string;
-  GioiTinh: string | null;
-  NgheNghiep: string | null;
-  CCCD: string;
-  SoDienThoai: string;
-  Email: string | null;
-  NoiO: string | null;
-  SoLanHien: number;
-  KetQua: string;
-  TinhThanh: string | null;
-  QuanHuyen: string | null;
-  PhuongXa: string | null;
-  TenDot: string | null;
-  TenDonVi: string | null;
-  TheTich: number | null;
+  maTT: number;
+  hoTen: string;
+  ngaySinh: string;
+  gioiTinh: string | null;
+  ngheNghiep: string | null;
+  cccd: string;
+  soDienThoai: string;
+  email: string | null;
+  noiO: string | null;
+  soLanHien: number;
+  ketQua: string;
+  tinhThanh: string | null;
+  quanHuyen: string | null;
+  phuongXa: string | null;
+  tenDot: string | null;
+  tenDonVi: string | null;
+  theTich: number | null;
 }
+
 
 

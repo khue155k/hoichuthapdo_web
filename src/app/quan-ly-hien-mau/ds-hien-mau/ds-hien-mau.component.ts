@@ -307,11 +307,11 @@ export class DsHienMauComponent implements OnInit {
         next: (response) => {
           if (response.code === 200) {
             this.dotHienMauList = response.data.map((dotHM: any) => ({
-              value: dotHM.id,
-              label: dotHM.ten_dot,
-              diaDiem: dotHM.dia_diem,
-              ngayBd: dotHM.ngay_bd,
-              ngayKt: dotHM.ngay_kt
+              value: dotHM.maDot,
+              label: dotHM.tenDot,
+              diaDiem: dotHM.diaDiem,
+              ngayBd: dotHM.thoiGianBatDau,
+              ngayKt: dotHM.thoiGianKetThuc
             }));
 
             if (this.dotHienMauList.length > 0) {
