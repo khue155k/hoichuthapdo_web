@@ -1,0 +1,27 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-title {
+    font-size: 23px;
+    font-weight: 500;
+    color: rgb(46, 107, 72);
+    text-transform: uppercase;
+    margin-left: 10px;
+
+    @media (max-width: 668px) {
+        display: none;
+    }
+}
+
+.app-logo {
+    max-width: 160px;
+    height: auto;
+    margin-left: 10px;
+
+    @media (max-width: 275px) {
+        display: none;
+    }
+}
