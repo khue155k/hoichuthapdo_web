@@ -3,3 +3,6 @@ export * from "./auth.service"
 export * from './dashboard.service'
 export * from "./location.service"
 export * from "./template-result.interface"
+export * from "./ds-hien-mau.service"
+export * from "./dot-hien-mau.service"
+export * from "./tinh-nguyen-vien.service"

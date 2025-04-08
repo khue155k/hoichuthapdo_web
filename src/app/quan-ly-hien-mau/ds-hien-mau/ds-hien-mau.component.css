@@ -1,0 +1,208 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  transition: transform 0.2s;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.status-select {
+  border-radius: 5px;
+}
+
+input.form-control {
+  border-radius: 5px;
+}
+
+button.btn-primary {
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .col-md-6 {
+    margin-bottom: 20px;
+  }
+}
+
+.company-details {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+.table td {
+  vertical-align: middle;
+}
+.table th {
+  vertical-align: middle;
+}
+/* 
+.table {
+  background-color: #f8f9fa;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table td {
+  vertical-align: middle;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.table th {
+  font-weight: bold;
+  background-color: #e9ecef;
+  color: #333;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid #007bff;
+}
+
+.table tr:hover td {
+  background-color: #e9ecef;
+}
+
+.table td,
+.table th {
+  text-align: left;
+}
+
+.table td {
+  color: #555;
+}
+
+.table tr:nth-child(even) td {
+  background-color: #f2f2f2;
+} */
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-danger:active {
+  transform: scale(0.95);
+}
+
+.pagination-button {
+  background: none;
+  border: none;
+  color: rgb(88, 86, 214);
+  cursor: pointer;
+  padding: 5px 10px;
+  margin: 0 5px;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-button:disabled {
+  color: grey;
+  cursor: not-allowed;
+}
+
+.pagination-button.active {
+  background-color: rgb(88, 86, 214);
+  color: white;
+  border-radius: 5px;
+}
+
+.pagination-button:hover:not(.active) {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.custom-modal {
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.custom-dialog {
+  max-width: 800px;
+  margin: 1.75rem auto;
+  border-radius: 8px;
+}
+
+.custom-content {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: hsl(0, 0%, 98%);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-content .modal-header {
+  background-color: #605DC8;
+  color: white;
+  border-bottom: none;
+  padding: 15px 15px 0px 15px;
+}
+
+.custom-content .modal-footer {
+  border-top: none;
+  padding: 10px;
+  justify-content: flex-end;
+}
+.form-control {
+  border-radius: 0.375rem;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.form-control:focus {
+  border-color: #0e5dbc;
+  box-shadow: 0 0 0 0.2rem rgba(14, 93, 191, 0.25);
+}
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 0.875rem;
+  display: block;
+}
+.btn-info, .btn-warning {
+  color: white;
+}
+
+.infoTNV p {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #495057;
+  border-bottom: 1px solid #c4cfda;
+  padding-bottom: 5px;
+}

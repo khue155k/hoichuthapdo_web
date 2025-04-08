@@ -1,0 +1,425 @@
+<!-- ds-hien-mau.component.html -->
+<div class="mx-5 mb-3">
+    <form [formGroup]="searchForm" (ngSubmit)="searchTTHienMauForm()">
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <select2 class="form-control status-select" formControlName="dot_hm_id" [data]="dotHienMauList"
+                    [value]="dot_hien_mau_id" styleMode="borderless" placeholder="Chọn đợt hiến máu"
+                    (update)="updateDotHM($event)">
+                </select2>
+            </div>
+            <div class="col-md-2">
+                <select2 class="form-control status-select" formControlName="status" [data]="statusList"
+                    [value]="currentStatus" styleMode="borderless" placeholder="Chọn đợt hiến máu"
+                    (update)="updateCurrentStatus($event)">
+                </select2>
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control" placeholder="Nhập số CCCD, họ tên hoặc sdt"
+                    formControlName="searchTerm" (keyup.enter)="searchTTHienMauForm()"
+                    (input)="searchTTHienMauFormDelay()" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="exportExcel()">Xuất
+                    Excel</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="DangKyOpen()">
+                    Đăng ký
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="d-flex mb-3" *ngIf="dotHienMauStatus != 'Đã kết thúc'">
+        <div *ngIf="currentStatus === 'Chưa hiến'">
+            <button class="btn btn-success mx-2" (click)="capNhatKetQuaAll('Đã hiến')">Đã hiến</button>
+            <button class="btn btn-danger mx-2" (click)="capNhatKetQuaAll('Từ chối')">Từ chối</button>
+        </div>
+        <div *ngIf="currentStatus === 'Đã hiến'">
+            <button class="btn btn-warning mx-2" (click)="capNhatKetQuaAll('Chưa hiến')">Hủy
+                duyệt</button>
+        </div>
+        <div *ngIf="currentStatus === 'Từ chối'">
+            <button class="btn btn-info mx-2" (click)="capNhatKetQuaAll('Chưa hiến')">Chưa
+                hiến</button>
+        </div>
+    </div>
+    <div class="row">
+        <table cTable [striped]="true">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="selectAll" [indeterminate]="selectAllIndeterminate"
+                            [(ngModel)]="selectAllValue" (change)="onSelectAllChange()">
+                    </th>
+                    <th scope="col">TT</th>
+                    <th scope="col">CCCD</th>
+                    <th scope="col">Họ và tên</th>
+                    <th scope="col">Số điện thoại</th>
+                    <th scope="col">Thể tích </th>
+                    <th scope="col">Số lần hiến</th>
+                    <th scope="col">Thời gian đăng ký</th>
+                    <th scope="col">Tình trạng</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="ds_hien_mau.length == 0">
+                    <tr class="table-danger">
+                        <th colspan="100%">
+                            Không có thông tin hiến máu nào thỏa mãn
+                        </th>
+                    </tr>
+                </ng-container>
+                <ng-container *ngFor="let ttHM of ds_hien_mau; let i = index">
+                    <tr [ngClass]="{'table-success': ttHM.ket_qua == 'Đã hiến', 'table-danger': ttHM.ket_qua === 'Từ chối', 'table-info': ttHM.ket_qua === 'Chưa hiến'}">
+                        <td>
+                            <input type="checkbox" name="selectTTHM" (click)="updateSelectItem(ttHM.id, $event)"
+                                #checkbox>
+                        </td>
+                        <td>{{i+1+(currentPage-1)*pageSize}}</td>
+                        <td>{{ttHM.cccd}}</td>
+                        <td>{{ttHM.ho_ten}}</td>
+                        <td>{{ttHM.sdt}}</td>
+                        <td>{{ttHM.the_tich }}</td>
+                        <td>{{ttHM.so_lan}}</td>
+                        <td>{{ttHM.ngay_dang_ky | date:'HH:mm dd/MM'}}</td>
+                        <td>{{ttHM.ket_qua}}</td>
+                        <td>
+                            <div class="d-flex justify-content-center flex-wrap"
+                                *ngIf="dotHienMauStatus != 'Đã kết thúc'">
+                                <div *ngIf="ttHM.ket_qua === 'Chưa hiến'">
+                                    <button class="btn btn-success mx-1" (click)="capNhatKetQua('Đã hiến',ttHM)">Đã
+                                        hiến</button>
+                                    <button class="btn btn-danger mx-1" (click)="capNhatKetQua('Từ chối',ttHM)">Từ
+                                        chối</button>
+                                </div>
+                                <div *ngIf="ttHM.ket_qua === 'Đã hiến'">
+                                    <button class="btn btn-warning mx-1" (click)="capNhatKetQua('Chưa hiến',ttHM)">Hủy
+                                        duyệt</button>
+                                </div>
+                                <div *ngIf="ttHM.ket_qua === 'Từ chối'">
+                                    <button class="btn btn-info mx-1" (click)="capNhatKetQua('Chưa hiến',ttHM)">Chưa
+                                        hiến</button>
+                                </div>
+                                <button class="btn btn-primary mx-1" (click)="OpenEditModal(ttHM)">Sửa</button>
+                                <button class="btn btn-primary mx-1" (click)="OpenViewModal(ttHM)">Xem</button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+
+        <div *ngIf="isEditModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg custom-dialog" role="document">
+                <div class="modal-content custom-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" *ngIf="isEdit"> {{editTitle}} </h5>
+                        <h5 class="modal-title" *ngIf="isAdd"> {{addTitle}}</h5>
+                    </div>
+                    <div class="modal-body">
+                        <header class="text-center mb-4">
+                            <p *ngIf="isEdit">
+                                <strong>{{ tnv_Selected.ten_dot }}</strong>
+                            </p>
+                            <p *ngIf="isAdd">
+                                <strong>{{ dot_hien_mau.tenDot }}</strong>
+                            </p>
+                            <p *ngIf="dotHienMauStatus === 'Chưa diễn ra'">(Sự kiện chưa diễn ra)</p>
+                            <p *ngIf="dotHienMauStatus === 'Đang diễn ra'">(Sự kiện đang diễn ra)</p>
+                            <div *ngIf="dotHienMauStatus === 'Đã kết thúc'" class="alert alert-warning">
+                                Sự kiện này đã kết thúc.
+                            </div>
+                        </header>
+                        <form [formGroup]="editForm" *ngIf="dotHienMauStatus !== 'Đã kết thúc'" novalidate>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="cccd">Số căn cước công dân</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="cccd" placeholder="Số căn cước công dân"
+                                            class="form-control" id="cccd" (blur)="autoFill()">
+                                        <div *ngIf="editForm.controls['cccd'].invalid && editForm.controls['cccd'].touched"
+                                            class="invalid-feedback">
+                                            Căn cước công dân không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ho_ten">Họ và tên</label><span class="text-danger"> *</span>
+                                        <input formControlName="ho_ten" placeholder="Họ và tên" class="form-control"
+                                            id="ho_ten" [readonly]="isReadOnlyAutoFill">
+                                        <div *ngIf="editForm.controls['ho_ten'].invalid && editForm.controls['ho_ten'].touched"
+                                            class="invalid-feedback">
+                                            Họ và tên không được bỏ trống.
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="dien_thoai">Điện thoại di động</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="dien_thoai" placeholder="Điện thoại di động"
+                                            class="form-control" id="dien_thoai" [readonly]="isReadOnlyAutoFill">
+                                        <div *ngIf="editForm.controls['dien_thoai'].invalid && editForm.controls['dien_thoai'].touched"
+                                            class="invalid-feedback">
+                                            Điện thoại di động không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="ngay_sinh">Ngày sinh</label><span class="text-danger"> *</span>
+                                        <input type="date" data-date-format="YYYY-MM-DD" formControlName="ngay_sinh"
+                                            class="form-control" id="ngay_sinh" [readonly]="isReadOnlyAutoFill" />
+                                        <div *ngIf="editForm.controls['ngay_sinh'].invalid && editForm.controls['ngay_sinh'].touched"
+                                            class="invalid-feedback">
+                                            Ngày sinh không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="gioi_tinh">Giới tính</label><span class="text-danger"> *</span>
+                                        <select2 class="form-control" formControlName="gioi_tinh" [overlay]="false"
+                                            placeholder="Chọn giới tính" [data]="gioiTinhOptions"
+                                            [styleMode]="'borderless'" [value]="gioi_tinh"
+                                            (update)="update('gioi_tinh', $event)" id="gioi_tinh"
+                                            [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                                        </select2>
+                                        <input class="form-control" formControlName="gioi_tinh_text" type="text"
+                                            [value]="gioi_tinh" readonly
+                                            [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                                        <div *ngIf="editForm.controls['gioi_tinh'].invalid && editForm.controls['gioi_tinh'].touched"
+                                            class="invalid-feedback">
+                                            Giới tính không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dia_chi_thuong_tru">Địa chỉ thường trú (theo CMND, CCCD)</label><span
+                                    class="text-danger">
+                                    *</span>
+                                <div id="dia_chi_thuong_tru">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <select2 formControlName="tinh_thanh" class="form-control" id="tinh_thanh"
+                                                (update)="update('tinh_thanh', $event)" [(ngModel)]="selectedProvince"
+                                                [overlay]="false" placeholder="Chọn tỉnh thành"
+                                                [value]="selectedProvince" [data]="sl2_tinh_thanh"
+                                                [styleMode]="'borderless'" [displaySearchStatus]="'default'"
+                                                [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                                            </select2>
+                                            <input class="form-control" formControlName="tinh_thanh_text" type="text"
+                                                [value]="selectedProvinceName" readonly
+                                                [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                                            <div *ngIf="editForm.controls['tinh_thanh'].invalid && editForm.controls['tinh_thanh'].touched"
+                                                class="invalid-feedback">
+                                                Trường Tỉnh/thành không được bỏ trống.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select2 formControlName="quan_huyen" class="form-control" id="quan_huyen"
+                                                (update)="update('quan_huyen', $event)" [(ngModel)]="selectedDistrict"
+                                                [overlay]="false" placeholder="Chọn quận huyện"
+                                                [value]="selectedDistrict" [data]="sl2_quan_huyen"
+                                                [styleMode]="'borderless'" [displaySearchStatus]="'default'"
+                                                [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                                            </select2>
+                                            <input class="form-control" formControlName="quan_huyen_text" type="text"
+                                                [value]="selectedDistrictName" readonly
+                                                [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                                            <div *ngIf="editForm.controls['quan_huyen'].invalid && editForm.controls['quan_huyen'].touched"
+                                                class="invalid-feedback">
+                                                Trường Quận/huyện không được bỏ trống.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select2 formControlName="phuong_xa" class="form-control" id="phuong_xa"
+                                                (update)="update('phuong_xa', $event)" [(ngModel)]="selectedWard"
+                                                [overlay]="false" placeholder="Chọn phường xã" [value]="selectedWard"
+                                                [data]="sl2_phuong_xa" [styleMode]="'borderless'"
+                                                [displaySearchStatus]="'default'"
+                                                [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                                            </select2>
+                                            <input class="form-control" formControlName="phuong_xa_text" type="text"
+                                                [value]="selectedWardName" readonly
+                                                [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                                            <div *ngIf="editForm.controls['phuong_xa'].invalid && editForm.controls['phuong_xa'].touched"
+                                                class="invalid-feedback">
+                                                Trường Phường/xã không được bỏ trống.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="email">Địa chỉ email</label>
+                                        <input formControlName="email" placeholder="Địa chỉ email" class="form-control"
+                                            id="email" [readonly]="isReadOnlyAutoFill">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="so_lan">Số lần đã hiến máu</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="so_lan" placeholder="Số lần đã hiến máu"
+                                            class="form-control" id="so_lan" [readonly]="isReadOnlyAutoFill">
+                                        <div *ngIf="editForm.controls['so_lan'].invalid && editForm.controls['so_lan'].touched"
+                                            class="invalid-feedback">
+                                            Số lần đã hiến máu không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label for="noi_o">Nơi ở hiện tại</label><span class="text-danger"> *</span>
+                                        <input formControlName="noi_o" placeholder="Nơi ở hiện tại" class="form-control"
+                                            id="noi_o">
+                                        <div *ngIf="editForm.controls['noi_o'].invalid && editForm.controls['noi_o'].touched"
+                                            class="invalid-feedback">
+                                            Trường Tỉnh/thành không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="nghe_nghiep">Nghề nghiệp hiện tại</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="nghe_nghiep" placeholder="Nghề nghiệp hiện tại"
+                                            class="form-control" id="nghe_nghiep">
+                                        <div *ngIf="editForm.controls['nghe_nghiep'].invalid && editForm.controls['nghe_nghiep'].touched"
+                                            class="invalid-feedback">
+                                            Trường Nghề nghiệp hiện tại không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="co_quan">Cơ quan</label><span class="text-danger"> *</span>
+                                        <select2 formControlName="co_quan" class="form-control" id="co_quan"
+                                            [overlay]="false" placeholder="Chọn cơ quan" [value]="selectedCoQuanID"
+                                            [data]="donViList" [styleMode]="'borderless'" [(ngModel)]="selectedCoQuanID"
+                                            [displaySearchStatus]="'default'">
+                                        </select2>
+                                        <div *ngIf="editForm.controls['co_quan'].invalid && editForm.controls['co_quan'].touched"
+                                            class="invalid-feedback">
+                                            Cơ quan không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="thoi_gian">Thời gian đăng ký</label><span class="text-danger">
+                                            *</span>
+                                        <input type="datetime-local" id="thoi_gian" formControlName="thoi_gian"
+                                            class="form-control" [min]="ngay_bd" [max]="ngay_kt"
+                                            (input)="validateDate()"
+                                            [ngClass]="{'is-invalid': editForm.controls['thoi_gian'].invalid && editForm.controls['thoi_gian'].touched}" />
+                                        <div *ngIf="editForm.controls['thoi_gian'].hasError('outOfRange') && editForm.controls['thoi_gian'].touched"
+                                            class="invalid-feedback">
+                                            Thời gian đăng ký phải nằm trong khoảng từ {{ ngay_bd | date: 'dd/MM/yyyy'
+                                            }} đến {{ ngay_kt |
+                                            date: 'dd/MM/yyyy' }}.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="don_vi_mau">Thể tích (ml)</label>
+                                        <span class="text-danger"> *</span>
+                                        <select2 formControlName="don_vi_mau" class="form-control" id="don_vi_mau"
+                                            [overlay]="false" placeholder="Thể tích" [value]="selectedTheTich"
+                                            [data]="theTichMauHienList" [styleMode]="'borderless'"
+                                            [(ngModel)]="selectedTheTich">
+                                        </select2>
+                                        <div *ngIf="editForm.controls['don_vi_mau'].invalid && editForm.controls['don_vi_mau'].touched"
+                                            class="invalid-feedback">
+                                            Thể tích máu hiến không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Hủy</button>
+                        <button type="button" class="btn btn-primary" (click)="saveChanges()"
+                            *ngIf="dotHienMauStatus != 'Đã kết thúc'">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isViewModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg custom-dialog" role="document">
+                <div class="modal-content custom-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"> Thông tin chi tiết </h5>
+                    </div>
+                    <div class="modal-body infoTNV">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Số căn cước công dân:</strong> {{ tnv_Selected.cccd || 'N/A' }}</p>
+                                <p><strong>Điện thoại di động:</strong> {{ tnv_Selected.sdt || 'N/A' }}</p>
+                                <p><strong>Giới tính:</strong> {{ tnv_Selected.gioi_tinh || 'N/A' }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Họ và tên:</strong> {{ tnv_Selected.ho_ten || 'N/A' }}</p>
+                                <p><strong>Ngày sinh:</strong> {{ (tnv_Selected.ngay_sinh | date:'dd/MM/yyyy') || 'N/A' }}</p>
+                                <p><strong>Email:</strong> {{ tnv_Selected.email || 'N/A' }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p><strong>Địa chỉ thường trú:</strong> {{ tnv_Selected.tinh_thanh || 'N/A' }}, {{ tnv_Selected.quan_huyen || 'N/A' }}, {{ tnv_Selected.phuong_xa || 'N/A' }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Số lần hiến máu:</strong> {{ tnv_Selected.so_lan || 'N/A' }}</p>
+                                <p><strong>Nghề nghiệp hiện tại:</strong> {{ tnv_Selected.nghe_nghiep || 'N/A' }}</p>
+                                <p><strong>Cơ quan:</strong> {{ tnv_Selected.ten_don_vi || 'N/A' }}</p>
+                                <p><strong>Thể tích:</strong> {{ tnv_Selected.the_tich || 'N/A' }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Ngày hiến máu:</strong> {{ (tnv_Selected.ngay_hien | date:'dd/MM/yyyy') || 'N/A' }}</p>
+                                <p><strong>Nơi ở hiện tại:</strong> {{ tnv_Selected.cho_o || 'N/A' }}</p>
+                                <p><strong>Thời gian đăng ký:</strong> {{ tnv_Selected.nghe_nghiep || 'N/A' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeViewModal()">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
+                *ngIf="currentPage > 1">«</button>
+
+            <ng-container *ngFor="let page of getLimitedPageNumbers()">
+                <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
+                *ngIf="currentPage * pageSize < totalCount">»</button>
+
+            <div class="float-end">
+                <span style="margin: 0; margin-right: 1rem;">Số dòng mỗi trang: </span>
+                <select style="padding: 5px;" [(ngModel)]="pageSize" (change)="searchTTHienMauForm()">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>

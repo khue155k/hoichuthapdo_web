@@ -6,7 +6,7 @@ import { NgModule } from '@angular/core';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'thong_ke',
+    redirectTo: 'quan-ly-hien-mau',
     pathMatch: 'full'
   },
   {
@@ -35,14 +35,14 @@ export const routes: Routes = [
           roles: ['']
         }
       },
-      // {
-      //   path: 'quan-ly-hien-mau',
-      //   canActivate: [AuthGuard],
-      //   loadChildren: () => import('./quan-ly-hien-mau/routes').then((m) => m.routes),
-      //   data:{
-      //     roles: ['']
-      //   }
-      // },
+      {
+        path: 'quan-ly-hien-mau',
+        canActivate: [AuthGuard],
+        loadChildren: () => import('./quan-ly-hien-mau/routes').then((m) => m.routes),
+        data:{
+          roles: ['']
+        }
+      },
       // {
       //   path: 'tai-khoan',
       //   canActivate: [AuthGuard],
