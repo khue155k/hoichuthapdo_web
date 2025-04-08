@@ -1,0 +1,43 @@
+<div class="container mt-5">
+    <div class="text-center mb-4 logo">
+        <img src="assets/images/logo-hctd.svg" alt="Login Image" class="img-fluid" />
+    </div>
+
+    <div class="login-form">
+        <h4 class="text-center">Đăng nhập</h4>
+        <form (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="text" id="email" [(ngModel)]="ma_nv" name="email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu:</label>
+                <input type="password" id="password" [(ngModel)]="password" name="password" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="Captcha">Captcha:</label>
+                <div class="d-flex align-items-center">
+                    <input type="text" [(ngModel)]="userCaptcha" id="Captcha" name="captcha" class="form-control me-2" required />
+                    <img [src]="captchaImage" alt="Captcha" class="img-fluid" style="width: 100px; height: auto;" />
+                </div>
+                <div *ngIf="!captchaValid" class="invalid-feedback">
+                    Captcha không chính xác.
+                </div>
+                <div *ngIf="loginFalse" class="invalid-feedback">
+                    Tài khoản hoặc mật khẩu không chính xác.
+                </div>
+                <div *ngIf="connectFalse" class="invalid-feedback">
+                    Không thể kết nối đến máy chủ, vui lòng kiếm tra lại kết nối.
+                </div>
+            </div>
+                      
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" id="rememberMe" [(ngModel)]="rememberMe" name="rememberMe" class="form-check-input" />
+                <label for="rememberMe" class="form-check-label">Nhớ mật khẩu</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+        </form>
+    </div>
+</div>

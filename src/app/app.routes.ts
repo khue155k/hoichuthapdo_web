@@ -13,10 +13,10 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () => import('./login/login.component').then(m => m.LoginComponent),
   },
-  {
-    path: 'dang-ky-hien-mau/:dot_hien_mau_id',
-    loadComponent: () => import('./dang-ky-hien-mau/dang-ky-hien-mau.component').then(m => m.DangKyHienMauComponent)
-  },
+  // {
+  //   path: 'dang-ky-hien-mau/:dot_hien_mau_id',
+  //   loadComponent: () => import('./dang-ky-hien-mau/dang-ky-hien-mau.component').then(m => m.DangKyHienMauComponent)
+  // },
   {
     path: '',
     component: DefaultLayoutComponent,
@@ -26,31 +26,31 @@ export const routes: Routes = [
     },
     canActivate: [AuthGuard],
     children: [
-      {
-        path: 'thong_ke',
-        canActivate: [AuthGuard],
-        loadChildren: () => import('./dashboard/routes').then((m) => m.routes),
-        data:{
-          title: 'Thống kê',
-          roles: ['']
-        }
-      },
-      {
-        path: 'quan-ly-hien-mau',
-        canActivate: [AuthGuard],
-        loadChildren: () => import('./quan-ly-hien-mau/routes').then((m) => m.routes),
-        data:{
-          roles: ['']
-        }
-      },
-      {
-        path: 'tai-khoan',
-        canActivate: [AuthGuard],
-        loadChildren: () => import('./tai-khoan/routes').then((m) => m.routes),
-        data: {
-          roles: ['']
-        }
-      },
+      // {
+      //   path: 'thong_ke',
+      //   canActivate: [AuthGuard],
+      //   loadChildren: () => import('./dashboard/routes').then((m) => m.routes),
+      //   data:{
+      //     title: 'Thống kê',
+      //     roles: ['']
+      //   }
+      // },
+      // {
+      //   path: 'quan-ly-hien-mau',
+      //   canActivate: [AuthGuard],
+      //   loadChildren: () => import('./quan-ly-hien-mau/routes').then((m) => m.routes),
+      //   data:{
+      //     roles: ['']
+      //   }
+      // },
+      // {
+      //   path: 'tai-khoan',
+      //   canActivate: [AuthGuard],
+      //   loadChildren: () => import('./tai-khoan/routes').then((m) => m.routes),
+      //   data: {
+      //     roles: ['']
+      //   }
+      // },
     ]
   },
   {
