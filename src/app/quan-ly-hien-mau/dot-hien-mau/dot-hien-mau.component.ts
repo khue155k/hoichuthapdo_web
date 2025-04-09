@@ -145,7 +145,7 @@ export class DotHienMauComponent implements OnInit {
             'Đơn vị máu đăng ký': dotHM.donViMau,
           }));
 
-          const tong_the_tich_mau = dotHienMau.reduce((total, dotHM) => {
+          const tong_theTich_mau = dotHienMau.reduce((total, dotHM) => {
             const donViMauValue = parseInt(dotHM.donViMau, 10);
             return total + (isNaN(donViMauValue) ? 0 : donViMauValue);
           }, 0);
@@ -156,7 +156,7 @@ export class DotHienMauComponent implements OnInit {
             'Địa điểm': '',
             'Thời gian bắt đầu': '',
             'Thời gian kết thúc': '',
-            'Đơn vị máu đăng ký': tong_the_tich_mau,
+            'Đơn vị máu đăng ký': tong_theTich_mau,
           });
 
           const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
@@ -195,7 +195,7 @@ export class DotHienMauComponent implements OnInit {
     this.dotHMSelected = dotHm;
     const confirmDelete = window.confirm('Xác nhận xóa đợt hiến máu ' + this.dotHMSelected.tenDot + ' ?');
     if (confirmDelete) {
-      this.dotHienMauService.deleteDotHienMau(this.dotHMSelected.id).subscribe({
+      this.dotHienMauService.deleteDotHienMau(this.dotHMSelected.maDot).subscribe({
         next: (response) => {
           if (response.code == 200) {
             this.searchDotHienMau();
@@ -233,7 +233,7 @@ export class DotHienMauComponent implements OnInit {
           thoiGianKetThuc: this.dotHMForm.value.thoiGianKetThuc,
           donViMau: this.dotHMForm.value.donViMau
         };
-        this.dotHienMauService.updateDotHienMau(this.dotHMSelected.id, updatedData).subscribe({
+        this.dotHienMauService.updateDotHienMau(this.dotHMSelected.maDot, updatedData).subscribe({
           next: (response) => {
             if (response.code == 200) {
               this.isEditModalOpen = false;
@@ -272,6 +272,7 @@ export class DotHienMauComponent implements OnInit {
           if (response.code === 200) {
             this.searchDotHienMau();
             alert('Tạo đợt hiến máu thành công.');
+            this.isEditModalOpen = false;
           }
           if (response.code === 400 || response.code === 404) {
             alert(response.message);
