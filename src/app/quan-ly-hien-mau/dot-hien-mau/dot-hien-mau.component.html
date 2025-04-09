@@ -1,0 +1,165 @@
+<div class="mx-5">
+    <form [formGroup]="searchForm">
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="OpenCreateModal()">Tạo đợt hiến máu</button>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Nhập tên đợt hoặc địa điểm"
+                    formControlName="searchTerm" (input)="searchDotHienMauFormDelay()" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="exportExcel()">
+                    Xuất Excel
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <table cTable [striped]="true">
+            <thead>
+                <tr>
+                    <th scope="col">TT</th>
+                    <th scope="col">Tên đợt</th>
+                    <th scope="col">Địa điểm</th>
+                    <th scope="col">Thời gian bắt đầu</th>
+                    <th scope="col">Thời gian kết thúc</th>
+                    <th scope="col">Đơn vị máu đăng ký</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="dotHienMauList.length == 0">
+                    <tr class="table-danger">
+                        <th colspan="100%">
+                            Không có đợt hiến máu nào
+                        </th>
+                    </tr>
+                </ng-container>
+                <ng-container *ngFor="let dotHm of dotHienMauList; let i = index">
+                    <tr [ngClass]="{'table-success': dotHm.status === 'Đang diễn ra', 'table-danger': dotHm.status === 'Đã kết thúc', 'table-info': dotHm.status === 'Chưa diễn ra'}">
+                        <td>{{i+1+(currentPage-1)*pageSize}}</td>
+                        <td>{{dotHm.ten_dot}}</td>
+                        <td>{{dotHm.dia_diem}}</td>
+                        <td>{{dotHm.ngay_bd | date:'HH:mm dd/MM/yyyy'}}</td>
+                        <td>{{dotHm.ngay_kt | date:'HH:mm dd/MM/yyyy'}}</td>
+                        <td>{{dotHm.don_vi_mau_dk}}</td>
+                        <td>
+                            <div class="d-flex justify-content-center flex-wrap">
+                                <button class="btn btn-primary mx-1" (click)="OpenEditModal(dotHm)">Sửa</button>
+                                <button class="btn btn-primary mx-1" (click)="OpenDeleteModal(dotHm)">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+        <div *ngIf="isEditModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg custom-dialog" role="document">
+                <div class="modal-content custom-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" *ngIf="isAdd"> {{addTitle}}</h5>
+                        <h5 class="modal-title" *ngIf="isEdit"> {{editTitle}} </h5>
+                    </div>
+                    <div class="modal-body">
+                        <header class="text-center mb-4" *ngIf="isEdit">
+                            <p *ngIf="dotHMSelected.status === 'Chưa diễn ra'">(Sự kiện chưa diễn ra)</p>
+                            <p *ngIf="dotHMSelected.status === 'Đang diễn ra'">(Sự kiện đang diễn ra)</p>
+                            <div *ngIf="dotHMSelected.status === 'Đã kết thúc'" class="alert alert-warning">
+                                Sự kiện này đã kết thúc.
+                            </div>
+                        </header>
+                        <form [formGroup]="dotHMForm" novalidate>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="ten_dot">Tên đợt</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="ten_dot" placeholder="Tên đợt" class="form-control"
+                                            id="ten_dot">
+                                        <div *ngIf="dotHMForm.controls['ten_dot'].invalid && dotHMForm.controls['ten_dot'].touched"
+                                            class="invalid-feedback">
+                                            Tên đợt không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="dia_diem">Địa điểm</label><span class="text-danger"> *</span>
+                                        <input formControlName="dia_diem" placeholder="Địa điểm" class="form-control"
+                                            id="dia_diem">
+                                        <div *ngIf="dotHMForm.controls['dia_diem'].invalid && dotHMForm.controls['dia_diem'].touched"
+                                            class="invalid-feedback">
+                                            Địa điểm không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="ngay_bd">Thời gian bắt đầu</label><span class="text-danger">
+                                            *</span>
+                                        <input type="datetime-local" formControlName="ngay_bd" class="form-control"
+                                            id="ngay_bd" />
+                                        <div *ngIf="dotHMForm.controls['ngay_bd'].invalid && dotHMForm.controls['ngay_bd'].touched"
+                                            class="invalid-feedback">
+                                            Thời gian bắt đầu không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="ngay_kt">Thời gian kết thúc</label><span class="text-danger">
+                                            *</span>
+                                        <input type="datetime-local" formControlName="ngay_kt" class="form-control"
+                                            id="ngay_kt" />
+                                        <div *ngIf="dotHMForm.controls['ngay_kt'].invalid && dotHMForm.controls['ngay_kt'].touched"
+                                            class="invalid-feedback">
+                                            Thời gian kết thúc không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="don_vi_mau_dk">Đơn vị máu đăng ký</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="don_vi_mau_dk" placeholder="Đơn vị máu đăng ký"
+                                            class="form-control" id="don_vi_mau_dk">
+                                        <div *ngIf="dotHMForm.controls['don_vi_mau_dk'].invalid && dotHMForm.controls['don_vi_mau_dk'].touched"
+                                            class="invalid-feedback">
+                                            Đơn vị máu đăng ký không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Hủy</button>
+                        <button type="button" class="btn btn-primary" (click)="saveChanges()">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
+                *ngIf="currentPage > 1">«</button>
+
+            <ng-container *ngFor="let page of getLimitedPageNumbers()">
+                <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
+                *ngIf="currentPage * pageSize < totalCount">»</button>
+
+            <div class="float-end">
+                <span style="margin: 0; margin-right: 1rem;">Số dòng mỗi trang: </span>
+                <select style="padding: 5px;" [(ngModel)]="pageSize" (change)="searchDotHienMauForm()">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

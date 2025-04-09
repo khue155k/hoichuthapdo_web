@@ -1,0 +1,69 @@
+.pagination-button {
+    background: none;
+    border: none;
+    color: rgb(88, 86, 214);
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 0 5px;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-button:disabled {
+    color: grey;
+    cursor: not-allowed;
+}
+
+.pagination-button.active {
+    background-color: rgb(88, 86, 214);
+    color: white;
+    border-radius: 5px;
+}
+
+.pagination-button:hover:not(.active) {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.table th {
+    vertical-align: middle;
+}
+
+.custom-modal {
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.custom-dialog {
+    max-width: 800px;
+    margin: 1.75rem auto;
+    border-radius: 8px;
+}
+
+.custom-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: hsl(0, 0%, 98%);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-content .modal-header {
+    background-color: #605DC8;
+    color: white;
+    border-bottom: none;
+    padding: 15px 15px 0px 15px;
+}
+
+.custom-content .modal-footer {
+    border-top: none;
+    padding: 10px;
+    justify-content: flex-end;
+}
+

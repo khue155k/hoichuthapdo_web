@@ -21,14 +21,14 @@ export const routes: Routes = [
           roles: ['all'],
         }
       },
-      // {
-      //   path: 'dot-hien-mau',
-      //   loadComponent: () => import('./dot-hien-mau/dot-hien-mau.component').then(m => m.DotHienMauComponent),
-      //   data: {
-      //     title: 'Đợt hiến máu',
-      //     roles: ['all'],
-      //   }
-      // },
+      {
+        path: 'dot-hien-mau',
+        loadComponent: () => import('./dot-hien-mau/dot-hien-mau.component').then(m => m.DotHienMauComponent),
+        data: {
+          title: 'Đợt hiến máu',
+          roles: ['all'],
+        }
+      },
     ]
   }
 ];
