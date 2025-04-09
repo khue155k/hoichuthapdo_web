@@ -43,21 +43,21 @@ export class DsHienMauComponent implements OnInit {
     });
     this.editForm = this.fb.group({
       cccd: ['', Validators.required],
-      ho_ten: ['', Validators.required],
+      hoTen: ['', Validators.required],
       dien_thoai: ['', Validators.required],
-      ngay_sinh: ['', Validators.required],
-      gioi_tinh: ['', Validators.required],
+      ngaySinh: ['', Validators.required],
+      gioiTinh: ['', Validators.required],
       tinh_thanh: ['', Validators.required],
       quan_huyen: ['', Validators.required],
       phuong_xa: ['', Validators.required],
       email: [''],
-      so_lan: ['', Validators.required],
-      noi_o: ['', Validators.required],
-      nghe_nghiep: ['', Validators.required],
-      co_quan: ['', Validators.required],
+      soLanHien: ['', Validators.required],
+      noiO: ['', Validators.required],
+      ngheNghiep: ['', Validators.required],
+      don_vi: ['', Validators.required],
       thoi_gian: ['', Validators.required],
       don_vi_mau: ['', Validators.required],
-      gioi_tinh_text: [''],
+      gioiTinh_text: [''],
       tinh_thanh_text: [''],
       quan_huyen_text: [''],
       phuong_xa_text: [''],
@@ -90,7 +90,7 @@ export class DsHienMauComponent implements OnInit {
   currentStatus: string = 'Chưa hiến';
   tnv_Selected: any = null;
   isAdmin: boolean = false;
-  dot_hien_mau_id: number = 0;
+  maDot: number = 0;
 
   selectedCoQuanID: number = 0
   donViList: any[] = [];
@@ -108,7 +108,7 @@ export class DsHienMauComponent implements OnInit {
 
   theTichMauHienList: any[] = [];
   selectedTheTich: string = '';
-  gioi_tinh: string = '';
+  gioiTinh: string = '';
 
   selectAllValue = false;
   selectAllIndeterminate = false;
@@ -131,8 +131,8 @@ export class DsHienMauComponent implements OnInit {
   sl2_phuong_xa: any[] = []
 
   update(key: string, event: Select2UpdateEvent<any>) {
-    if (key === 'gioi_tinh')
-      this.gioi_tinh = event.value;
+    if (key === 'gioiTinh')
+      this.gioiTinh = event.value;
     else if (key === 'tinh_thanh') {
       this.sl2_quan_huyen = []
       this.sl2_phuong_xa = []
@@ -149,18 +149,18 @@ export class DsHienMauComponent implements OnInit {
         this.onWardChange()
     }
   }
-  ngay_bd_str: string = ''
-  ngay_kt_str: string = ''
-  ngay_bd: any | null = null;
-  ngay_kt: any | null = null;
+  thoiGianBatDau_str: string = ''
+  thoiGianKetThuc_str: string = ''
+  thoiGianBatDau: any | null = null;
+  thoiGianKetThuc: any | null = null;
   validateDate(): void {
     const thoiGianControl = this.editForm.controls['thoi_gian'];
     const thoiGianValue = thoiGianControl.value;
 
     if (thoiGianValue) {
       const ngayNhap = new Date(thoiGianValue);
-      const ngayBd = new Date(this.ngay_bd_str);
-      const ngayKt = new Date(this.ngay_kt_str);
+      const ngayBd = new Date(this.thoiGianBatDau_str);
+      const ngayKt = new Date(this.thoiGianKetThuc_str);
 
       if (ngayNhap < ngayBd || ngayNhap > ngayKt) {
         thoiGianControl.setErrors({ outOfRange: true });
@@ -172,16 +172,16 @@ export class DsHienMauComponent implements OnInit {
 
   getDotHienMauStatus(): string {
     const now = new Date();
-    const ngay_bd = new Date(this.dot_hien_mau.ngayBd)
-    const ngay_kt = new Date(this.dot_hien_mau.ngayKt)
+    const thoiGianBatDau = new Date(this.dot_hien_mau.ngayBd)
+    const thoiGianKetThuc = new Date(this.dot_hien_mau.ngayKt)
 
-    if (ngay_bd && now < ngay_bd) {
+    if (thoiGianBatDau && now < thoiGianBatDau) {
       return 'Chưa diễn ra';
     }
-    if (ngay_bd && ngay_kt && now >= ngay_bd && now <= ngay_kt) {
+    if (thoiGianBatDau && thoiGianKetThuc && now >= thoiGianBatDau && now <= thoiGianKetThuc) {
       return 'Đang diễn ra';
     }
-    if (this.dot_hien_mau.ngayKt && now > ngay_kt) {
+    if (this.dot_hien_mau.ngayKt && now > thoiGianKetThuc) {
       return 'Đã kết thúc';
     }
     return '';
@@ -197,18 +197,18 @@ export class DsHienMauComponent implements OnInit {
     this.currentStatus = this.searchForm.get('status')?.value || 'Nội dung tìm kiếm';
 
     let ds_hien_mau: any[] = [];
-    this.dsHienMauService.search(searchTerm, this.currentStatus.toString(), this.dot_hien_mau_id, 1000, 1)
+    this.dsHienMauService.search(searchTerm, this.currentStatus.toString(), this.maDot, 1000, 1)
       .subscribe(
         (response: TemplateResult<PaginatedResult<TTHienMau>>) => {
           ds_hien_mau = response.data.items;
 
           const excelData = ds_hien_mau.map((tnv, index) => ({
             'STT': index + 1,
-            'Họ và tên': tnv.ho_ten,
-            'Năm sinh': tnv.ngay_sinh.substring(0, 4),
+            'Họ và tên': tnv.hoTen,
+            'Năm sinh': tnv.ngaySinh.substring(0, 4),
             'Đơn vị': tnv.ten_don_vi,
             'Thể tích máu hiến (ml)': tnv.the_tich,
-            'Số lần đã hiến': tnv.so_lan,
+            'Số lần đã hiến': tnv.soLanHien,
           }));
 
           const tong_the_tich_mau = ds_hien_mau.reduce((total, tnv) => {
@@ -278,16 +278,16 @@ export class DsHienMauComponent implements OnInit {
       },
     });
   }
-  loadDonVisByDotHienMau(): Promise<void> {
+  loadDonVis(): Promise<void> {
     return new Promise((resolve, reject) => {
       var id = 0;
       if (this.isEdit) {
-        id = Number(this.tnv_Selected.dot_hien_mau_id)
+        id = Number(this.tnv_Selected.maDot)
       }
       else if (this.isAdd) {
         id = Number(this.dot_hien_mau.value);
       }
-      this.dotHienMauService.getDonVisByDotHienMauId(id).subscribe({
+      this.dotHienMauService.getDonVis().subscribe({
         next: (response) => {
           if (response.code === 200) {
             this.donViList = response.data;
@@ -316,8 +316,8 @@ export class DsHienMauComponent implements OnInit {
 
             if (this.dotHienMauList.length > 0) {
               const lastDotHienMau = this.dotHienMauList[this.dotHienMauList.length - 1];
-              this.dot_hien_mau_id = lastDotHienMau.value;
-              this.searchForm.get('dot_hm_id')?.setValue(this.dot_hien_mau_id);
+              this.maDot = lastDotHienMau.value;
+              this.searchForm.get('dot_hm_id')?.setValue(this.maDot);
               this.dot_hien_mau = lastDotHienMau
               this.dotHienMauStatus = this.getDotHienMauStatus();
             }
@@ -332,7 +332,7 @@ export class DsHienMauComponent implements OnInit {
     });
   }
   updateDotHM(event: Select2UpdateEvent<any>) {
-    this.dot_hien_mau_id = event.value;
+    this.maDot = event.value;
     this.searchTTHienMauForm();
   }
 
@@ -348,22 +348,22 @@ export class DsHienMauComponent implements OnInit {
         next: (response) => {
           if (response.code === 200) {
             this.isReadOnlyAutoFill = true;
-            this.selectedProvince = response.data.tinh_thanh_code;
-            this.gioi_tinh = response.data.gioi_tinh;
+            this.selectedProvince = response.data.maTinhThanh;
+            this.gioiTinh = response.data.gioiTinh;
 
             setTimeout(() => {
-              this.selectedDistrict = response.data.quan_huyen_code;
+              this.selectedDistrict = response.data.maQuanHuyen;
               setTimeout(() => {
-                this.selectedWard = response.data.phuong_xa_code;
+                this.selectedWard = response.data.maPhuongXa;
                 setTimeout(() => {
                   this.editForm.patchValue({
                     cccd: response.data.cccd,
-                    ho_ten: response.data.ho_ten,
-                    dien_thoai: response.data.sdt,
-                    ngay_sinh: response.data.ngay_sinh.substring(0, 10),
-                    gioi_tinh: response.data.gioi_tinh,
+                    hoTen: response.data.hoTen,
+                    dien_thoai: response.data.soDienThoai,
+                    ngaySinh: response.data.ngaySinh.substring(0, 10),
+                    gioiTinh: response.data.gioiTinh,
                     email: response.data.email,
-                    so_lan: response.data.so_lan
+                    soLanHien: response.data.soLanHien
                   });
                 }, 100)
               }, 100);
@@ -374,12 +374,12 @@ export class DsHienMauComponent implements OnInit {
             this.selectedDistrict = '';
             this.selectedWard = '';
             this.editForm.patchValue({
-              ho_ten: '',
+              hoTen: '',
               dien_thoai: '',
-              ngay_sinh: '',
-              gioi_tinh: '',
+              ngaySinh: '',
+              gioiTinh: '',
               email: '',
-              so_lan: ''
+              soLanHien: ''
             });
             this.isReadOnlyAutoFill = false;
           }
@@ -434,10 +434,10 @@ export class DsHienMauComponent implements OnInit {
 
 
   DangKyOpen() {
-    const dot_hien_mau_id = this.searchForm.get('dot_hm_id')?.value || 0;
-    if (dot_hien_mau_id != 0) {
+    const maDot = this.searchForm.get('dot_hm_id')?.value || 0;
+    if (maDot != 0) {
       this.isAdd = true;
-      this.loadDonVisByDotHienMau();
+      this.loadDonVis();
       this.isEditModalOpen = true;
     }
     else {
@@ -446,38 +446,37 @@ export class DsHienMauComponent implements OnInit {
   }
   DangKy() {
     if (this.editForm.valid) {
-      const ds_hien_mau_data = {
+      const tt_hien_mau_data = {
         id: 0,
-        dot_hien_mau_id: this.dot_hien_mau_id,
-        tnv_id: 0,
-        the_tich_id: Number(this.selectedTheTich),
-        co_quan_id: this.selectedCoQuanID,
-        nghe_nghiep: this.editForm.value.nghe_nghiep,
-        noi_o: this.editForm.value.noi_o,
-        ngay_dang_ky: this.editForm.value.thoi_gian,
-        ket_qua: 'Chưa hiến'
+        maDot: this.maDot,
+        CCCD: '',
+        maTheTich: Number(this.selectedTheTich),
+        maDonVi: this.selectedCoQuanID,
+        ngheNghiep: this.editForm.value.ngheNghiep,
+        noiO: this.editForm.value.noiO,
+        thoiGianDangKy: this.editForm.value.thoi_gian,
+        ketQua: 'Chưa hiến'
       }
 
       // Thêm kiểm tra cccd đã có thì load thông tin ra
       const tinh_nguyen_vien_data = {
         id: 0,
-        ho_ten: this.editForm.value.ho_ten,
-        ngay_sinh: this.editForm.value.ngay_sinh,
-        cccd: this.editForm.value.cccd,
-        gioi_tinh: this.editForm.value.gioi_tinh,
-        sdt: this.editForm.value.dien_thoai,
+        hoTen: this.editForm.value.hoTen,
+        ngaySinh: this.editForm.value.ngaySinh,
+        CCCD: this.editForm.value.cccd,
+        gioiTinh: this.editForm.value.gioiTinh,
+        soDienThoai: this.editForm.value.dien_thoai,
         email: this.editForm.value.email,
-        tinh_thanh_code: this.selectedProvince,
-        quan_huyen_code: this.selectedDistrict,
-        phuong_xa_code: this.selectedWard,
-        so_lan: this.editForm.value.so_lan,
-        khen_thuong: ''
+        maTinhThanh: this.selectedProvince,
+        maQuanHuyen: this.selectedDistrict,
+        maPhuongXa: this.selectedWard,
+        soLanHien: this.editForm.value.soLanHien
       }
       this.tinhNguyenVienService.createTinhNguyenVien(tinh_nguyen_vien_data).subscribe({
         next: (response) => {
           if (response.code === 200) {
-            ds_hien_mau_data.tnv_id = response.data.id
-            this.dsHienMauService.createTTHienMau(ds_hien_mau_data).subscribe({
+            tt_hien_mau_data.CCCD = response.data.id
+            this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {
                   alert('Gửi đăng ký thành công.');
@@ -514,30 +513,30 @@ export class DsHienMauComponent implements OnInit {
   OpenEditModal(ttHM: any) {
     this.tnv_Selected = ttHM;
     this.isEdit = true;
-    this.loadDonVisByDotHienMau().then(() => {
+    this.loadDonVis().then(() => {
       this.isEditModalOpen = true;
       this.editForm.patchValue({
         cccd: this.tnv_Selected.cccd,
-        ho_ten: this.tnv_Selected.ho_ten,
-        dien_thoai: this.tnv_Selected.sdt,
-        ngay_sinh: this.tnv_Selected.ngay_sinh.substring(0, 10),
-        gioi_tinh: this.tnv_Selected.gioi_tinh,
+        hoTen: this.tnv_Selected.hoTen,
+        dien_thoai: this.tnv_Selected.soDienThoai,
+        ngaySinh: this.tnv_Selected.ngaySinh.substring(0, 10),
+        gioiTinh: this.tnv_Selected.gioiTinh,
         email: this.tnv_Selected.email,
-        so_lan: this.tnv_Selected.so_lan,
-        noi_o: this.tnv_Selected.cho_o,
-        nghe_nghiep: this.tnv_Selected.nghe_nghiep,
-        thoi_gian: this.tnv_Selected.ngay_dang_ky,
+        soLanHien: this.tnv_Selected.soLanHien,
+        noiO: this.tnv_Selected.cho_o,
+        ngheNghiep: this.tnv_Selected.ngheNghiep,
+        thoi_gian: this.tnv_Selected.thoiGianDangKy,
       });
     })
-    this.gioi_tinh = this.tnv_Selected.gioi_tinh;
-    this.selectedProvince = this.tnv_Selected.tinh_thanh_code;
+    this.gioiTinh = this.tnv_Selected.gioiTinh;
+    this.selectedProvince = this.tnv_Selected.maTinhThanh;
     setTimeout(() => {
-      this.selectedDistrict = this.tnv_Selected.quan_huyen_code
+      this.selectedDistrict = this.tnv_Selected.maQuanHuyen
       setTimeout(() => {
-        this.selectedWard = this.tnv_Selected.phuong_xa_code
+        this.selectedWard = this.tnv_Selected.maPhuongXa
       }, 100);
     }, 100);
-    this.selectedCoQuanID = this.tnv_Selected.co_quan_id
+    this.selectedCoQuanID = this.tnv_Selected.maDonVi
     this.selectedTheTich = this.tnv_Selected.the_tich_mau_id
   }
   loadProvinces() {
@@ -574,14 +573,14 @@ export class DsHienMauComponent implements OnInit {
     this.isEditModalOpen = false;
     this.selectedCoQuanID = 0;
     this.selectedTheTich = '';
-    this.gioi_tinh = '';
+    this.gioiTinh = '';
     this.isReadOnlyAutoFill = false;
     this.editForm.reset();
   }
 
   capNhatKetQua(ketQuaMoi: string, ttHM: any) {
     this.tnv_Selected = ttHM;
-    const confirmUpdate = window.confirm('Xác nhận cập nhật trạng thái cho ' + this.tnv_Selected.ho_ten + ' thành ' + ketQuaMoi + '?');
+    const confirmUpdate = window.confirm('Xác nhận cập nhật trạng thái cho ' + this.tnv_Selected.hoTen + ' thành ' + ketQuaMoi + '?');
     if (confirmUpdate) {
       this.dsHienMauService.updateStatus(this.tnv_Selected.id, ketQuaMoi).subscribe({
         next: (response) => {
@@ -635,22 +634,22 @@ export class DsHienMauComponent implements OnInit {
     else {
       if (this.editForm.valid) {
         const updatedData = {
-          dot_hien_mau_id: this.dot_hien_mau_id,
+          maDot: this.maDot,
 
           cccd: this.editForm.value.cccd,
-          ho_ten: this.editForm.value.ho_ten,
-          sdt: this.editForm.value.dien_thoai,
-          ngay_sinh: this.editForm.value.ngay_sinh,
-          gioi_tinh: this.editForm.value.gioi_tinh,
-          tinh_thanh_code: this.selectedProvince,
-          quan_huyen_code: this.selectedDistrict,
-          phuong_xa_code: this.selectedWard,
+          hoTen: this.editForm.value.hoTen,
+          soDienThoai: this.editForm.value.dien_thoai,
+          ngaySinh: this.editForm.value.ngaySinh,
+          gioiTinh: this.editForm.value.gioiTinh,
+          maTinhThanh: this.selectedProvince,
+          maQuanHuyen: this.selectedDistrict,
+          maPhuongXa: this.selectedWard,
           email: this.editForm.value.email,
-          so_lan: this.editForm.value.so_lan,
-          noi_o: this.editForm.value.noi_o,
-          nghe_nghiep: this.editForm.value.nghe_nghiep,
-          co_quan_id: Number(this.selectedCoQuanID),
-          ngay_dang_ky: this.editForm.value.thoi_gian,
+          soLanHien: this.editForm.value.soLanHien,
+          noiO: this.editForm.value.noiO,
+          ngheNghiep: this.editForm.value.ngheNghiep,
+          maDonVi: Number(this.selectedCoQuanID),
+          thoiGianDangKy: this.editForm.value.thoi_gian,
           the_tich_mau_id: this.selectedTheTich,
         };
         this.dsHienMauService.updateTTHienMau(this.tnv_Selected.id, updatedData).subscribe({
@@ -695,7 +694,7 @@ export class DsHienMauComponent implements OnInit {
     const searchTerm = this.searchForm.get('searchTerm')?.value || 'Nội dung tìm kiếm';
     this.currentStatus = this.searchForm.get('status')?.value || 'Nội dung tìm kiếm';
 
-    this.dsHienMauService.search(searchTerm, this.currentStatus.toString(), this.dot_hien_mau_id, this.pageSize, this.currentPage)
+    this.dsHienMauService.search(searchTerm, this.currentStatus.toString(), this.maDot, this.pageSize, this.currentPage)
       .subscribe({
         next: (response: TemplateResult<PaginatedResult<TTHienMau>>) => {
           this.ds_hien_mau = response.data.items;

@@ -4,7 +4,7 @@
         <div class="row mb-4">
             <div class="col-md-3">
                 <select2 class="form-control status-select" formControlName="dot_hm_id" [data]="dotHienMauList"
-                    [value]="dot_hien_mau_id" styleMode="borderless" placeholder="Chọn đợt hiến máu"
+                    [value]="maDot" styleMode="borderless" placeholder="Chọn đợt hiến máu"
                     (update)="updateDotHM($event)">
                 </select2>
             </div>
@@ -15,7 +15,7 @@
                 </select2>
             </div>
             <div class="col-md-3">
-                <input type="text" class="form-control" placeholder="Nhập số CCCD, họ tên hoặc sdt"
+                <input type="text" class="form-control" placeholder="Nhập số CCCD, họ tên hoặc soDienThoai"
                     formControlName="searchTerm" (keyup.enter)="searchTTHienMauForm()"
                     (input)="searchTTHienMauFormDelay()" />
             </div>
@@ -72,33 +72,33 @@
                     </tr>
                 </ng-container>
                 <ng-container *ngFor="let ttHM of ds_hien_mau; let i = index">
-                    <tr [ngClass]="{'table-success': ttHM.ket_qua == 'Đã hiến', 'table-danger': ttHM.ket_qua === 'Từ chối', 'table-info': ttHM.ket_qua === 'Chưa hiến'}">
+                    <tr [ngClass]="{'table-success': ttHM.ketQua == 'Đã hiến', 'table-danger': ttHM.ketQua === 'Từ chối', 'table-info': ttHM.ketQua === 'Chưa hiến'}">
                         <td>
                             <input type="checkbox" name="selectTTHM" (click)="updateSelectItem(ttHM.id, $event)"
                                 #checkbox>
                         </td>
                         <td>{{i+1+(currentPage-1)*pageSize}}</td>
                         <td>{{ttHM.cccd}}</td>
-                        <td>{{ttHM.ho_ten}}</td>
-                        <td>{{ttHM.sdt}}</td>
+                        <td>{{ttHM.hoTen}}</td>
+                        <td>{{ttHM.soDienThoai}}</td>
                         <td>{{ttHM.the_tich }}</td>
-                        <td>{{ttHM.so_lan}}</td>
-                        <td>{{ttHM.ngay_dang_ky | date:'HH:mm dd/MM'}}</td>
-                        <td>{{ttHM.ket_qua}}</td>
+                        <td>{{ttHM.soLanHien}}</td>
+                        <td>{{ttHM.thoiGianDangKy | date:'HH:mm dd/MM'}}</td>
+                        <td>{{ttHM.ketQua}}</td>
                         <td>
                             <div class="d-flex justify-content-center flex-wrap"
                                 *ngIf="dotHienMauStatus != 'Đã kết thúc'">
-                                <div *ngIf="ttHM.ket_qua === 'Chưa hiến'">
+                                <div *ngIf="ttHM.ketQua === 'Chưa hiến'">
                                     <button class="btn btn-success mx-1" (click)="capNhatKetQua('Đã hiến',ttHM)">Đã
                                         hiến</button>
                                     <button class="btn btn-danger mx-1" (click)="capNhatKetQua('Từ chối',ttHM)">Từ
                                         chối</button>
                                 </div>
-                                <div *ngIf="ttHM.ket_qua === 'Đã hiến'">
+                                <div *ngIf="ttHM.ketQua === 'Đã hiến'">
                                     <button class="btn btn-warning mx-1" (click)="capNhatKetQua('Chưa hiến',ttHM)">Hủy
                                         duyệt</button>
                                 </div>
-                                <div *ngIf="ttHM.ket_qua === 'Từ chối'">
+                                <div *ngIf="ttHM.ketQua === 'Từ chối'">
                                     <button class="btn btn-info mx-1" (click)="capNhatKetQua('Chưa hiến',ttHM)">Chưa
                                         hiến</button>
                                 </div>
@@ -121,7 +121,7 @@
                     <div class="modal-body">
                         <header class="text-center mb-4">
                             <p *ngIf="isEdit">
-                                <strong>{{ tnv_Selected.ten_dot }}</strong>
+                                <strong>{{ tnv_Selected.tenDot }}</strong>
                             </p>
                             <p *ngIf="isAdd">
                                 <strong>{{ dot_hien_mau.tenDot }}</strong>
@@ -146,10 +146,10 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="ho_ten">Họ và tên</label><span class="text-danger"> *</span>
-                                        <input formControlName="ho_ten" placeholder="Họ và tên" class="form-control"
-                                            id="ho_ten" [readonly]="isReadOnlyAutoFill">
-                                        <div *ngIf="editForm.controls['ho_ten'].invalid && editForm.controls['ho_ten'].touched"
+                                        <label for="hoTen">Họ và tên</label><span class="text-danger"> *</span>
+                                        <input formControlName="hoTen" placeholder="Họ và tên" class="form-control"
+                                            id="hoTen" [readonly]="isReadOnlyAutoFill">
+                                        <div *ngIf="editForm.controls['hoTen'].invalid && editForm.controls['hoTen'].touched"
                                             class="invalid-feedback">
                                             Họ và tên không được bỏ trống.
                                         </div>
@@ -170,26 +170,26 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="ngay_sinh">Ngày sinh</label><span class="text-danger"> *</span>
-                                        <input type="date" data-date-format="YYYY-MM-DD" formControlName="ngay_sinh"
-                                            class="form-control" id="ngay_sinh" [readonly]="isReadOnlyAutoFill" />
-                                        <div *ngIf="editForm.controls['ngay_sinh'].invalid && editForm.controls['ngay_sinh'].touched"
+                                        <label for="ngaySinh">Ngày sinh</label><span class="text-danger"> *</span>
+                                        <input type="date" data-date-format="YYYY-MM-DD" formControlName="ngaySinh"
+                                            class="form-control" id="ngaySinh" [readonly]="isReadOnlyAutoFill" />
+                                        <div *ngIf="editForm.controls['ngaySinh'].invalid && editForm.controls['ngaySinh'].touched"
                                             class="invalid-feedback">
                                             Ngày sinh không được bỏ trống.
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="gioi_tinh">Giới tính</label><span class="text-danger"> *</span>
-                                        <select2 class="form-control" formControlName="gioi_tinh" [overlay]="false"
+                                        <label for="gioiTinh">Giới tính</label><span class="text-danger"> *</span>
+                                        <select2 class="form-control" formControlName="gioiTinh" [overlay]="false"
                                             placeholder="Chọn giới tính" [data]="gioiTinhOptions"
-                                            [styleMode]="'borderless'" [value]="gioi_tinh"
-                                            (update)="update('gioi_tinh', $event)" id="gioi_tinh"
+                                            [styleMode]="'borderless'" [value]="gioiTinh"
+                                            (update)="update('gioiTinh', $event)" id="gioiTinh"
                                             [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
                                         </select2>
-                                        <input class="form-control" formControlName="gioi_tinh_text" type="text"
-                                            [value]="gioi_tinh" readonly
+                                        <input class="form-control" formControlName="gioiTinh_text" type="text"
+                                            [value]="gioiTinh" readonly
                                             [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
-                                        <div *ngIf="editForm.controls['gioi_tinh'].invalid && editForm.controls['gioi_tinh'].touched"
+                                        <div *ngIf="editForm.controls['gioiTinh'].invalid && editForm.controls['gioiTinh'].touched"
                                             class="invalid-feedback">
                                             Giới tính không được bỏ trống.
                                         </div>
@@ -261,11 +261,11 @@
                                             id="email" [readonly]="isReadOnlyAutoFill">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="so_lan">Số lần đã hiến máu</label><span class="text-danger">
+                                        <label for="soLanHien">Số lần đã hiến máu</label><span class="text-danger">
                                             *</span>
-                                        <input formControlName="so_lan" placeholder="Số lần đã hiến máu"
-                                            class="form-control" id="so_lan" [readonly]="isReadOnlyAutoFill">
-                                        <div *ngIf="editForm.controls['so_lan'].invalid && editForm.controls['so_lan'].touched"
+                                        <input formControlName="soLanHien" placeholder="Số lần đã hiến máu"
+                                            class="form-control" id="soLanHien" [readonly]="isReadOnlyAutoFill">
+                                        <div *ngIf="editForm.controls['soLanHien'].invalid && editForm.controls['soLanHien'].touched"
                                             class="invalid-feedback">
                                             Số lần đã hiến máu không được bỏ trống.
                                         </div>
@@ -275,20 +275,20 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <label for="noi_o">Nơi ở hiện tại</label><span class="text-danger"> *</span>
-                                        <input formControlName="noi_o" placeholder="Nơi ở hiện tại" class="form-control"
-                                            id="noi_o">
-                                        <div *ngIf="editForm.controls['noi_o'].invalid && editForm.controls['noi_o'].touched"
+                                        <label for="noiO">Nơi ở hiện tại</label><span class="text-danger"> *</span>
+                                        <input formControlName="noiO" placeholder="Nơi ở hiện tại" class="form-control"
+                                            id="noiO">
+                                        <div *ngIf="editForm.controls['noiO'].invalid && editForm.controls['noiO'].touched"
                                             class="invalid-feedback">
                                             Trường Tỉnh/thành không được bỏ trống.
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="nghe_nghiep">Nghề nghiệp hiện tại</label><span class="text-danger">
+                                        <label for="ngheNghiep">Nghề nghiệp hiện tại</label><span class="text-danger">
                                             *</span>
-                                        <input formControlName="nghe_nghiep" placeholder="Nghề nghiệp hiện tại"
-                                            class="form-control" id="nghe_nghiep">
-                                        <div *ngIf="editForm.controls['nghe_nghiep'].invalid && editForm.controls['nghe_nghiep'].touched"
+                                        <input formControlName="ngheNghiep" placeholder="Nghề nghiệp hiện tại"
+                                            class="form-control" id="ngheNghiep">
+                                        <div *ngIf="editForm.controls['ngheNghiep'].invalid && editForm.controls['ngheNghiep'].touched"
                                             class="invalid-feedback">
                                             Trường Nghề nghiệp hiện tại không được bỏ trống.
                                         </div>
@@ -298,13 +298,13 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label for="co_quan">Cơ quan</label><span class="text-danger"> *</span>
-                                        <select2 formControlName="co_quan" class="form-control" id="co_quan"
+                                        <label for="don_vi">Cơ quan</label><span class="text-danger"> *</span>
+                                        <select2 formControlName="don_vi" class="form-control" id="don_vi"
                                             [overlay]="false" placeholder="Chọn cơ quan" [value]="selectedCoQuanID"
                                             [data]="donViList" [styleMode]="'borderless'" [(ngModel)]="selectedCoQuanID"
                                             [displaySearchStatus]="'default'">
                                         </select2>
-                                        <div *ngIf="editForm.controls['co_quan'].invalid && editForm.controls['co_quan'].touched"
+                                        <div *ngIf="editForm.controls['don_vi'].invalid && editForm.controls['don_vi'].touched"
                                             class="invalid-feedback">
                                             Cơ quan không được bỏ trống.
                                         </div>
@@ -313,13 +313,13 @@
                                         <label for="thoi_gian">Thời gian đăng ký</label><span class="text-danger">
                                             *</span>
                                         <input type="datetime-local" id="thoi_gian" formControlName="thoi_gian"
-                                            class="form-control" [min]="ngay_bd" [max]="ngay_kt"
+                                            class="form-control" [min]="thoiGianBatDau" [max]="thoiGianKetThuc"
                                             (input)="validateDate()"
                                             [ngClass]="{'is-invalid': editForm.controls['thoi_gian'].invalid && editForm.controls['thoi_gian'].touched}" />
                                         <div *ngIf="editForm.controls['thoi_gian'].hasError('outOfRange') && editForm.controls['thoi_gian'].touched"
                                             class="invalid-feedback">
-                                            Thời gian đăng ký phải nằm trong khoảng từ {{ ngay_bd | date: 'dd/MM/yyyy'
-                                            }} đến {{ ngay_kt |
+                                            Thời gian đăng ký phải nằm trong khoảng từ {{ thoiGianBatDau | date: 'dd/MM/yyyy'
+                                            }} đến {{ thoiGianKetThuc |
                                             date: 'dd/MM/yyyy' }}.
                                         </div>
                                     </div>
@@ -359,12 +359,12 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <p><strong>Số căn cước công dân:</strong> {{ tnv_Selected.cccd || 'N/A' }}</p>
-                                <p><strong>Điện thoại di động:</strong> {{ tnv_Selected.sdt || 'N/A' }}</p>
-                                <p><strong>Giới tính:</strong> {{ tnv_Selected.gioi_tinh || 'N/A' }}</p>
+                                <p><strong>Điện thoại di động:</strong> {{ tnv_Selected.soDienThoai || 'N/A' }}</p>
+                                <p><strong>Giới tính:</strong> {{ tnv_Selected.gioiTinh || 'N/A' }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p><strong>Họ và tên:</strong> {{ tnv_Selected.ho_ten || 'N/A' }}</p>
-                                <p><strong>Ngày sinh:</strong> {{ (tnv_Selected.ngay_sinh | date:'dd/MM/yyyy') || 'N/A' }}</p>
+                                <p><strong>Họ và tên:</strong> {{ tnv_Selected.hoTen || 'N/A' }}</p>
+                                <p><strong>Ngày sinh:</strong> {{ (tnv_Selected.ngaySinh | date:'dd/MM/yyyy') || 'N/A' }}</p>
                                 <p><strong>Email:</strong> {{ tnv_Selected.email || 'N/A' }}</p>
                             </div>
                         </div>
@@ -375,15 +375,15 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <p><strong>Số lần hiến máu:</strong> {{ tnv_Selected.so_lan || 'N/A' }}</p>
-                                <p><strong>Nghề nghiệp hiện tại:</strong> {{ tnv_Selected.nghe_nghiep || 'N/A' }}</p>
+                                <p><strong>Số lần hiến máu:</strong> {{ tnv_Selected.soLanHien || 'N/A' }}</p>
+                                <p><strong>Nghề nghiệp hiện tại:</strong> {{ tnv_Selected.ngheNghiep || 'N/A' }}</p>
                                 <p><strong>Cơ quan:</strong> {{ tnv_Selected.ten_don_vi || 'N/A' }}</p>
                                 <p><strong>Thể tích:</strong> {{ tnv_Selected.the_tich || 'N/A' }}</p>
                             </div>
                             <div class="col-md-6">
                                 <p><strong>Ngày hiến máu:</strong> {{ (tnv_Selected.ngay_hien | date:'dd/MM/yyyy') || 'N/A' }}</p>
                                 <p><strong>Nơi ở hiện tại:</strong> {{ tnv_Selected.cho_o || 'N/A' }}</p>
-                                <p><strong>Thời gian đăng ký:</strong> {{ tnv_Selected.nghe_nghiep || 'N/A' }}</p>
+                                <p><strong>Thời gian đăng ký:</strong> {{ tnv_Selected.ngheNghiep || 'N/A' }}</p>
                             </div>
                         </div>
                     </div>

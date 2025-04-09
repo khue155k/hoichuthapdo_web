@@ -13,10 +13,14 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () => import('./login/login.component').then(m => m.LoginComponent),
   },
-  // {
-  //   path: 'dang-ky-hien-mau/:dot_hien_mau_id',
-  //   loadComponent: () => import('./dang-ky-hien-mau/dang-ky-hien-mau.component').then(m => m.DangKyHienMauComponent)
-  // },
+  {
+    path: 'dang-ky-hien-mau',
+    loadComponent: () => import('./dang-ky-hien-mau/dang-ky-hien-mau.component').then(m => m.DangKyHienMauComponent)
+  },
+  {
+    path: 'dang-ky-hien-mau/:maDot',
+    loadComponent: () => import('./dang-ky-hien-mau/dang-ky-hien-mau.component').then(m => m.DangKyHienMauComponent)
+  },
   {
     path: '',
     component: DefaultLayoutComponent,

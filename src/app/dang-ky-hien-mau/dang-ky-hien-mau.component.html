@@ -1,0 +1,218 @@
+<div class="header-img-container">
+    <img src="https://www.redcross.org.vn/wp-content/uploads/2024/01/logo-hctd.svg" alt="Header Image"
+        class="header-img">
+</div>
+
+<div class="container mt-5">
+    <header class="text-center mb-4">
+        <h3>ĐĂNG KÝ HIẾN MÁU</h3>
+        <p *ngIf="tenDot">
+            <strong>{{ tenDot }}</strong>
+        </p>
+        <p *ngIf="getDotHienMauStatus() === 'Chưa diễn ra'">(Sự kiện chưa diễn ra)</p>
+        <p *ngIf="getDotHienMauStatus() === 'Đang diễn ra'">(Sự kiện đang diễn ra)</p>
+
+        <div *ngIf="getDotHienMauStatus() === 'Đã kết thúc'" class="alert alert-warning">
+            Sự kiện này đã kết thúc.
+        </div>
+    </header>
+    <form [formGroup]="registerForm" *ngIf="getDotHienMauStatus() !== 'Đã kết thúc'" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="cccd">Số căn cước công dân</label><span class="text-danger"> *</span>
+                    <input formControlName="cccd" placeholder="Số căn cước công dân" class="form-control" id="cccd"
+                        (blur)="autoFill()">
+                    <div *ngIf="registerForm.controls['cccd'].invalid && registerForm.controls['cccd'].touched"
+                        class="invalid-feedback">
+                        Căn cước công dân không được bỏ trống.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="hoTen">Họ và tên</label><span class="text-danger"> *</span>
+                    <input formControlName="hoTen" placeholder="Họ và tên" class="form-control" id="hoTen"
+                        [readonly]="isReadOnlyAutoFill">
+                    <div *ngIf="registerForm.controls['hoTen'].invalid && registerForm.controls['hoTen'].touched"
+                        class="invalid-feedback">
+                        Họ và tên không được bỏ trống.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="dien_thoai">Điện thoại di động</label><span class="text-danger"> *</span>
+                    <input formControlName="dien_thoai" placeholder="Điện thoại di động" class="form-control"
+                        id="dien_thoai" [readonly]="isReadOnlyAutoFill">
+                    <div *ngIf="registerForm.controls['dien_thoai'].invalid && registerForm.controls['dien_thoai'].touched"
+                        class="invalid-feedback">
+                        Điện thoại di động không được bỏ trống.
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="ngaySinh">Ngày sinh</label><span class="text-danger"> *</span>
+                    <input type="date" data-date-format="YYYY-MM-DD" formControlName="ngaySinh" class="form-control"
+                        id="ngaySinh" [readonly]="isReadOnlyAutoFill" />
+                    <div *ngIf="registerForm.controls['ngaySinh'].invalid && registerForm.controls['ngaySinh'].touched"
+                        class="invalid-feedback">
+                        Ngày sinh không được bỏ trống.
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="gioiTinh">Giới tính</label><span class="text-danger"> *</span>
+                    <select2 class="form-control" formControlName="gioiTinh" [overlay]="false"
+                        placeholder="Chọn giới tính" [data]="gioiTinhOptions" [styleMode]="'borderless'"
+                        [value]="gioiTinh" (update)="update('gioiTinh', $event)" id="gioiTinh" [readonly]="true" [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                    </select2>
+                    <input class="form-control" formControlName="gioiTinh_text" type="text" [value]="gioiTinh"
+                        readonly [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                    <div *ngIf="registerForm.controls['gioiTinh'].invalid && registerForm.controls['gioiTinh'].touched"
+                        class="invalid-feedback">
+                        Giới tính không được bỏ trống.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="dia_chi_thuong_tru">Địa chỉ thường trú (theo CMND, CCCD)</label><span class="text-danger">
+                *</span>
+            <div id="dia_chi_thuong_tru">
+                <div class="row">
+                    <div class="col-md-4">
+                        <select2 formControlName="tinh_thanh" class="form-control" id="tinh_thanh"
+                            (update)="update('tinh_thanh', $event)" [(ngModel)]="selectedProvince" [overlay]="false"
+                            placeholder="Chọn tỉnh thành" [value]="selectedProvince" [data]="sl2_tinh_thanh"
+                            [styleMode]="'borderless'" [displaySearchStatus]="'default'"
+                            [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                        </select2>
+                        <input class="form-control" formControlName="tinh_thanh_text" type="text"
+                            [value]="selectedProvinceName" readonly
+                            [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                        <div *ngIf="registerForm.controls['tinh_thanh'].invalid && registerForm.controls['tinh_thanh'].touched"
+                            class="invalid-feedback">
+                            Trường Tỉnh/thành không được bỏ trống.
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select2 formControlName="quan_huyen" class="form-control" id="quan_huyen"
+                            (update)="update('quan_huyen', $event)" [(ngModel)]="selectedDistrict" [overlay]="false"
+                            placeholder="Chọn quận huyện" [value]="selectedDistrict" [data]="sl2_quan_huyen"
+                            [styleMode]="'borderless'" [displaySearchStatus]="'default'"
+                            [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                        </select2>
+                        <input class="form-control" formControlName="quan_huyen_text" type="text"
+                            [value]="selectedDistrictName" readonly
+                            [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                        <div *ngIf="registerForm.controls['quan_huyen'].invalid && registerForm.controls['quan_huyen'].touched"
+                            class="invalid-feedback">
+                            Trường Quận/huyện không được bỏ trống.
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select2 formControlName="phuong_xa" class="form-control" id="phuong_xa"
+                            (update)="update('phuong_xa', $event)" [(ngModel)]="selectedWard" [overlay]="false"
+                            placeholder="Chọn phường xã" [value]="selectedWard" [data]="sl2_phuong_xa"
+                            [styleMode]="'borderless'" [displaySearchStatus]="'default'"
+                            [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                        </select2>
+                        <input class="form-control" formControlName="phuong_xa_text" type="text"
+                            [value]="selectedWardName" readonly
+                            [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                        <div *ngIf="registerForm.controls['phuong_xa'].invalid && registerForm.controls['phuong_xa'].touched"
+                            class="invalid-feedback">
+                            Trường Phường/xã không được bỏ trống.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="email">Địa chỉ email</label>
+                    <input formControlName="email" placeholder="Địa chỉ email" class="form-control" id="email"
+                        [readonly]="isReadOnlyAutoFill">
+                </div>
+                <div class="col-md-6">
+                    <label for="soLanHien">Số lần đã hiến máu</label><span class="text-danger"> *</span>
+                    <input formControlName="soLanHien" placeholder="Số lần đã hiến máu" class="form-control" id="soLanHien"
+                        [readonly]="isReadOnlyAutoFill">
+                    <div *ngIf="registerForm.controls['soLanHien'].invalid && registerForm.controls['soLanHien'].touched"
+                        class="invalid-feedback">
+                        Số lần đã hiến máu không được bỏ trống.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-8">
+                    <label for="noiO">Nơi ở hiện tại</label><span class="text-danger"> *</span>
+                    <input formControlName="noiO" placeholder="Nơi ở hiện tại" class="form-control" id="noiO">
+                    <div *ngIf="registerForm.controls['noiO'].invalid && registerForm.controls['noiO'].touched"
+                        class="invalid-feedback">
+                        Trường Tỉnh/thành không được bỏ trống.
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="ngheNghiep">Nghề nghiệp hiện tại</label><span class="text-danger"> *</span>
+                    <input formControlName="ngheNghiep" placeholder="Nghề nghiệp hiện tại" class="form-control"
+                        id="ngheNghiep">
+                    <div *ngIf="registerForm.controls['ngheNghiep'].invalid && registerForm.controls['ngheNghiep'].touched"
+                        class="invalid-feedback">
+                        Trường Nghề nghiệp hiện tại không được bỏ trống.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="don_vi">Cơ quan</label><span class="text-danger"> *</span>
+                    <select2 formControlName="don_vi" class="form-control" id="don_vi" [overlay]="false"
+                        placeholder="Chọn cơ quan" [value]="selectedCoQuanID" [data]="donViList"
+                        [styleMode]="'borderless'" [(ngModel)]="selectedCoQuanID" [displaySearchStatus]="'default'">
+                    </select2>
+                    <div *ngIf="registerForm.controls['don_vi'].invalid && registerForm.controls['don_vi'].touched"
+                        class="invalid-feedback">
+                        Cơ quan không được bỏ trống.
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="thoi_gian">Thời gian đăng ký</label><span class="text-danger"> *</span>
+                    <input type="datetime-local" id="thoi_gian" formControlName="thoi_gian" class="form-control"
+                        [min]="thoiGianBatDau" [max]="thoiGianKetThuc" (input)="validateDate()"
+                        [ngClass]="{'is-invalid': registerForm.controls['thoi_gian'].invalid && registerForm.controls['thoi_gian'].touched}" />
+                    <div *ngIf="registerForm.controls['thoi_gian'].hasError('outOfRange') && registerForm.controls['thoi_gian'].touched"
+                        class="invalid-feedback">
+                        Thời gian đăng ký phải nằm trong khoảng từ {{ thoiGianBatDau | date: 'dd/MM/yyyy' }} đến {{ thoiGianKetThuc |
+                        date: 'dd/MM/yyyy' }}.
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="don_vi_mau">Thể tích (ml)</label>
+                    <span class="text-danger"> *</span>
+                    <select2 formControlName="don_vi_mau" class="form-control" id="don_vi_mau" [overlay]="false"
+                        placeholder="Thể tích" [value]="selectedTheTich" [data]="theTichMauHienList"
+                        [styleMode]="'borderless'" [(ngModel)]="selectedTheTich">
+                    </select2>
+                    <div *ngIf="registerForm.controls['don_vi_mau'].invalid && registerForm.controls['don_vi_mau'].touched"
+                        class="invalid-feedback">
+                        Thể tích máu hiến không được bỏ trống.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-check">
+            <input formControlName="dongy1" type="checkbox" class="form-check-input" id="dongy1">
+            <label class="form-check-label" for="dongy1">Đồng ý với các điều khoản và điều kiện.</label>
+            <div *ngIf="registerForm.controls['dongy1'].invalid && registerForm.controls['dongy1'].touched"
+                class="invalid-feedback">
+                Bạn phải đồng ý với các điều khoản và điều kiện.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Đăng ký</button>
+    </form>
+</div>

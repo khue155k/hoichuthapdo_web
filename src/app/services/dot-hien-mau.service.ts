@@ -37,11 +37,11 @@ export class DotHienMauService {
     return this.http.delete<TemplateResult<any>>(`${this.baseUrl}/deleteDotHm/${id}`);
   }
 
-  getDotHienMau(dot_hien_mau_id: number): Observable<TemplateResult<any>> {
-    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/${dot_hien_mau_id}`);
+  getDotHienMau(maDot: number): Observable<TemplateResult<any>> {
+    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/${maDot}`);
   }
-  getDonVisByDotHienMauId(dotHienMauId: number): Observable<TemplateResult<any[]>> {
-    return this.http.get<TemplateResult<any[]>>(`${this.baseUrl}/${dotHienMauId}/donvi`);
+  getDonVis(): Observable<TemplateResult<any[]>> {
+    return this.http.get<TemplateResult<any[]>>(`${environment.apiUrl}/DonVi`);
   }
   getTheTichMauHien(): Observable<TemplateResult<any[]>> {
     return this.http.get<TemplateResult<any[]>>(`${this.baseUrl}/the_tich_mau_hien`);
@@ -56,9 +56,9 @@ export class DotHienMauService {
 
 export interface DotHienMau {
   id: number;
-  ten_dot: string;
+  tenDot: string;
   dia_diem: string;
-  ngay_bd: string
-  ngay_kt: string
+  thoiGianBatDau: string
+  thoiGianKetThuc: string
   don_vi_mau_dk: number;
 }

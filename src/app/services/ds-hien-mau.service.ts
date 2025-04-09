@@ -15,15 +15,15 @@ export class DsHienMauService {
 
   search(
     string_tim_kiem: string = "Nội dung tìm kiếm",
-    string_ket_qua: string = "Nội dung tìm kiếm",
-    dot_hien_mau_id: number = 0,
+    string_ketQua: string = "Nội dung tìm kiếm",
+    maDot: number = 0,
     pageSize: number = 10,
     currentPage: number = 1
   ): Observable<TemplateResult<PaginatedResult<TTHienMau>>> {
     let params = new HttpParams()
       .set('string_tim_kiem', string_tim_kiem)
-      .set('string_ket_qua', string_ket_qua)
-      .set('dot_hien_mau_id', dot_hien_mau_id.toString())
+      .set('string_ketQua', string_ketQua)
+      .set('maDot', maDot.toString())
       .set('pageSize', pageSize.toString())
       .set('currentPage', currentPage.toString());
 
