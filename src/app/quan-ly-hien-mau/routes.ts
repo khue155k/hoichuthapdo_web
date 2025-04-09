@@ -29,6 +29,14 @@ export const routes: Routes = [
           roles: ['all'],
         }
       },
+      {
+        path: 'don-vi',
+        loadComponent: () => import('./don-vi/don-vi.component').then(m => m.DonViComponent),
+        data: {
+          title: 'Đơn vị',
+          roles: ['all'],
+        }
+      },
     ]
   }
 ];

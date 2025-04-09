@@ -40,9 +40,7 @@ export class DotHienMauService {
   getDotHienMau(maDot: number): Observable<TemplateResult<any>> {
     return this.http.get<TemplateResult<any>>(`${this.baseUrl}/${maDot}`);
   }
-  getDonVis(): Observable<TemplateResult<any[]>> {
-    return this.http.get<TemplateResult<any[]>>(`${environment.apiUrl}/DonVi`);
-  }
+
   getTheTichMauHien(): Observable<TemplateResult<any[]>> {
     return this.http.get<TemplateResult<any[]>>(`${this.baseUrl}/the_tich_mau_hien`);
   }
@@ -55,10 +53,10 @@ export class DotHienMauService {
 }
 
 export interface DotHienMau {
-  id: number;
+  maDot: number;
   tenDot: string;
-  dia_diem: string;
+  diaDiem: string;
   thoiGianBatDau: string
   thoiGianKetThuc: string
-  don_vi_mau_dk: number;
+  donViMau: number;
 }

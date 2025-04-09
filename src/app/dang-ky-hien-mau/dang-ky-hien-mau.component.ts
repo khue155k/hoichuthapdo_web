@@ -9,6 +9,7 @@ import { Select2Module, Select2Data, Select2UpdateEvent } from 'ng-select2-compo
 // import { TTHienMauService } from '../services/ds-hien-mau1.service';
 import { TTHienMauService } from '../services/ds-hien-mau.service';
 import { TinhNguyenVienService } from '../services/tinh-nguyen-vien.service';
+import { DonViService } from '../services';
 
 @Component({
   selector: 'app-dang-ky-hien-mau',
@@ -19,7 +20,7 @@ import { TinhNguyenVienService } from '../services/tinh-nguyen-vien.service';
 })
 export class DangKyHienMauComponent {
   constructor(private fb: FormBuilder, private locationService: LocationService,
-    private route: ActivatedRoute, private dotHienMauService: DotHienMauService,
+    private route: ActivatedRoute, private dotHienMauService: DotHienMauService, private donViService: DonViService,
     private router: Router, private tinhNguyenVienService: TinhNguyenVienService,
     private dsHienMauService: TTHienMauService) {
     this.registerForm = this.fb.group({
@@ -204,7 +205,7 @@ export class DangKyHienMauComponent {
   }
 
   loadDonVis() {
-    this.dotHienMauService.getDonVis().subscribe({
+    this.donViService.getDonVis().subscribe({
       next: (response) => {
         if (response.code === 200) {
           this.donViList = response.data.map((donVi: any) => ({
@@ -374,7 +375,7 @@ export class DangKyHienMauComponent {
       this.tinhNguyenVienService.createTinhNguyenVien(tinh_nguyen_vien_data).subscribe({
         next: (response) => {
           if (response.code === 200) {
-            tt_hien_mau_data.CCCD = response.data.id
+            tt_hien_mau_data.CCCD = response.data.CCCD
             this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {

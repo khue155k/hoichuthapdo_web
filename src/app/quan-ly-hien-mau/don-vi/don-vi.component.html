@@ -1,0 +1,134 @@
+<div class="mx-5">
+    <form [formGroup]="searchForm">
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="OpenCreateModal()">Tạo đơn vị</button>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Nhập tên đơn vị hoặc địa điểm"
+                    formControlName="searchTerm" (input)="searchDonViFormDelay()" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="exportExcel()">
+                    Xuất Excel
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <table cTable [striped]="true">
+            <thead>
+                <tr>
+                    <th scope="col">TT</th>
+                    <th scope="col">Tên đơn vị</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Số điện thoại</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="donViList.length == 0">
+                    <tr class="table-danger">
+                        <th colspan="100%">
+                            Không có đơn vị nào
+                        </th>
+                    </tr>
+                </ng-container>
+                <ng-container *ngFor="let donVi of donViList; let i = index">
+                    <tr>
+                        <td>{{i+1+(currentPage-1)*pageSize}}</td>
+                        <td>{{donVi.tenDV}}</td>
+                        <td>{{donVi.email || 'Không có'}}</td>
+                        <td>{{donVi.soDienThoai || 'Không có'}}</td>
+                        <td>
+                            <div class="d-flex justify-content-center flex-wrap">
+                                <button class="btn btn-warning mx-1" (click)="OpenEditModal(donVi)">Sửa</button>
+                                <button class="btn btn-danger mx-1" (click)="OpenDeleteModal(donVi)">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+        <div *ngIf="isEditModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg custom-dialog" role="document">
+                <div class="modal-content custom-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" *ngIf="isAdd"> {{addTitle}}</h5>
+                        <h5 class="modal-title" *ngIf="isEdit"> {{editTitle}} </h5>
+                    </div>
+                    <div class="modal-body">
+                        <form [formGroup]="donViForm" novalidate>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="tenDV">Tên đơn vị</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="tenDV" placeholder="Tên đơn vị" class="form-control"
+                                            id="tenDV">
+                                        <div *ngIf="donViForm.controls['tenDV'].invalid && donViForm.controls['tenDV'].touched"
+                                            class="invalid-feedback">
+                                            Tên đơn vị không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email">Email</label><span class="text-danger"> *</span>
+                                        <input formControlName="email" placeholder="Email" class="form-control"
+                                            id="email">
+                                        <div *ngIf="donViForm.controls['email'].invalid && donViForm.controls['email'].touched"
+                                            class="invalid-feedback">
+                                            Email không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="soDienThoai">Số điện thoại</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="soDienThoai" placeholder="Số điện thoại" class="form-control"
+                                            id="soDienThoai">
+                                        <div *ngIf="donViForm.controls['soDienThoai'].invalid && donViForm.controls['soDienThoai'].touched"
+                                            class="invalid-feedback">
+                                            Số điện thoại không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Hủy</button>
+                        <button type="button" class="btn btn-primary" (click)="saveChanges()">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
+                *ngIf="currentPage > 1">«</button>
+
+            <ng-container *ngFor="let page of getLimitedPageNumbers()">
+                <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
+                *ngIf="currentPage * pageSize < totalCount">»</button>
+
+            <div class="float-end">
+                <span style="margin: 0; margin-right: 1rem;">Số dòng mỗi trang: </span>
+                <select style="padding: 5px;" [(ngModel)]="pageSize" (change)="searchDonViForm()">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
