@@ -39,11 +39,11 @@
                 <ng-container *ngFor="let dotHm of dotHienMauList; let i = index">
                     <tr [ngClass]="{'table-success': dotHm.status === 'Đang diễn ra', 'table-danger': dotHm.status === 'Đã kết thúc', 'table-info': dotHm.status === 'Chưa diễn ra'}">
                         <td>{{i+1+(currentPage-1)*pageSize}}</td>
-                        <td>{{dotHm.ten_dot}}</td>
-                        <td>{{dotHm.dia_diem}}</td>
-                        <td>{{dotHm.ngay_bd | date:'HH:mm dd/MM/yyyy'}}</td>
-                        <td>{{dotHm.ngay_kt | date:'HH:mm dd/MM/yyyy'}}</td>
-                        <td>{{dotHm.don_vi_mau_dk}}</td>
+                        <td>{{dotHm.tenDot}}</td>
+                        <td>{{dotHm.diaDiem}}</td>
+                        <td>{{dotHm.thoiGianBatDau | date:'HH:mm dd/MM/yyyy'}}</td>
+                        <td>{{dotHm.thoiGianKetThuc | date:'HH:mm dd/MM/yyyy'}}</td>
+                        <td>{{dotHm.donViMau}}</td>
                         <td>
                             <div class="d-flex justify-content-center flex-wrap">
                                 <button class="btn btn-primary mx-1" (click)="OpenEditModal(dotHm)">Sửa</button>
@@ -73,20 +73,20 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label for="ten_dot">Tên đợt</label><span class="text-danger">
+                                        <label for="tenDot">Tên đợt</label><span class="text-danger">
                                             *</span>
-                                        <input formControlName="ten_dot" placeholder="Tên đợt" class="form-control"
-                                            id="ten_dot">
-                                        <div *ngIf="dotHMForm.controls['ten_dot'].invalid && dotHMForm.controls['ten_dot'].touched"
+                                        <input formControlName="tenDot" placeholder="Tên đợt" class="form-control"
+                                            id="tenDot">
+                                        <div *ngIf="dotHMForm.controls['tenDot'].invalid && dotHMForm.controls['tenDot'].touched"
                                             class="invalid-feedback">
                                             Tên đợt không được bỏ trống.
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="dia_diem">Địa điểm</label><span class="text-danger"> *</span>
-                                        <input formControlName="dia_diem" placeholder="Địa điểm" class="form-control"
-                                            id="dia_diem">
-                                        <div *ngIf="dotHMForm.controls['dia_diem'].invalid && dotHMForm.controls['dia_diem'].touched"
+                                        <label for="diaDiem">Địa điểm</label><span class="text-danger"> *</span>
+                                        <input formControlName="diaDiem" placeholder="Địa điểm" class="form-control"
+                                            id="diaDiem">
+                                        <div *ngIf="dotHMForm.controls['diaDiem'].invalid && dotHMForm.controls['diaDiem'].touched"
                                             class="invalid-feedback">
                                             Địa điểm không được bỏ trống.
                                         </div>
@@ -96,31 +96,31 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="ngay_bd">Thời gian bắt đầu</label><span class="text-danger">
+                                        <label for="thoiGianBatDau">Thời gian bắt đầu</label><span class="text-danger">
                                             *</span>
-                                        <input type="datetime-local" formControlName="ngay_bd" class="form-control"
-                                            id="ngay_bd" />
-                                        <div *ngIf="dotHMForm.controls['ngay_bd'].invalid && dotHMForm.controls['ngay_bd'].touched"
+                                        <input type="datetime-local" formControlName="thoiGianBatDau" class="form-control"
+                                            id="thoiGianBatDau" />
+                                        <div *ngIf="dotHMForm.controls['thoiGianBatDau'].invalid && dotHMForm.controls['thoiGianBatDau'].touched"
                                             class="invalid-feedback">
                                             Thời gian bắt đầu không được bỏ trống.
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="ngay_kt">Thời gian kết thúc</label><span class="text-danger">
+                                        <label for="thoiGianKetThuc">Thời gian kết thúc</label><span class="text-danger">
                                             *</span>
-                                        <input type="datetime-local" formControlName="ngay_kt" class="form-control"
-                                            id="ngay_kt" />
-                                        <div *ngIf="dotHMForm.controls['ngay_kt'].invalid && dotHMForm.controls['ngay_kt'].touched"
+                                        <input type="datetime-local" formControlName="thoiGianKetThuc" class="form-control"
+                                            id="thoiGianKetThuc" />
+                                        <div *ngIf="dotHMForm.controls['thoiGianKetThuc'].invalid && dotHMForm.controls['thoiGianKetThuc'].touched"
                                             class="invalid-feedback">
                                             Thời gian kết thúc không được bỏ trống.
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="don_vi_mau_dk">Đơn vị máu đăng ký</label><span class="text-danger">
+                                        <label for="donViMau">Đơn vị máu đăng ký</label><span class="text-danger">
                                             *</span>
-                                        <input formControlName="don_vi_mau_dk" placeholder="Đơn vị máu đăng ký"
-                                            class="form-control" id="don_vi_mau_dk">
-                                        <div *ngIf="dotHMForm.controls['don_vi_mau_dk'].invalid && dotHMForm.controls['don_vi_mau_dk'].touched"
+                                        <input formControlName="donViMau" placeholder="Đơn vị máu đăng ký"
+                                            class="form-control" id="donViMau">
+                                        <div *ngIf="dotHMForm.controls['donViMau'].invalid && dotHMForm.controls['donViMau'].touched"
                                             class="invalid-feedback">
                                             Đơn vị máu đăng ký không được bỏ trống.
                                         </div>

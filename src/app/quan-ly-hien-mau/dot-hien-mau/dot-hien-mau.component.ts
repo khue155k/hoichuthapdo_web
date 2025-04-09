@@ -31,11 +31,11 @@ export class DotHienMauComponent implements OnInit {
       searchTerm: [''],
     });
     this.dotHMForm = this.fb.group({
-      ten_dot: ['', Validators.required],
-      dia_diem: ['', Validators.required],
-      ngay_bd: ['', Validators.required],
-      ngay_kt: ['', Validators.required],
-      don_vi_mau_dk: ['', Validators.required],
+      tenDot: ['', Validators.required],
+      diaDiem: ['', Validators.required],
+      thoiGianBatDau: ['', Validators.required],
+      thoiGianKetThuc: ['', Validators.required],
+      donViMau: ['', Validators.required],
     });
   }
 
@@ -85,16 +85,16 @@ export class DotHienMauComponent implements OnInit {
 
   getDotHienMauStatus(dotHM: any): string {
     const now = new Date();
-    const ngay_bd = new Date(dotHM.ngay_bd)
-    const ngay_kt = new Date(dotHM.ngay_kt)
+    const thoiGianBatDau = new Date(dotHM.thoiGianBatDau)
+    const thoiGianKetThuc = new Date(dotHM.thoiGianKetThuc)
 
-    if (ngay_bd && now < ngay_bd) {
+    if (thoiGianBatDau && now < thoiGianBatDau) {
       return 'Chưa diễn ra';
     }
-    if (ngay_bd && ngay_kt && now >= ngay_bd && now <= ngay_kt) {
+    if (thoiGianBatDau && thoiGianKetThuc && now >= thoiGianBatDau && now <= thoiGianKetThuc) {
       return 'Đang diễn ra';
     }
-    if (dotHM.ngay_kt && now > ngay_kt) {
+    if (dotHM.thoiGianKetThuc && now > thoiGianKetThuc) {
       return 'Đã kết thúc';
     }
     return '';
@@ -138,15 +138,15 @@ export class DotHienMauComponent implements OnInit {
 
           const excelData = dotHienMau.map((dotHM, index) => ({
             'STT': index + 1,
-            'Tên đợt': dotHM.ten_dot,
-            'Địa điểm': dotHM.dia_diem,
-            'Thời gian bắt đầu': dotHM.ngay_bd,
-            'Thời gian kết thúc': dotHM.ngay_kt,
-            'Đơn vị máu đăng ký': dotHM.don_vi_mau_dk,
+            'Tên đợt': dotHM.tenDot,
+            'Địa điểm': dotHM.diaDiem,
+            'Thời gian bắt đầu': dotHM.thoiGianBatDau,
+            'Thời gian kết thúc': dotHM.thoiGianKetThuc,
+            'Đơn vị máu đăng ký': dotHM.donViMau,
           }));
 
           const tong_the_tich_mau = dotHienMau.reduce((total, dotHM) => {
-            const donViMauValue = parseInt(dotHM.don_vi_mau_dk, 10);
+            const donViMauValue = parseInt(dotHM.donViMau, 10);
             return total + (isNaN(donViMauValue) ? 0 : donViMauValue);
           }, 0);
 
@@ -184,17 +184,17 @@ export class DotHienMauComponent implements OnInit {
     this.isEdit = true;
     this.isEditModalOpen = true;
     this.dotHMForm.patchValue({
-      ten_dot: this.dotHMSelected.ten_dot,
-      dia_diem: this.dotHMSelected.dia_diem,
-      ngay_bd: this.dotHMSelected.ngay_bd,
-      ngay_kt: this.dotHMSelected.ngay_kt,
-      don_vi_mau_dk: this.dotHMSelected.don_vi_mau_dk
+      tenDot: this.dotHMSelected.tenDot,
+      diaDiem: this.dotHMSelected.diaDiem,
+      thoiGianBatDau: this.dotHMSelected.thoiGianBatDau,
+      thoiGianKetThuc: this.dotHMSelected.thoiGianKetThuc,
+      donViMau: this.dotHMSelected.donViMau
     });
   }
 
   OpenDeleteModal(dotHm: any) {
     this.dotHMSelected = dotHm;
-    const confirmDelete = window.confirm('Xác nhận xóa đợt hiến máu ' + this.dotHMSelected.ten_dot + ' ?');
+    const confirmDelete = window.confirm('Xác nhận xóa đợt hiến máu ' + this.dotHMSelected.tenDot + ' ?');
     if (confirmDelete) {
       this.dotHienMauService.deleteDotHienMau(this.dotHMSelected.id).subscribe({
         next: (response) => {
@@ -228,11 +228,11 @@ export class DotHienMauComponent implements OnInit {
     else {
       if (this.dotHMForm.valid) {
         const updatedData = {
-          ten_dot: this.dotHMForm.value.ten_dot,
-          dia_diem: this.dotHMForm.value.dia_diem,
-          ngay_bd: this.dotHMForm.value.ngay_bd,
-          ngay_kt: this.dotHMForm.value.ngay_kt,
-          don_vi_mau_dk: this.dotHMForm.value.don_vi_mau_dk
+          tenDot: this.dotHMForm.value.tenDot,
+          diaDiem: this.dotHMForm.value.diaDiem,
+          thoiGianBatDau: this.dotHMForm.value.thoiGianBatDau,
+          thoiGianKetThuc: this.dotHMForm.value.thoiGianKetThuc,
+          donViMau: this.dotHMForm.value.donViMau
         };
         this.dotHienMauService.updateDotHienMau(this.dotHMSelected.id, updatedData).subscribe({
           next: (response) => {
@@ -261,11 +261,11 @@ export class DotHienMauComponent implements OnInit {
   AddDotHM() {
     if (this.dotHMForm.valid) {
       const dotHMdata = {
-        ten_dot: this.dotHMForm.value.ten_dot,
-        dia_diem: this.dotHMForm.value.dia_diem,
-        ngay_bd: this.dotHMForm.value.ngay_bd,
-        ngay_kt: this.dotHMForm.value.ngay_kt,
-        don_vi_mau_dk: this.dotHMForm.value.don_vi_mau_dk
+        tenDot: this.dotHMForm.value.tenDot,
+        diaDiem: this.dotHMForm.value.diaDiem,
+        thoiGianBatDau: this.dotHMForm.value.thoiGianBatDau,
+        thoiGianKetThuc: this.dotHMForm.value.thoiGianKetThuc,
+        donViMau: this.dotHMForm.value.donViMau
       }
 
       this.dotHienMauService.createDotHienMau(dotHMdata).subscribe({
