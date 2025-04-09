@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TTHienMau, DsHienMauService, DotHienMauService, PaginatedResult, TemplateResult, TinhNguyenVienService } from '../../services/index.js';
+import { TTHienMau, TTHienMauService, DotHienMauService, PaginatedResult, TemplateResult, TinhNguyenVienService } from '../../services/index.js';
 import { Select2Module, Select2UpdateEvent } from 'ng-select2-component';
 import { LocationService } from '../../services/location.service.js';
 import 'jspdf-autotable';
@@ -30,8 +30,8 @@ import {
   templateUrl: './ds-hien-mau.component.html',
   styleUrl: './ds-hien-mau.component.css'
 })
-export class DsHienMauComponent implements OnInit {
-  constructor(private dsHienMauService: DsHienMauService,
+export class TTHienMauComponent implements OnInit {
+  constructor(private dsHienMauService: TTHienMauService,
     private locationService: LocationService,
     private tinhNguyenVienService: TinhNguyenVienService,
     private dotHienMauService: DotHienMauService,
@@ -392,7 +392,6 @@ export class DsHienMauComponent implements OnInit {
           }
         },
         error: (err) => {
-          console.log(err);
           alert(err);
         },
       })
@@ -491,7 +490,6 @@ export class DsHienMauComponent implements OnInit {
                 }
               },
               error: (err) => {
-                console.log(err);
                 alert('Đăng ký không thành công, vui lòng thử lại.')
               }
             })
@@ -501,7 +499,6 @@ export class DsHienMauComponent implements OnInit {
           }
         },
         error: (err) => {
-          console.log(err);
           alert('Đăng ký không thành công, vui lòng thử lại.')
         }
       });
@@ -511,7 +508,6 @@ export class DsHienMauComponent implements OnInit {
   }
   OpenViewModal(ttHM: any) {
     this.tnv_Selected = ttHM;
-    console.log(this.tnv_Selected);
     this.isViewModalOpen = true;
   }
 
@@ -589,7 +585,6 @@ export class DsHienMauComponent implements OnInit {
     if (confirmUpdate) {
       this.dsHienMauService.updateStatus(this.tnv_Selected.id, ketQuaMoi).subscribe({
         next: (response) => {
-          console.log(response);
           if (response.code === 200) {
             if (this.ds_hien_mau.length == 1 && this.currentPage > 1) this.currentPage--;
             this.searchTTHienMau();
@@ -608,12 +603,10 @@ export class DsHienMauComponent implements OnInit {
   }
 
   capNhatKetQuaAll(ketQuaMoi: string) {
-    console.log(this.selectedItemList);
     const confirmUpdate = window.confirm('Xác nhận cập nhật trạng thái cho các dòng đã chọn thành ' + ketQuaMoi + '?');
     if (confirmUpdate) {
       this.dsHienMauService.updateListStatus(ketQuaMoi, this.selectedItemList).subscribe({
         next: (response) => {
-          console.log(response);
           if (response.code === 200) {
             if (this.ds_hien_mau.length == this.selectedItemList.size && this.currentPage > 1) this.currentPage--;
             this.searchTTHienMau();
@@ -668,7 +661,6 @@ export class DsHienMauComponent implements OnInit {
               this.isEdit = false
               this.searchTTHienMau();
               alert('Cập nhật thông tin thành công!')
-              console.log(updatedData);
             }
             if (response.code === 404 || response.code === 400) {
               alert(response.message);

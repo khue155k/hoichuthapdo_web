@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class DsHienMauService {
+export class TTHienMauService {
 
   private apiUrl = environment.apiUrl + '/TTHienMau'
 
@@ -47,7 +47,6 @@ export class DsHienMauService {
     return this.http.put<TemplateResult<TTHienMau>>(`${this.apiUrl}/updateStatus/${id}?ketQua=${ketQuaMoi}`,{});
   }
   updateListStatus(ketQuaMoi: string, selectedItemList: Set<number>): Observable<TemplateResult<any>> {
-    console.log(selectedItemList);
     return this.http.put<TemplateResult<any>>(`${this.apiUrl}/updateListStatus?ketQua=${ketQuaMoi}`, Array.from(selectedItemList));
   }
 }

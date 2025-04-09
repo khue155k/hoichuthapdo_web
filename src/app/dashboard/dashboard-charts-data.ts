@@ -6,13 +6,13 @@ import {
   ChartType,
   PluginOptionsByType,
   ScaleOptions,
-  TooltipLabelStyle
+  TooltipLabelStyle,
+  TooltipItem
 } from 'chart.js';
-import { DeepPartial } from 'chart.js/dist/types/utils';
+
 import { getStyle, hexToRgba } from '@coreui/utils';
 import { DashboardService } from '../services/dashboard.service';
 import { ceil } from 'lodash-es';
-
 export interface IChartProps {
   data?: ChartData;
   labels?: any;
@@ -167,13 +167,15 @@ export class DashboardChartsData {
         ...colors[2]
       }
     ];
-    const plugins: DeepPartial<PluginOptionsByType<any>> = {
+    const plugins: any = {
       legend: {
         display: false
       },
       tooltip: {
         callbacks: {
-          labelColor: (context) => ({ backgroundColor: context.dataset.borderColor } as TooltipLabelStyle)
+          labelColor: (context: TooltipItem<'line'>) => ({
+            backgroundColor: context.dataset.borderColor as string
+          } as TooltipLabelStyle)
         }
       }
     };

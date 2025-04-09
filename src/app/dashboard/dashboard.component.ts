@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit {
         }
       },
       error: (err) => {
-        alert(`Có lỗi khi lấy danh sách đợt hiến máu: ${err}`);
+        alert(`Có lỗi khi lấy danh sách năm hiến máu: ${err}`);
       },
     });
   }

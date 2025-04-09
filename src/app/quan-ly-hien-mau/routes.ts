@@ -15,7 +15,7 @@ export const routes: Routes = [
       },
       {
         path: 'danh-sach-hien-mau',
-        loadComponent: () => import('./ds-hien-mau/ds-hien-mau.component').then(m => m.DsHienMauComponent),
+        loadComponent: () => import('./ds-hien-mau/ds-hien-mau.component').then(m => m.TTHienMauComponent),
         data: {
           title: 'Danh sách hiến máu',
           roles: ['all'],

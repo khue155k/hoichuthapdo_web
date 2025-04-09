@@ -12,11 +12,11 @@ export class DashboardService {
   private baseUrl = environment.apiUrl;
 
   ttHMTheoDot(year: number): Observable<TemplateResult<any[]>> {
-    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/DsHienMau/ttHMTheoDot?year=${year}`);
+    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/TTHienMau/ttHMTheoDot?year=${year}`);
   }
 
   ttHMTheoThang(year: number): Observable<TemplateResult<any[]>> {
-    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/DsHienMau/ttHMTheoThang?year=${year}`);
+    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/TTHienMau/ttHMTheoThang?year=${year}`);
   }
 
   getNamHMs(): Observable<TemplateResult<any[]>> {

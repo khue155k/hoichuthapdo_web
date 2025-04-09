@@ -22,7 +22,6 @@ export class AuthService {
 
     return this.http.post<{ message: string; data: any }>(this.apiUrl, body, { headers }).pipe(
       map((response) => {
-        console.log(response);
         if (response.message === 'Login complete!') {
           localStorage.setItem('token', response.data.token);
           return true;

@@ -6,8 +6,8 @@ import { DotHienMauService } from '../services/dot-hien-mau.service';
 import { Router } from '@angular/router';
 import { LocationService } from '../services/location.service';
 import { Select2Module, Select2Data, Select2UpdateEvent } from 'ng-select2-component';
-// import { DsHienMauService } from '../services/ds-hien-mau1.service';
-import { DsHienMauService } from '../services/ds-hien-mau.service';
+// import { TTHienMauService } from '../services/ds-hien-mau1.service';
+import { TTHienMauService } from '../services/ds-hien-mau.service';
 import { TinhNguyenVienService } from '../services/tinh-nguyen-vien.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class DangKyHienMauComponent {
   constructor(private fb: FormBuilder, private locationService: LocationService,
     private route: ActivatedRoute, private dotHienMauService: DotHienMauService,
     private router: Router, private tinhNguyenVienService: TinhNguyenVienService,
-    private dsHienMauService: DsHienMauService) {
+    private dsHienMauService: TTHienMauService) {
     this.registerForm = this.fb.group({
       hoTen: ['', Validators.required],
       ngaySinh: ['', Validators.required],
@@ -49,7 +49,7 @@ export class DangKyHienMauComponent {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.maDot = Number(params.get('maDot'));
-      this.getDotHienMau();
+      this.loadDotHienMau();
       this.loadDonVis();
       this.loadTheTichMauHien();
     });
@@ -129,26 +129,63 @@ export class DangKyHienMauComponent {
   }
   thoiGianBatDau_str: string = ''
   thoiGianKetThuc_str: string = ''
-  getDotHienMau() {
-    if (this.maDot== 0) this.maDot = 1
-    this.dotHienMauService.getDotHienMau(this.maDot).subscribe({
-      next: (response) => {
-        if (response.code === 200) {
-          this.tenDot = response.data.tenDot;
-          this.thoiGianBatDau = new Date(response.data.thoiGianBatDau);
-          this.thoiGianKetThuc = new Date(response.data.thoiGianKetThuc);
-          this.thoiGianBatDau_str = this.formatToISO(this.thoiGianBatDau);
-          this.thoiGianKetThuc_str = this.formatToISO(this.thoiGianKetThuc);
+
+  loadDotHienMau(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.dotHienMauService.getAllDotHienMau().subscribe({
+        next: (response) => {
+          if (response.code === 200) {
+            var dotHienMauList: any;
+            dotHienMauList = response.data.map((dotHM: any) => ({
+              maDot: dotHM.maDot,
+              tenDot: dotHM.tenDot,
+              diaDiem: dotHM.diaDiem,
+              thoiGianBatDau: dotHM.thoiGianBatDau,
+              thoiGianKetThuc: dotHM.thoiGianKetThuc
+            }));
+
+            if (dotHienMauList.length > 0) {
+              const lastDotHienMau = dotHienMauList[dotHienMauList.length - 1];
+              this.tenDot = lastDotHienMau.tenDot;
+              this.thoiGianBatDau = new Date(lastDotHienMau.thoiGianBatDau);
+              this.thoiGianKetThuc = new Date(lastDotHienMau.thoiGianKetThuc);
+              this.thoiGianBatDau_str = this.formatToISO(this.thoiGianBatDau);
+              this.thoiGianKetThuc_str = this.formatToISO(this.thoiGianKetThuc);
+            } else {
+              this.router.navigate(['/404']);
+            }
+          } else {
+            console.error('Lỗi khi tải đợt hiến máu');
+          }
+          resolve();
+        },
+        error: (error) => {
+          console.error('Lỗi khi tải đợt hiến máu:', error);
+          reject();
         }
-        if (response.code === 404) {
-          this.router.navigate(['/404']);
-        }
-      },
-      error: (err) => {
-        console.error('Lỗi khi lấy thông tin đợt hiến máu:', err);
-      }
+      });
     });
   }
+  // getDotHienMau() {
+  //   if (this.maDot == 0) this.maDot = 1
+  //   this.dotHienMauService.getDotHienMau(this.maDot).subscribe({
+  //     next: (response) => {
+  //       if (response.code === 200) {
+  //         this.tenDot = response.data.tenDot;
+  //         this.thoiGianBatDau = new Date(response.data.thoiGianBatDau);
+  //         this.thoiGianKetThuc = new Date(response.data.thoiGianKetThuc);
+  //         this.thoiGianBatDau_str = this.formatToISO(this.thoiGianBatDau);
+  //         this.thoiGianKetThuc_str = this.formatToISO(this.thoiGianKetThuc);
+  //       }
+  //       if (response.code === 404) {
+  //         this.router.navigate(['/404']);
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Lỗi khi lấy thông tin đợt hiến máu:', err);
+  //     }
+  //   });
+  // }
   validateDate(): void {
     const thoiGianControl = this.registerForm.controls['thoi_gian'];
     const thoiGianValue = thoiGianControl.value;
@@ -169,13 +206,11 @@ export class DangKyHienMauComponent {
   loadDonVis() {
     this.dotHienMauService.getDonVis().subscribe({
       next: (response) => {
-        if (response.code === 200){
+        if (response.code === 200) {
           this.donViList = response.data.map((donVi: any) => ({
             value: donVi.maDV,
             label: donVi.tenDV,
           }));
-          console.log(this.donViList);
-
         }
       },
       error: (err) => {
@@ -304,7 +339,6 @@ export class DangKyHienMauComponent {
           }
         },
         error: (err) => {
-          console.log(err);
           alert(err);
         },
       })
@@ -344,7 +378,7 @@ export class DangKyHienMauComponent {
             this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {
-                  this.isReadOnlyAutoFill= false;
+                  this.isReadOnlyAutoFill = false;
                   this.registerForm.reset();
                   alert('Gửi đăng ký thành công.');
                 }
@@ -353,7 +387,6 @@ export class DangKyHienMauComponent {
                 }
               },
               error: (err) => {
-                console.log(err);
                 alert('Đăng ký không thành công, vui lòng thử lại.')
               }
             })
@@ -363,7 +396,6 @@ export class DangKyHienMauComponent {
           }
         },
         error: (err) => {
-          console.log(err);
           alert('Đăng ký không thành công, vui lòng thử lại.')
         }
       });

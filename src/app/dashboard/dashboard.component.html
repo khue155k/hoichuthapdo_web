@@ -3,10 +3,10 @@
     <c-row>
       <c-col sm="7">
         <c-row>
-          <c-col sm="6">
-            <h4 class="card-title mb-0" id="traffic">Thống kê số lần hiến máu năm: </h4>
+          <c-col sm="6" class="pe-0">
+            <h5 class="card-title mb-0" id="traffic">Thống kê số lần hiến máu năm: </h5>
           </c-col>
-          <c-col sm="4" class="float-start">
+          <c-col sm="4" class="float-start d-flex align-items-center p-0">
             <select2 id="dotHM" [data]="namList" [value]="namSelected" styleMode="default" placeholder="Chọn năm"
               (update)="updateNam($event)">
             </select2>

@@ -180,7 +180,6 @@ export class DotHienMauComponent implements OnInit {
   }
   OpenEditModal(dotHm: any) {
     this.dotHMSelected = dotHm;
-    console.log(this.dotHMSelected);
     this.isEdit = true;
     this.isEditModalOpen = true;
     this.dotHMForm.patchValue({
@@ -279,7 +278,6 @@ export class DotHienMauComponent implements OnInit {
           }
         },
         error: (err) => {
-          console.log(err);
           alert('Tạo đợt hiến máu không thành công, vui lòng thử lại.')
         }
       });
