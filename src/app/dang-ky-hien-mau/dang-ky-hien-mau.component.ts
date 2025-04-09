@@ -79,7 +79,7 @@ export class DangKyHienMauComponent {
 
   donViList: any[] = [];
   theTichMauHienList: any[] = [];
-  selectedCoQuanID: number = 0
+  selectedCoQuanID: number = 0;
   selectedTheTich: string = ''
   gioiTinhOptions = [
     { value: 'Nam', label: 'Nam' },
@@ -166,14 +166,16 @@ export class DangKyHienMauComponent {
     }
   }
 
-
   loadDonVis() {
     this.dotHienMauService.getDonVis().subscribe({
       next: (response) => {
         if (response.code === 200){
-          this.donViList = response.data;
-          const lastDonViId = this.donViList[this.donViList.length - 1].value;
-          this.registerForm.controls['don_vi'].setValue(lastDonViId);
+          this.donViList = response.data.map((donVi: any) => ({
+            value: donVi.maDV,
+            label: donVi.tenDV,
+          }));
+          console.log(this.donViList);
+
         }
       },
       error: (err) => {
@@ -181,6 +183,7 @@ export class DangKyHienMauComponent {
       }
     });
   }
+
   getDotHienMauStatus(): string {
     const now = new Date();
     if (this.thoiGianBatDau && now < this.thoiGianBatDau) {
@@ -315,7 +318,7 @@ export class DangKyHienMauComponent {
         maDot: this.maDot,
         CCCD: '',
         maTheTich: Number(this.selectedTheTich),
-        maDonVi: this.selectedCoQuanID,
+        maDV: this.selectedCoQuanID,
         ngheNghiep: this.registerForm.value.ngheNghiep,
         noiO: this.registerForm.value.noiO,
         thoiGianDangKy: this.registerForm.value.thoi_gian,
@@ -341,6 +344,7 @@ export class DangKyHienMauComponent {
             this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {
+                  this.isReadOnlyAutoFill= false;
                   this.registerForm.reset();
                   alert('Gửi đăng ký thành công.');
                 }

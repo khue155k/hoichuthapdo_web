@@ -290,7 +290,10 @@ export class DsHienMauComponent implements OnInit {
       this.dotHienMauService.getDonVis().subscribe({
         next: (response) => {
           if (response.code === 200) {
-            this.donViList = response.data;
+            this.donViList = response.data.map((donVi: any) => ({
+              value: donVi.maDV,
+              label: donVi.tenDV,
+            }));
           }
           resolve();
         },
@@ -301,6 +304,7 @@ export class DsHienMauComponent implements OnInit {
       });
     });
   }
+  
   loadDotHienMau(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.dotHienMauService.getAllDotHienMau().subscribe({
@@ -451,7 +455,7 @@ export class DsHienMauComponent implements OnInit {
         maDot: this.maDot,
         CCCD: '',
         maTheTich: Number(this.selectedTheTich),
-        maDonVi: this.selectedCoQuanID,
+        maDV: this.selectedCoQuanID,
         ngheNghiep: this.editForm.value.ngheNghiep,
         noiO: this.editForm.value.noiO,
         thoiGianDangKy: this.editForm.value.thoi_gian,
@@ -479,6 +483,7 @@ export class DsHienMauComponent implements OnInit {
             this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {
+                  this.isReadOnlyAutoFill= false;
                   alert('Gửi đăng ký thành công.');
                 }
                 if (response.code === 400) {
@@ -536,7 +541,7 @@ export class DsHienMauComponent implements OnInit {
         this.selectedWard = this.tnv_Selected.maPhuongXa
       }, 100);
     }, 100);
-    this.selectedCoQuanID = this.tnv_Selected.maDonVi
+    this.selectedCoQuanID = this.tnv_Selected.maDV
     this.selectedTheTich = this.tnv_Selected.the_tich_mau_id
   }
   loadProvinces() {
@@ -648,7 +653,7 @@ export class DsHienMauComponent implements OnInit {
           soLanHien: this.editForm.value.soLanHien,
           noiO: this.editForm.value.noiO,
           ngheNghiep: this.editForm.value.ngheNghiep,
-          maDonVi: Number(this.selectedCoQuanID),
+          maDV: Number(this.selectedCoQuanID),
           thoiGianDangKy: this.editForm.value.thoi_gian,
           the_tich_mau_id: this.selectedTheTich,
         };
