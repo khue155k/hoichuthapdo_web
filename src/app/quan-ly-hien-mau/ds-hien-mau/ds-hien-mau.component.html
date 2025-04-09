@@ -4,18 +4,18 @@
         <div class="row mb-4">
             <div class="col-md-3">
                 <select2 class="form-control status-select" formControlName="dot_hm_id" [data]="dotHienMauList"
-                    [value]="maDot" styleMode="borderless" placeholder="Chọn đợt hiến máu"
+                    [value]="maDot" styleMode="borderless" placeholder="Chọn đợt hiến máu" 
                     (update)="updateDotHM($event)">
                 </select2>
             </div>
             <div class="col-md-2">
                 <select2 class="form-control status-select" formControlName="status" [data]="statusList"
-                    [value]="currentStatus" styleMode="borderless" placeholder="Chọn đợt hiến máu"
+                    [value]="currentStatus" styleMode="borderless" placeholder="Chọn trạng thái"
                     (update)="updateCurrentStatus($event)">
                 </select2>
             </div>
             <div class="col-md-3">
-                <input type="text" class="form-control" placeholder="Nhập số CCCD, họ tên hoặc soDienThoai"
+                <input type="text" class="form-control" placeholder="Nhập số CCCD, họ tên hoặc số điện thoại"
                     formControlName="searchTerm" (keyup.enter)="searchTTHienMauForm()"
                     (input)="searchTTHienMauFormDelay()" />
             </div>
@@ -74,14 +74,14 @@
                 <ng-container *ngFor="let ttHM of ds_hien_mau; let i = index">
                     <tr [ngClass]="{'table-success': ttHM.ketQua == 'Đã hiến', 'table-danger': ttHM.ketQua === 'Từ chối', 'table-info': ttHM.ketQua === 'Chưa hiến'}">
                         <td>
-                            <input type="checkbox" name="selectTTHM" (click)="updateSelectItem(ttHM.id, $event)"
+                            <input type="checkbox" name="selectTTHM" (click)="updateSelectItem(ttHM.maTT, $event)"
                                 #checkbox>
                         </td>
                         <td>{{i+1+(currentPage-1)*pageSize}}</td>
                         <td>{{ttHM.cccd}}</td>
                         <td>{{ttHM.hoTen}}</td>
                         <td>{{ttHM.soDienThoai}}</td>
-                        <td>{{ttHM.the_tich }}</td>
+                        <td>{{ttHM.theTich }}</td>
                         <td>{{ttHM.soLanHien}}</td>
                         <td>{{ttHM.thoiGianDangKy | date:'HH:mm dd/MM'}}</td>
                         <td>{{ttHM.ketQua}}</td>
@@ -102,7 +102,7 @@
                                     <button class="btn btn-info mx-1" (click)="capNhatKetQua('Chưa hiến',ttHM)">Chưa
                                         hiến</button>
                                 </div>
-                                <button class="btn btn-primary mx-1" (click)="OpenEditModal(ttHM)">Sửa</button>
+                                <button class="btn btn-warning mx-1" (click)="OpenEditModal(ttHM)">Sửa</button>
                                 <button class="btn btn-primary mx-1" (click)="OpenViewModal(ttHM)">Xem</button>
                             </div>
                         </td>
@@ -120,12 +120,8 @@
                     </div>
                     <div class="modal-body">
                         <header class="text-center mb-4">
-                            <p *ngIf="isEdit">
-                                <strong>{{ tnv_Selected.tenDot }}</strong>
-                            </p>
-                            <p *ngIf="isAdd">
-                                <strong>{{ dot_hien_mau.tenDot }}</strong>
-                            </p>
+                            <strong>{{ tenDotHM }}</strong>
+
                             <p *ngIf="dotHienMauStatus === 'Chưa diễn ra'">(Sự kiện chưa diễn ra)</p>
                             <p *ngIf="dotHienMauStatus === 'Đang diễn ra'">(Sự kiện đang diễn ra)</p>
                             <div *ngIf="dotHienMauStatus === 'Đã kết thúc'" class="alert alert-warning">
@@ -259,6 +255,10 @@
                                         <label for="email">Địa chỉ email</label>
                                         <input formControlName="email" placeholder="Địa chỉ email" class="form-control"
                                             id="email" [readonly]="isReadOnlyAutoFill">
+                                        <div *ngIf="editForm.controls['email'].invalid && editForm.controls['email'].touched"
+                                            class="invalid-feedback">
+                                            Trường Email không hợp lệ.
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="soLanHien">Số lần đã hiến máu</label><span class="text-danger">
@@ -280,7 +280,7 @@
                                             id="noiO">
                                         <div *ngIf="editForm.controls['noiO'].invalid && editForm.controls['noiO'].touched"
                                             class="invalid-feedback">
-                                            Trường Tỉnh/thành không được bỏ trống.
+                                            Trường Nơi ở hiện tại không được bỏ trống.
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -358,7 +358,7 @@
                     <div class="modal-body infoTNV">
                         <div class="row">
                             <div class="col-md-6">
-                                <p><strong>Số căn cước công dân:</strong> {{ tnv_Selected.cccd || 'N/A' }}</p>
+                                <p><strong>Số căn cước công dân:</strong> {{ tnv_Selected.CCCD || 'N/A' }}</p>
                                 <p><strong>Điện thoại di động:</strong> {{ tnv_Selected.soDienThoai || 'N/A' }}</p>
                                 <p><strong>Giới tính:</strong> {{ tnv_Selected.gioiTinh || 'N/A' }}</p>
                             </div>
@@ -370,19 +370,19 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <p><strong>Địa chỉ thường trú:</strong> {{ tnv_Selected.tinh_thanh || 'N/A' }}, {{ tnv_Selected.quan_huyen || 'N/A' }}, {{ tnv_Selected.phuong_xa || 'N/A' }}</p>
+                                <p><strong>Địa chỉ thường trú:</strong> {{ tnv_Selected.tinhThanh || 'N/A' }}, {{ tnv_Selected.quanHuyen || 'N/A' }}, {{ tnv_Selected.phuongXa || 'N/A' }}</p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <p><strong>Số lần hiến máu:</strong> {{ tnv_Selected.soLanHien || 'N/A' }}</p>
                                 <p><strong>Nghề nghiệp hiện tại:</strong> {{ tnv_Selected.ngheNghiep || 'N/A' }}</p>
-                                <p><strong>Cơ quan:</strong> {{ tnv_Selected.ten_don_vi || 'N/A' }}</p>
-                                <p><strong>Thể tích:</strong> {{ tnv_Selected.the_tich || 'N/A' }}</p>
+                                <p><strong>Cơ quan:</strong> {{ tnv_Selected.tenDV || 'N/A' }}</p>
+                                <p><strong>Thể tích:</strong> {{ tnv_Selected.theTich || 'N/A' }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p><strong>Ngày hiến máu:</strong> {{ (tnv_Selected.ngay_hien | date:'dd/MM/yyyy') || 'N/A' }}</p>
-                                <p><strong>Nơi ở hiện tại:</strong> {{ tnv_Selected.cho_o || 'N/A' }}</p>
+                                <p><strong>Ngày hiến máu:</strong> {{ (tnv_Selected.thoiGianHien | date:'dd/MM/yyyy') || 'N/A' }}</p>
+                                <p><strong>Nơi ở hiện tại:</strong> {{ tnv_Selected.noiO || 'N/A' }}</p>
                                 <p><strong>Thời gian đăng ký:</strong> {{ tnv_Selected.ngheNghiep || 'N/A' }}</p>
                             </div>
                         </div>

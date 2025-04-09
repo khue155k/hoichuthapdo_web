@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TTHienMau, TTHienMauService, DotHienMauService, PaginatedResult, TemplateResult, TinhNguyenVienService } from '../../services/index.js';
+import { TTHienMau, TTHienMauService, DotHienMauService, DonViService, PaginatedResult, TemplateResult, TinhNguyenVienService } from '../../services/index.js';
 import { Select2Module, Select2UpdateEvent } from 'ng-select2-component';
 import { LocationService } from '../../services/location.service.js';
 import 'jspdf-autotable';
@@ -15,7 +15,6 @@ import {
   TableDirective,
 }
   from '@coreui/angular';
-
 @Component({
   selector: 'app-ds-hien-mau',
   standalone: true,
@@ -35,6 +34,7 @@ export class TTHienMauComponent implements OnInit {
     private locationService: LocationService,
     private tinhNguyenVienService: TinhNguyenVienService,
     private dotHienMauService: DotHienMauService,
+    private donViService: DonViService,
     private fb: FormBuilder, private router: Router) {
     this.searchForm = this.fb.group({
       searchTerm: [''],
@@ -50,7 +50,7 @@ export class TTHienMauComponent implements OnInit {
       tinh_thanh: ['', Validators.required],
       quan_huyen: ['', Validators.required],
       phuong_xa: ['', Validators.required],
-      email: [''],
+      email: ['', Validators.email],
       soLanHien: ['', Validators.required],
       noiO: ['', Validators.required],
       ngheNghiep: ['', Validators.required],
@@ -81,7 +81,7 @@ export class TTHienMauComponent implements OnInit {
   addTitle: string = 'Đăng ký hiến máu'
 
   dotHienMauList: any[] = [];
-  dot_hien_mau: any = null;
+  tenDotHM: string = '';
   dotHienMauStatus: string = '';
   ds_hien_mau: any[] = [];
   totalCount: number = 0;
@@ -170,10 +170,10 @@ export class TTHienMauComponent implements OnInit {
     }
   }
 
-  getDotHienMauStatus(): string {
+  getDotHienMauStatus(maDot: number): string {
     const now = new Date();
-    const thoiGianBatDau = new Date(this.dot_hien_mau.ngayBd)
-    const thoiGianKetThuc = new Date(this.dot_hien_mau.ngayKt)
+    const thoiGianBatDau = new Date(this.dotHienMauList.find(dot => dot.value === maDot).thoiGianBatDau)
+    const thoiGianKetThuc = new Date(this.dotHienMauList.find(dot => dot.value === maDot).thoiGianKetThuc)
 
     if (thoiGianBatDau && now < thoiGianBatDau) {
       return 'Chưa diễn ra';
@@ -181,7 +181,7 @@ export class TTHienMauComponent implements OnInit {
     if (thoiGianBatDau && thoiGianKetThuc && now >= thoiGianBatDau && now <= thoiGianKetThuc) {
       return 'Đang diễn ra';
     }
-    if (this.dot_hien_mau.ngayKt && now > thoiGianKetThuc) {
+    if (thoiGianKetThuc && now > thoiGianKetThuc) {
       return 'Đã kết thúc';
     }
     return '';
@@ -206,13 +206,13 @@ export class TTHienMauComponent implements OnInit {
             'STT': index + 1,
             'Họ và tên': tnv.hoTen,
             'Năm sinh': tnv.ngaySinh.substring(0, 4),
-            'Đơn vị': tnv.ten_don_vi,
-            'Thể tích máu hiến (ml)': tnv.the_tich,
+            'Đơn vị': tnv.tenDV,
+            'Thể tích máu hiến (ml)': tnv.theTich,
             'Số lần đã hiến': tnv.soLanHien,
           }));
 
-          const tong_the_tich_mau = ds_hien_mau.reduce((total, tnv) => {
-            const theTichValue = parseInt(tnv.the_tich, 10);
+          const tong_theTich_mau = ds_hien_mau.reduce((total, tnv) => {
+            const theTichValue = parseInt(tnv.theTich, 10);
             return total + (isNaN(theTichValue) ? 0 : theTichValue);
           }, 0);
 
@@ -221,7 +221,7 @@ export class TTHienMauComponent implements OnInit {
             'Họ và tên': 'Tổng cộng',
             'Năm sinh': '',
             'Đơn vị': '',
-            'Thể tích máu hiến (ml)': tong_the_tich_mau,
+            'Thể tích máu hiến (ml)': tong_theTich_mau,
             'Số lần đã hiến': '',
           });
 
@@ -270,24 +270,20 @@ export class TTHienMauComponent implements OnInit {
   loadTheTichMauHien() {
     this.dotHienMauService.getTheTichMauHien().subscribe({
       next: (response) => {
-        if (response.code === 200)
+        if (response.code === 200) {
           this.theTichMauHienList = response.data;
+          console.log(response.data);
+        }
       },
       error: (err) => {
         console.error('Lỗi khi load thể tích máu hiến:', err);
       },
     });
   }
+
   loadDonVis(): Promise<void> {
     return new Promise((resolve, reject) => {
-      var id = 0;
-      if (this.isEdit) {
-        id = Number(this.tnv_Selected.maDot)
-      }
-      else if (this.isAdd) {
-        id = Number(this.dot_hien_mau.value);
-      }
-      this.dotHienMauService.getDonVis().subscribe({
+      this.donViService.getDonVis().subscribe({
         next: (response) => {
           if (response.code === 200) {
             this.donViList = response.data.map((donVi: any) => ({
@@ -303,8 +299,9 @@ export class TTHienMauComponent implements OnInit {
         }
       });
     });
+
   }
-  
+
   loadDotHienMau(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.dotHienMauService.getAllDotHienMau().subscribe({
@@ -314,16 +311,14 @@ export class TTHienMauComponent implements OnInit {
               value: dotHM.maDot,
               label: dotHM.tenDot,
               diaDiem: dotHM.diaDiem,
-              ngayBd: dotHM.thoiGianBatDau,
-              ngayKt: dotHM.thoiGianKetThuc
+              thoiGianBatDau: dotHM.thoiGianBatDau,
+              thoiGianKetThuc: dotHM.thoiGianKetThuc
             }));
 
             if (this.dotHienMauList.length > 0) {
               const lastDotHienMau = this.dotHienMauList[this.dotHienMauList.length - 1];
               this.maDot = lastDotHienMau.value;
               this.searchForm.get('dot_hm_id')?.setValue(this.maDot);
-              this.dot_hien_mau = lastDotHienMau
-              this.dotHienMauStatus = this.getDotHienMauStatus();
             }
           }
           resolve();
@@ -337,6 +332,9 @@ export class TTHienMauComponent implements OnInit {
   }
   updateDotHM(event: Select2UpdateEvent<any>) {
     this.maDot = event.value;
+    this.tenDotHM = this.dotHienMauList.find(dot => dot.value === this.maDot).label;
+    console.log(this.dotHienMauList.find(dot => dot.value === this.maDot));
+    this.dotHienMauStatus = this.getDotHienMauStatus(this.maDot);
     this.searchTTHienMauForm();
   }
 
@@ -405,7 +403,7 @@ export class TTHienMauComponent implements OnInit {
         checkbox.nativeElement.checked = false;
       });
     } else {
-      this.ds_hien_mau.forEach((t) => this.selectedItemList.add(t.id));
+      this.ds_hien_mau.forEach((t) => this.selectedItemList.add(t.maTT));
 
       this.checkboxs.toArray().forEach((checkbox) => {
         checkbox.nativeElement.checked = true;
@@ -433,9 +431,6 @@ export class TTHienMauComponent implements OnInit {
     }
   }
 
-
-
-
   DangKyOpen() {
     const maDot = this.searchForm.get('dot_hm_id')?.value || 0;
     if (maDot != 0) {
@@ -461,7 +456,6 @@ export class TTHienMauComponent implements OnInit {
         ketQua: 'Chưa hiến'
       }
 
-      // Thêm kiểm tra cccd đã có thì load thông tin ra
       const tinh_nguyen_vien_data = {
         id: 0,
         hoTen: this.editForm.value.hoTen,
@@ -482,7 +476,8 @@ export class TTHienMauComponent implements OnInit {
             this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {
-                  this.isReadOnlyAutoFill= false;
+                  this.isReadOnlyAutoFill = false;
+                  this.searchTTHienMau();
                   alert('Gửi đăng ký thành công.');
                 }
                 if (response.code === 400) {
@@ -490,7 +485,7 @@ export class TTHienMauComponent implements OnInit {
                 }
               },
               error: (err) => {
-                alert('Đăng ký không thành công, vui lòng thử lại.')
+                alert("Có lỗi xảy ra. Vui lòng thử lại sau")
               }
             })
           }
@@ -499,7 +494,7 @@ export class TTHienMauComponent implements OnInit {
           }
         },
         error: (err) => {
-          alert('Đăng ký không thành công, vui lòng thử lại.')
+          alert("Có lỗi xảy ra. Vui lòng thử lại sau")   
         }
       });
     } else {
@@ -512,6 +507,7 @@ export class TTHienMauComponent implements OnInit {
   }
 
   OpenEditModal(ttHM: any) {
+    console.log(ttHM);
     this.tnv_Selected = ttHM;
     this.isEdit = true;
     this.loadDonVis().then(() => {
@@ -524,7 +520,7 @@ export class TTHienMauComponent implements OnInit {
         gioiTinh: this.tnv_Selected.gioiTinh,
         email: this.tnv_Selected.email,
         soLanHien: this.tnv_Selected.soLanHien,
-        noiO: this.tnv_Selected.cho_o,
+        noiO: this.tnv_Selected.noiO,
         ngheNghiep: this.tnv_Selected.ngheNghiep,
         thoi_gian: this.tnv_Selected.thoiGianDangKy,
       });
@@ -538,7 +534,7 @@ export class TTHienMauComponent implements OnInit {
       }, 100);
     }, 100);
     this.selectedCoQuanID = this.tnv_Selected.maDV
-    this.selectedTheTich = this.tnv_Selected.the_tich_mau_id
+    this.selectedTheTich = this.tnv_Selected.maTheTich
   }
   loadProvinces() {
     this.locationService.getProvinces().subscribe(data => {
@@ -565,7 +561,7 @@ export class TTHienMauComponent implements OnInit {
     }));
   }
 
-  closeViewModal(){
+  closeViewModal() {
     this.isViewModalOpen = false;
   }
   closeEditModal() {
@@ -583,7 +579,7 @@ export class TTHienMauComponent implements OnInit {
     this.tnv_Selected = ttHM;
     const confirmUpdate = window.confirm('Xác nhận cập nhật trạng thái cho ' + this.tnv_Selected.hoTen + ' thành ' + ketQuaMoi + '?');
     if (confirmUpdate) {
-      this.dsHienMauService.updateStatus(this.tnv_Selected.id, ketQuaMoi).subscribe({
+      this.dsHienMauService.updateStatus(this.tnv_Selected.maTT, ketQuaMoi).subscribe({
         next: (response) => {
           if (response.code === 200) {
             if (this.ds_hien_mau.length == 1 && this.currentPage > 1) this.currentPage--;
@@ -633,7 +629,6 @@ export class TTHienMauComponent implements OnInit {
       if (this.editForm.valid) {
         const updatedData = {
           maDot: this.maDot,
-
           cccd: this.editForm.value.cccd,
           hoTen: this.editForm.value.hoTen,
           soDienThoai: this.editForm.value.dien_thoai,
@@ -648,19 +643,19 @@ export class TTHienMauComponent implements OnInit {
           ngheNghiep: this.editForm.value.ngheNghiep,
           maDV: Number(this.selectedCoQuanID),
           thoiGianDangKy: this.editForm.value.thoi_gian,
-          the_tich_mau_id: this.selectedTheTich,
+          maTheTich: this.selectedTheTich,
         };
-        this.dsHienMauService.updateTTHienMau(this.tnv_Selected.id, updatedData).subscribe({
+        this.dsHienMauService.updateTTHienMau(this.tnv_Selected.maTT, updatedData).subscribe({
           next: (response) => {
             if (response.code == 200) {
-              this.isEditModalOpen = false;
               this.selectedCoQuanID = 0;
               this.selectedTheTich = '';
               this.editForm.reset();
-              this.viewDetails(this.tnv_Selected.id, false)
+              this.viewDetails(this.tnv_Selected.maTT, false)
               this.isEdit = false
+              this.isEditModalOpen = false;
               this.searchTTHienMau();
-              alert('Cập nhật thông tin thành công!')
+              alert(response.message);
             }
             if (response.code === 404 || response.code === 400) {
               alert(response.message);
@@ -668,7 +663,6 @@ export class TTHienMauComponent implements OnInit {
           },
           error: (err) => {
             alert('Có lỗi xảy ra khi cập nhật thông tin.');
-            console.error('Lỗi khi cập nhật:', err);
           },
         });
       }
@@ -684,6 +678,7 @@ export class TTHienMauComponent implements OnInit {
   }
 
   searchTTHienMau(): void {
+    console.log("tim kiem")
     this.selectedItemList.clear();
     this.selectAllValue = false;
     this.selectAllIndeterminate = false;
@@ -713,7 +708,7 @@ export class TTHienMauComponent implements OnInit {
   }
 
   viewDetails(id: number, unReload: boolean): void {
-    if ((this.tnv_Selected && this.tnv_Selected.id == id) && unReload) return;
+    if ((this.tnv_Selected && this.tnv_Selected.ttHM == id) && unReload) return;
 
     this.dsHienMauService.getTTHienMauById(id).subscribe(
       (response) => {
