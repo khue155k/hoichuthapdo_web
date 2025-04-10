@@ -1,0 +1,117 @@
+<div class="mx-5">
+    <div class="d-flex justify-content-center mb-3">
+        <button class="btn btn-warning mx-1" (click)="OpenEditModal()">Sửa thông tin</button>
+    </div>
+    <div class="user-info-container">
+        <h5 class="text-center">Thông tin cá nhân</h5>
+        <div *ngIf="TTQTV; else noData">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Mã quản trị viên:</strong> {{ TTQTV.maQTV || 'N/A' }}</p>
+                    <p><strong>Tên quản trị viên:</strong> {{ TTQTV.tenQTV || 'N/A' }}</p>
+                    <p><strong>Bộ phận:</strong> {{ TTQTV.boPhan || 'N/A' }}</p>
+                    <p><strong>Chức vụ:</strong> {{ TTQTV.chucVu || 'N/A' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Tên tài khoản:</strong> {{ userInfo.unique_name || 'N/A' }}</p>
+                    <p><strong>Email:</strong> {{ TTQTV.email || 'N/A' }}</p>
+                    <p><strong>Số điện thoại:</strong> {{ TTQTV.soDienThoai || 'N/A' }}</p>
+                </div>
+            </div>
+        </div>
+        <ng-template #noData>
+            <p class="text-danger">Không có thông tin nhân viên.</p>
+        </ng-template>
+    </div>
+    <div *ngIf="isEditModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg custom-dialog" role="document">
+            <div class="modal-content custom-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sửa thông tin quản trị viên</h5>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="QTVForm" novalidate>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="maQTV">Mã quản trị viên</label>
+                                    <input formControlName="maQTV" placeholder="Mã quản trị viên" class="form-control"
+                                        id="maQTV" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="tenTaiKhoan">Tên tài khoản</label>
+                                    <input formControlName="tenTaiKhoan" placeholder="Tên tài khoản"
+                                        class="form-control" id="tenTaiKhoan" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="tenQTV">Tên quản trị viên</label><span class="text-danger">
+                                        *</span>
+                                    <input formControlName="tenQTV" placeholder="Tên quản trị viên" class="form-control"
+                                        id="tenQTV">
+                                    <div *ngIf="QTVForm.controls['tenQTV'].invalid && QTVForm.controls['tenQTV'].touched"
+                                        class="invalid-feedback">
+                                        Tên quản trị viên không được bỏ trống.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email">Email</label><span class="text-danger"> *</span>
+                                    <input formControlName="email" placeholder="Email" class="form-control" id="email">
+                                    <div *ngIf="QTVForm.controls['email'].invalid && QTVForm.controls['email'].touched"
+                                        class="invalid-feedback">
+                                        Email không được bỏ trống.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="boPhan">Bộ phận</label><span class="text-danger">
+                                        *</span>
+                                    <input formControlName="boPhan" placeholder="Bộ phận" class="form-control"
+                                        id="boPhan">
+                                    <div *ngIf="QTVForm.controls['boPhan'].invalid && QTVForm.controls['boPhan'].touched"
+                                        class="invalid-feedback">
+                                        Bộ phận không được bỏ trống.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="soDienThoai">Số điện thoại</label><span class="text-danger">
+                                        *</span>
+                                    <input formControlName="soDienThoai" placeholder="Số điện thoại"
+                                        class="form-control" id="soDienThoai">
+                                    <div *ngIf="QTVForm.controls['soDienThoai'].invalid && QTVForm.controls['soDienThoai'].touched"
+                                        class="invalid-feedback">
+                                        Số điện thoại không được bỏ trống.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="chucVu">Chức vụ</label><span class="text-danger">
+                                        *</span>
+                                    <input formControlName="chucVu" placeholder="Chức vụ" class="form-control"
+                                        id="chucVu">
+                                    <div *ngIf="QTVForm.controls['chucVu'].invalid && QTVForm.controls['chucVu'].touched"
+                                        class="invalid-feedback">
+                                        Chức vụ không được bỏ trống.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Hủy</button>
+                    <button type="button" class="btn btn-primary" (click)="saveChanges()">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

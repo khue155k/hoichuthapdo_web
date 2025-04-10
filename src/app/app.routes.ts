@@ -47,14 +47,14 @@ export const routes: Routes = [
           roles: ['']
         }
       },
-      // {
-      //   path: 'tai-khoan',
-      //   canActivate: [AuthGuard],
-      //   loadChildren: () => import('./tai-khoan/routes').then((m) => m.routes),
-      //   data: {
-      //     roles: ['']
-      //   }
-      // },
+      {
+        path: 'tai-khoan',
+        canActivate: [AuthGuard],
+        loadChildren: () => import('./tai-khoan/routes').then((m) => m.routes),
+        data: {
+          roles: ['']
+        }
+      },
     ]
   },
   {
