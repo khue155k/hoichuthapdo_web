@@ -37,12 +37,12 @@ export class DonViService {
     return this.http.delete<TemplateResult<any>>(`${this.baseUrl}/deleteDonVi/${id}`);
   }
 
-  getDonVi(maDV: number): Observable<TemplateResult<any>> {
-    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/${maDV}`);
+  getDonVi(id: number): Observable<TemplateResult<any>> {
+    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/${id}`);
   }
 
   getDonVis(): Observable<TemplateResult<any[]>> {
-    return this.http.get<TemplateResult<any[]>>(`${environment.apiUrl}/DonVi`);
+    return this.http.get<TemplateResult<any[]>>(`${this.baseUrl}`);
   }
 
   getAllDonViPaginated(pageSize: number, currentPage: number): Observable<TemplateResult<any>> {

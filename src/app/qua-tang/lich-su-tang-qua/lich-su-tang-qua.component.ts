@@ -9,10 +9,10 @@ import {
 import { debounceTime } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { QuaTangService, TemplateResult, PaginatedResult } from '../../services';
+import { LichSuTangQuaService, TemplateResult, PaginatedResult } from '../../services';
 
 @Component({
-  selector: 'app-quan-ly-qua-tang',
+  selector: 'app-lich-su-tang-qua',
   standalone: true,
   imports: [
     TableDirective,
@@ -20,136 +20,130 @@ import { QuaTangService, TemplateResult, PaginatedResult } from '../../services'
     ReactiveFormsModule,
     FormsModule
   ],
-  templateUrl: './quan-ly-qua-tang.component.html',
-  styleUrl: './quan-ly-qua-tang.component.css'
+  templateUrl: './lich-su-tang-qua.component.html',
+  styleUrl: './lich-su-tang-qua.component.css'
 })
-export class QuaTangComponent implements OnInit {
+export class LichSuTangQuaComponent implements OnInit {
   constructor(private fb: FormBuilder,
-    private quaTangService: QuaTangService,
+    private lichSuService: LichSuTangQuaService,
   ) {
     this.searchForm = this.fb.group({
       searchTerm: [''],
     });
-    this.quaTangForm = this.fb.group({
-      tenQua: ['', Validators.required],
-      giaTri: ['', Validators.required],
+    this.lichSuForm = this.fb.group({
+      cccd: ['', Validators.required],
+      maQua: ['', Validators.required],
+      noiDung: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.loadQuaTang();
+    this.loadLSTQ();
   }
 
   searchForm: FormGroup;
-  quaTangForm: FormGroup;
+  lichSuForm: FormGroup;
 
-  quaTangList: any[] = [];
-  quaTangSelected: any = null;
+  lichSuList: any[] = [];
+  lichSuSelected: any = null;
 
   totalCount: number = 0;
   currentPage: number = 1;
   pageSize: number = 10;
 
   isEditModalOpen: boolean = false;
-  isEdit: boolean = false;
-  isAdd: boolean = false
-  editTitle: string = 'Chỉnh sửa thông tin'
-  addTitle: string = 'Tạo quà tặng'
 
-  loadQuaTang(){
-      this.quaTangService.getAllQuaTangPaginated(this.pageSize, this.currentPage).subscribe({
-        next: (response) => {
-          if (response.code === 200) {
-            this.totalCount = response.data.totalCount;
-            this.quaTangList = response.data.items;
-          }
-          if (response.code === 404 || response.code === 400) {
-            console.error(response.message);
-          }
-        },
-        error: (error) => {
-          console.error('Lỗi khi tải quà tặng:', error);
+  loadLSTQ() {
+    this.lichSuService.getAllLSTQPaginated(this.pageSize, this.currentPage).subscribe({
+      next: (response) => {
+        if (response.code === 200) {
+          this.totalCount = response.data.totalCount;
+          this.lichSuList = response.data.items;
         }
-      });
+        if (response.code === 404 || response.code === 400) {
+          console.error(response.message);
+        }
+      },
+      error: (error) => {
+        console.error('Lỗi khi tải lịch sử tặng quà:', error);
+      }
+    });
   }
 
-  searchQuaTang(): void {
+  searchLSTQ(): void {
     const searchTerm = this.searchForm.get('searchTerm')?.value || 'Nội dung tìm kiếm';
 
-    this.quaTangService.search(searchTerm, this.pageSize, this.currentPage)
+    this.lichSuService.search(searchTerm, this.pageSize, this.currentPage)
       .subscribe({
         next: (response: TemplateResult<PaginatedResult<any>>) => {
           this.totalCount = response.data.totalCount;
-          this.quaTangList = response.data.items;
+          this.lichSuList = response.data.items;
         },
         error: (error) => {
           console.error('Error fetching data:', error);
         }
       });
   }
-  searchQuaTangForm(): void {
+  searchLSTQForm(): void {
     this.currentPage = 1;
-    this.searchQuaTang();
+    this.searchLSTQ();
   }
 
-  searchQuaTangFormDelay() {
+  searchLSTQFormDelay() {
     debounceTime(400);
-    this.searchQuaTangForm();
+    this.searchLSTQForm();
   }
 
   exportExcel() {
-    let quaTang: any[] = [];
+    let lichSu: any[] = [];
     const searchTerm = this.searchForm.get('searchTerm')?.value || 'Nội dung tìm kiếm';
 
-    this.quaTangService.search(searchTerm, 1000, 1)
+    this.lichSuService.search(searchTerm, 1000, 1)
       .subscribe({
         next: (response: TemplateResult<PaginatedResult<any>>) => {
-          quaTang = response.data.items;
+          lichSu = response.data.items;
 
-          const excelData = quaTang.map((quaTang, index) => ({
+          const excelData = lichSu.map((lichSu, index) => ({
             'STT': index + 1,
-            'Tên quà tặng': quaTang.tenQua,
-            'Giá trị': quaTang.giaTri,
+            'CCCD': lichSu.cccd,
+            'Mã quà': lichSu.maQua,
+            'Nội dung': lichSu.noiDung,
           }));
 
           const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
 
           const wb: XLSX.WorkBook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, 'Danh Sách Đợt Hiến Máu');
+          XLSX.utils.book_append_sheet(wb, ws, 'Danh Sách Lịch Sử Tặng Quà');
 
           const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
           const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-          saveAs(data, 'DanhSachQuaTang.xlsx');
+          saveAs(data, 'DanhSachLichSuTangQua.xlsx');
         },
         error: (error) => {
-          console.error('Lỗi khi tải danh sách tình nguyện viên tham gia hiến máu:', error);
+          console.error('Lỗi khi tải danh sách lịch sử tặng quà:', error);
         }
       });
   }
 
-  OpenCreateModal() {
-    this.isAdd = true;
+  OpenEditModal(lichSu: any) {
+    this.lichSuSelected = lichSu;
     this.isEditModalOpen = true;
-  }
-  OpenEditModal(quaTang: any) {
-    this.quaTangSelected = quaTang;
-    this.isEdit = true;
-    this.isEditModalOpen = true;
-    this.quaTangForm.patchValue({
-      tenQua: this.quaTangSelected.tenQua,
-      giaTri: this.quaTangSelected.giaTri,
+    this.lichSuForm.patchValue({
+      cccd: this.lichSuSelected.cccd,
+      maQua: this.lichSuSelected.maQua,
+      noiDung: this.lichSuSelected.noiDung,
     });
   }
 
-  OpenDeleteModal(quaTang: any) {
-    this.quaTangSelected = quaTang;
-    const confirmDelete = window.confirm('Xác nhận xóa quà tặng ' + this.quaTangSelected.tenQua + ' ?');
+  OpenDeleteModal(lichSu: any) {
+    this.lichSuSelected = lichSu;
+    const confirmDelete = window.confirm('Xác nhận xóa lịch sử tặng quà đã chọn?');
     if (confirmDelete) {
-      this.quaTangService.deleteQuaTang(this.quaTangSelected.maQua).subscribe({
+      this.lichSuService.deleteLSTQ(this.lichSuSelected.cccd, this.lichSuSelected.maQua).subscribe({
         next: (response) => {
           if (response.code == 200) {
-            this.searchQuaTang();
-            alert('Xóa quà tặng thành công!')
+            this.searchLSTQ();
+            alert('Xóa lịch sử tặng quà thành công!')
           }
           if (response.code === 404 || response.code === 400) {
             alert(response.message);
@@ -164,88 +158,56 @@ export class QuaTangComponent implements OnInit {
   }
 
   closeEditModal() {
-    this.isEdit = false
-    this.isAdd = false
     this.isEditModalOpen = false;
-    this.quaTangForm.reset();
+    this.lichSuForm.reset();
   }
 
   saveChanges() {
-    if (this.isAdd) {
-      this.AddQuaTang();
-    }
-    else {
-      if (this.quaTangForm.valid) {
-        const updatedData = {
-          tenQua: this.quaTangForm.value.tenQua,
-          giaTri: this.quaTangForm.value.giaTri,
-        };
-        this.quaTangService.updateQuaTang(this.quaTangSelected.maQua, updatedData).subscribe({
-          next: (response) => {
-            if (response.code == 200) {
-              this.isEditModalOpen = false;
-              this.quaTangForm.reset();
-              this.searchQuaTang();
-              this.isEdit = false
-              alert('Cập nhật thông tin thành công!')
-            }
-            if (response.code === 404 || response.code === 400) {
-              alert(response.message);
-            }
-          },
-          error: (err) => {
-            alert('Có lỗi xảy ra khi cập nhật thông tin.');
-            console.error('Lỗi khi cập nhật:', err);
-          },
-        });
-      }
-      else {
-        this.quaTangForm.markAllAsTouched();
-      }
-    }
-  }
-  AddQuaTang() {
-    if (this.quaTangForm.valid) {
-      const quaTangdata = {
-        tenQua: this.quaTangForm.value.tenQua,
-        giaTri: this.quaTangForm.value.giaTri,      }
-
-      this.quaTangService.createQuaTang(quaTangdata).subscribe({
+    if (this.lichSuForm.valid) {
+      const updatedData = {
+        cccd: this.lichSuForm.value.cccd,
+        maQua: this.lichSuForm.value.maQua,
+        noiDung: this.lichSuForm.value.noiDung,
+      };
+      this.lichSuService.updateLSTQ(this.lichSuSelected.cccd, this.lichSuSelected.maQua, updatedData).subscribe({
         next: (response) => {
-          if (response.code === 200) {
-            this.searchQuaTang();
-            alert('Tạo quà tặng thành công.');
+          if (response.code == 200) {
             this.isEditModalOpen = false;
+            this.lichSuForm.reset();
+            this.searchLSTQ();
+            alert('Cập nhật thông tin thành công!')
           }
-          if (response.code === 400 || response.code === 404) {
+          if (response.code === 404 || response.code === 400) {
             alert(response.message);
           }
         },
         error: (err) => {
-          alert('Tạo quà tặng không thành công, vui lòng thử lại.')
-        }
+          alert('Có lỗi xảy ra khi cập nhật thông tin.');
+          console.error('Lỗi khi cập nhật:', err);
+        },
       });
-    } else {
-      this.quaTangForm.markAllAsTouched();
+    }
+    else {
+      this.lichSuForm.markAllAsTouched();
     }
   }
-
+  
   goToPage(page: number): void {
     this.currentPage = page;
-    this.searchQuaTang();
+    this.searchLSTQ();
   }
 
   nextPage(): void {
     if (this.currentPage * this.pageSize < this.totalCount) {
       this.currentPage++;
-      this.searchQuaTang();
+      this.searchLSTQ();
     }
   }
 
   prePage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.searchQuaTang();
+      this.searchLSTQ();
     }
   }
 
