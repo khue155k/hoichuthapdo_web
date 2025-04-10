@@ -115,11 +115,10 @@ export class TinhNguyenVienComponent implements OnInit {
         });
   
         this.tinhNguyenVienList = await Promise.all(promises);
-        console.log(this.tinhNguyenVienList);
       }
   
       if (response.code === 404 || response.code === 400) {
-        alert(response.message);
+        console.error(response.message);
       }
     } catch (error) {
       console.error('Lỗi khi tải tình nguyện viên:', error);

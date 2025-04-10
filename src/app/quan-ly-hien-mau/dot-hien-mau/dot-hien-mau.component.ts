@@ -71,7 +71,7 @@ export class DotHienMauComponent implements OnInit {
             }));
           }
           if (response.code === 404 || response.code === 400) {
-            alert(response.message)
+            console.error(response.message)
           }
           resolve();
         },

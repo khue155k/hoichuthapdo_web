@@ -13,8 +13,6 @@ export class TinhNguyenVienService {
 
   constructor(private http: HttpClient) { }
 
-
-
   search(
       string_tim_kiem: string = "Nội dung tìm kiếm",
       pageSize: number = 10,
@@ -49,8 +47,11 @@ export class TinhNguyenVienService {
     }
 }
 export interface TinhNguyenVien {
-  maDV: number;
-  tenDV: string;
+  cccd: number;
+  hoTen: string;
+  ngaySinh: string;
+  gioiTinh: string;
   soDienThoai: string;
-  Email: string
+  email: string;
+  soLanHien: string;
 }

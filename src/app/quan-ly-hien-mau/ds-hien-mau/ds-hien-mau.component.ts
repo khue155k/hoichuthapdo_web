@@ -272,11 +272,10 @@ export class TTHienMauComponent implements OnInit {
       next: (response) => {
         if (response.code === 200) {
           this.theTichMauHienList = response.data;
-          console.log(response.data);
         }
       },
       error: (err) => {
-        console.error('Lỗi khi load thể tích máu hiến:', err);
+        console.error('Lỗi khi tải thể tích máu hiến:', err);
       },
     });
   }
