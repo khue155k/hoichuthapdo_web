@@ -37,6 +37,14 @@ export const routes: Routes = [
           roles: ['all'],
         }
       },
+      {
+        path: 'tinh-nguyen-vien',
+        loadComponent: () => import('./tinh-nguyen-vien/tinh-nguyen-vien.component').then(m => m.TinhNguyenVienComponent),
+        data: {
+          title: 'Đơn vị',
+          roles: ['all'],
+        }
+      },
     ]
   }
 ];

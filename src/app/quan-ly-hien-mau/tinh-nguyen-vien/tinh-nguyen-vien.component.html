@@ -1,0 +1,236 @@
+<div class="mx-5">
+    <form [formGroup]="searchForm">
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="OpenCreateModal()">Tạo tình nguyên viên</button>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Nhập số CCCD, họ tên, số điện thoại hoặc email"
+                    formControlName="searchTerm" (input)="searchTinhNguyenVienFormDelay()" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="exportExcel()">
+                    Xuất Excel
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <table cTable [striped]="true">
+            <thead>
+                <tr>
+                    <th scope="col">TT</th>
+                    <th scope="col">CCCD</th>
+                    <th scope="col">Họ tên</th>
+                    <th scope="col">Ngày sinh</th>
+                    <th scope="col">Giới tính</th>
+                    <th scope="col">Số điện thoại</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Địa chỉ thường trú</th>
+                    <th scope="col">Số lần hiến</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="tinhNguyenVienList.length == 0">
+                    <tr class="table-danger">
+                        <th colspan="100%">
+                            Không có tình nguyên viên nào
+                        </th>
+                    </tr>
+                </ng-container>
+                <ng-container *ngFor="let tinhNguyenVien of tinhNguyenVienList; let i = index">
+                    <tr>
+                        <td>{{i+1+(currentPage-1)*pageSize}}</td>
+                        <td>{{tinhNguyenVien.cccd}}</td>
+                        <td>{{tinhNguyenVien.hoTen}}</td>
+                        <td>{{tinhNguyenVien.ngaySinh | date:'dd/MM/yyyy'}}</td>
+                        <td>{{tinhNguyenVien.gioiTinh}}</td>
+                        <td>{{tinhNguyenVien.soDienThoai}}</td>
+                        <td>{{tinhNguyenVien.email}}</td>
+                        <td>{{tinhNguyenVien.tinhThanh}}, {{ tinhNguyenVien.quanHuyen}}, {{ tinhNguyenVien.phuongXa}}</td>
+                        <td>{{tinhNguyenVien.soLanHien}}</td>
+                        <td>
+                            <div class="d-flex justify-content-center flex-wrap">
+                                <button class="btn btn-warning mx-1"
+                                    (click)="OpenEditModal(tinhNguyenVien)">Sửa</button>
+                                <button class="btn btn-danger mx-1"
+                                    (click)="OpenDeleteModal(tinhNguyenVien)">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+        <div *ngIf="isEditModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg custom-dialog" role="document">
+                <div class="modal-content custom-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" *ngIf="isAdd"> {{addTitle}}</h5>
+                        <h5 class="modal-title" *ngIf="isEdit"> {{editTitle}} </h5>
+                    </div>
+                    <div class="modal-body">
+                        <form [formGroup]="tinhNguyenVienForm" novalidate>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="cccd">Số căn cước công dân</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="cccd" placeholder="Số căn cước công dân"
+                                            class="form-control" id="cccd">
+                                        <div *ngIf="tinhNguyenVienForm.controls['cccd'].invalid && tinhNguyenVienForm.controls['cccd'].touched"
+                                            class="invalid-feedback">
+                                            Căn cước công dân không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="hoTen">Họ và tên</label><span class="text-danger"> *</span>
+                                        <input formControlName="hoTen" placeholder="Họ và tên" class="form-control"
+                                            id="hoTen">
+                                        <div *ngIf="tinhNguyenVienForm.controls['hoTen'].invalid && tinhNguyenVienForm.controls['hoTen'].touched"
+                                            class="invalid-feedback">
+                                            Họ và tên không được bỏ trống.
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="soDienThoai">Điện thoại di động</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="soDienThoai" placeholder="Điện thoại di động"
+                                            class="form-control" id="soDienThoai">
+                                        <div *ngIf="tinhNguyenVienForm.controls['soDienThoai'].invalid && tinhNguyenVienForm.controls['soDienThoai'].touched"
+                                            class="invalid-feedback">
+                                            Điện thoại di động không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="ngaySinh">Ngày sinh</label><span class="text-danger"> *</span>
+                                        <input type="date" data-date-format="YYYY-MM-DD" formControlName="ngaySinh"
+                                            class="form-control" id="ngaySinh" />
+                                        <div *ngIf="tinhNguyenVienForm.controls['ngaySinh'].invalid && tinhNguyenVienForm.controls['ngaySinh'].touched"
+                                            class="invalid-feedback">
+                                            Ngày sinh không được bỏ trống.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="gioiTinh">Giới tính</label><span class="text-danger"> *</span>
+                                        <select2 class="form-control" formControlName="gioiTinh" [overlay]="false"
+                                            placeholder="Chọn giới tính" [data]="gioiTinhOptions"
+                                            [styleMode]="'borderless'" [value]="gioiTinh"
+                                            (update)="update('gioiTinh', $event)" id="gioiTinh">
+                                        </select2>
+                                        <div *ngIf="tinhNguyenVienForm.controls['gioiTinh'].invalid && tinhNguyenVienForm.controls['gioiTinh'].touched"
+                                            class="invalid-feedback">
+                                            Giới tính không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dia_chi_thuong_tru">Địa chỉ thường trú (theo CMND, CCCD)</label><span
+                                    class="text-danger">
+                                    *</span>
+                                <div id="dia_chi_thuong_tru">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <select2 formControlName="maTinhThanh" class="form-control" id="maTinhThanh"
+                                                (update)="update('maTinhThanh', $event)" [(ngModel)]="selectedProvince"
+                                                [overlay]="false" placeholder="Chọn tỉnh thành"
+                                                [value]="selectedProvince" [data]="sl2_tinhThanh"
+                                                [styleMode]="'borderless'" [displaySearchStatus]="'default'">
+                                            </select2>
+                                            <div *ngIf="tinhNguyenVienForm.controls['maTinhThanh'].invalid && tinhNguyenVienForm.controls['maTinhThanh'].touched"
+                                                class="invalid-feedback">
+                                                Trường Tỉnh/thành không được bỏ trống.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select2 formControlName="maQuanHuyen" class="form-control" id="maQuanHuyen"
+                                                (update)="update('maQuanHuyen', $event)" [(ngModel)]="selectedDistrict"
+                                                [overlay]="false" placeholder="Chọn quận huyện"
+                                                [value]="selectedDistrict" [data]="sl2_quanHuyen"
+                                                [styleMode]="'borderless'" [displaySearchStatus]="'default'">
+                                            </select2>
+                                            <div *ngIf="tinhNguyenVienForm.controls['maQuanHuyen'].invalid && tinhNguyenVienForm.controls['maQuanHuyen'].touched"
+                                                class="invalid-feedback">
+                                                Trường Quận/huyện không được bỏ trống.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select2 formControlName="maPhuongXa" class="form-control" id="maPhuongXa"
+                                                (update)="update('maPhuongXa', $event)" [(ngModel)]="selectedWard"
+                                                [overlay]="false" placeholder="Chọn phường xã" [value]="selectedWard"
+                                                [data]="sl2_phuongXa" [styleMode]="'borderless'"
+                                                [displaySearchStatus]="'default'">
+                                            </select2>
+                                            <div *ngIf="tinhNguyenVienForm.controls['maPhuongXa'].invalid && tinhNguyenVienForm.controls['maPhuongXa'].touched"
+                                                class="invalid-feedback">
+                                                Trường Phường/xã không được bỏ trống.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="email">Địa chỉ email</label>
+                                        <input formControlName="email" placeholder="Địa chỉ email" class="form-control"
+                                            id="email">
+                                        <div *ngIf="tinhNguyenVienForm.controls['email'].invalid && tinhNguyenVienForm.controls['email'].touched"
+                                            class="invalid-feedback">
+                                            Trường Email không hợp lệ.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="soLanHien">Số lần đã hiến máu</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="soLanHien" placeholder="Số lần đã hiến máu"
+                                            class="form-control" id="soLanHien">
+                                        <div *ngIf="tinhNguyenVienForm.controls['soLanHien'].invalid && tinhNguyenVienForm.controls['soLanHien'].touched"
+                                            class="invalid-feedback">
+                                            Số lần đã hiến máu không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Hủy</button>
+                        <button type="button" class="btn btn-primary" (click)="saveChanges()">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
+                *ngIf="currentPage > 1">«</button>
+
+            <ng-container *ngFor="let page of getLimitedPageNumbers()">
+                <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
+                *ngIf="currentPage * pageSize < totalCount">»</button>
+
+            <div class="float-end">
+                <span style="margin: 0; margin-right: 1rem;">Số dòng mỗi trang: </span>
+                <select style="padding: 5px;" [(ngModel)]="pageSize" (change)="searchTinhNguyenVienForm()">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

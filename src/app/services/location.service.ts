@@ -11,26 +11,27 @@ export class LocationService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Lấy danh sách tỉnh/thành phố
-   */
   getProvinces(): Observable<any> {
     return this.http.get<any>(`${this.api}/Address/provinces`);
   }
 
-  /**
-   * Lấy danh sách quận/huyện theo mã tỉnh
-   * @param provinceId Mã tỉnh/thành phố
-   */
   getDistricts(provinceId: string): Observable<any> {
     return this.http.get<any>(`${this.api}/Address/districts/provinceId?provinceId=${provinceId}`);
   }
 
-  /**
-   * Lấy danh sách phường/xã theo mã quận
-   * @param districtId Mã quận/huyện
-   */
   getWards(districtId: string): Observable<any> {
     return this.http.get<any>(`${this.api}/Address/wards/districtId?districtId=${districtId}`);
+  }
+
+  getProvince(id: number): Observable<any> {
+    return this.http.get<any>(`${this.api}/Address/province?provinceId=${id}`);
+  }
+
+  getDistrict(id: number): Observable<any> {
+    return this.http.get<any>(`${this.api}/Address/district?districtId=${id}`);
+  }
+
+  getWard(id: number): Observable<any> {
+    return this.http.get<any>(`${this.api}/Address/ward?wardId=${id}`);
   }
 }

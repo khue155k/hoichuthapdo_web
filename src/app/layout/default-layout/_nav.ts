@@ -32,6 +32,11 @@ export const navItems: INavDataExtended[] = [
         url: '/quan-ly-hien-mau/don-vi',
         icon: 'nav-icon-bullet',
       },
+      {
+        name: 'Tình nguyện viên',
+        url: '/quan-ly-hien-mau/tinh-nguyen-vien',
+        icon: 'nav-icon-bullet',
+      },
     ]
   },
   {

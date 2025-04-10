@@ -31,7 +31,7 @@ export class TTHienMauService {
   }
 
   createTTHienMau(TTHienMau: any): Observable<TemplateResult<any>> {
-    return this.http.post<TemplateResult<any>>(`${this.apiUrl}`, TTHienMau, {
+    return this.http.post<TemplateResult<any>>(`${this.apiUrl}/createTTHienMau`, TTHienMau, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
