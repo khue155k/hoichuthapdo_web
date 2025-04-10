@@ -93,13 +93,13 @@ export class TinhNguyenVienComponent implements OnInit {
   async loadTinhNguyenVien() {
     try {
       const response = await firstValueFrom(
-        this.tinhNguyenVienService.getAllTinhNguyenVienPaginated(this.pageSize, this.currentPage)
+        this.tinhNguyenVienService.getAllTinhNguyenVienPaginated(this.pageSize, this.currentPage, false)
       );
-  
+
       if (response.code === 200) {
         this.totalCount = response.data.totalCount;
         const items = response.data.items;
-  
+
         const promises = items.map(async (TNV: any) => {
           const [tinh, huyen, xa] = await Promise.all([
             firstValueFrom(this.locationService.getProvince(TNV.maTinhThanh)),
@@ -113,10 +113,10 @@ export class TinhNguyenVienComponent implements OnInit {
             phuongXa: xa?.name
           };
         });
-  
+
         this.tinhNguyenVienList = await Promise.all(promises);
       }
-  
+
       if (response.code === 404 || response.code === 400) {
         console.error(response.message);
       }
@@ -125,20 +125,42 @@ export class TinhNguyenVienComponent implements OnInit {
     }
   }
 
-  searchTinhNguyenVien(): void {
+  async searchTinhNguyenVien() {
     const searchTerm = this.searchForm.get('searchTerm')?.value || 'Nội dung tìm kiếm';
 
-    this.tinhNguyenVienService.search(searchTerm, this.pageSize, this.currentPage)
-      .subscribe({
-        next: (response: TemplateResult<PaginatedResult<any>>) => {
-          this.totalCount = response.data.totalCount;
-          this.tinhNguyenVienList = response.data.items;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-        }
-      });
+    try {
+      const response: TemplateResult<PaginatedResult<any>> = await firstValueFrom(
+        this.tinhNguyenVienService.search(searchTerm, this.pageSize, this.currentPage, false)
+      );
+      if (response.code === 200) {
+        this.totalCount = response.data.totalCount;
+        const items = response.data.items;
+
+        const promises = items.map(async (TNV: any) => {
+          const [tinh, huyen, xa] = await Promise.all([
+            firstValueFrom(this.locationService.getProvince(TNV.maTinhThanh)),
+            firstValueFrom(this.locationService.getDistrict(TNV.maQuanHuyen)),
+            firstValueFrom(this.locationService.getWard(TNV.maPhuongXa)),
+          ]);
+
+          return {
+            ...TNV,
+            tinhThanh: tinh?.name,
+            quanHuyen: huyen?.name,
+            phuongXa: xa?.name
+          };
+        });
+
+        this.tinhNguyenVienList = await Promise.all(promises);
+      }
+      if (response.code === 404 || response.code === 400) {
+        console.error(response.message);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }
+
   searchTinhNguyenVienForm(): void {
     this.currentPage = 1;
     this.searchTinhNguyenVien();
@@ -149,40 +171,62 @@ export class TinhNguyenVienComponent implements OnInit {
     this.searchTinhNguyenVienForm();
   }
 
-  exportExcel() {
+  async exportExcel() {
     let tinhNguyenVien: any[] = [];
     const searchTerm = this.searchForm.get('searchTerm')?.value || 'Nội dung tìm kiếm';
 
-    this.tinhNguyenVienService.search(searchTerm, 1000, 1)
-      .subscribe({
-        next: (response: TemplateResult<PaginatedResult<any>>) => {
-          tinhNguyenVien = response.data.items;
+    try {
+      const response: TemplateResult<PaginatedResult<any>> = await firstValueFrom(
+        this.tinhNguyenVienService.search(searchTerm, 1000, 1, false)
+      );
+      if (response.code === 200) {
+        this.totalCount = response.data.totalCount;
+        const items = response.data.items;
 
-          const excelData = tinhNguyenVien.map((tinhNguyenVien, index) => ({
-            'STT': index + 1,
-            'CCCD': tinhNguyenVien.CCCD,
-            'Họ tên': tinhNguyenVien.hoTen,
-            'Ngày sinh': tinhNguyenVien.ngaySinh,
-            'Giới tính': tinhNguyenVien.gioiTinh,
-            'Số điện thoại': tinhNguyenVien.soDienThoai,
-            'Email': tinhNguyenVien.email,
-            'Địa chỉ thường trú': tinhNguyenVien.noiO,
-            'Số lần hiến': tinhNguyenVien.soLanHien
-          }));
+        const promises = items.map(async (TNV: any) => {
+          const [tinh, huyen, xa] = await Promise.all([
+            firstValueFrom(this.locationService.getProvince(TNV.maTinhThanh)),
+            firstValueFrom(this.locationService.getDistrict(TNV.maQuanHuyen)),
+            firstValueFrom(this.locationService.getWard(TNV.maPhuongXa)),
+          ]);
 
-          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+          return {
+            ...TNV,
+            tinhThanh: tinh?.name,
+            quanHuyen: huyen?.name,
+            phuongXa: xa?.name
+          };
+        });
 
-          const wb: XLSX.WorkBook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, 'Danh Sách Đợt Hiến Máu');
+        tinhNguyenVien = await Promise.all(promises);
+      }
+      if (response.code === 404 || response.code === 400) {
+        console.error(response.message);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
 
-          const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-          const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-          saveAs(data, 'DanhSachTinhNguyenVien.xlsx');
-        },
-        error: (error) => {
-          console.error('Lỗi khi tải danh sách tình nguyện viên tham gia hiến máu:', error);
-        }
-      });
+    const excelData = tinhNguyenVien.map((tinhNguyenVien, index) => ({
+      'STT': index + 1,
+      'CCCD': tinhNguyenVien.cccd,
+      'Họ tên': tinhNguyenVien.hoTen,
+      'Ngày sinh': tinhNguyenVien.ngaySinh,
+      'Giới tính': tinhNguyenVien.gioiTinh,
+      'Số điện thoại': tinhNguyenVien.soDienThoai,
+      'Email': tinhNguyenVien.email,
+      'Địa chỉ thường trú': tinhNguyenVien.tinhThanh + ", " + tinhNguyenVien.quanHuyen + ", " + tinhNguyenVien.phuongXa,
+      'Số lần hiến': tinhNguyenVien.soLanHien
+    }));
+
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Danh Sách Tình Nguyện Viên');
+
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, 'DanhSachTinhNguyenVien.xlsx');
   }
 
   update(key: string, event: Select2UpdateEvent<any>) {
@@ -322,7 +366,7 @@ export class TinhNguyenVienComponent implements OnInit {
     else {
       if (this.tinhNguyenVienForm.valid) {
         const updatedData = {
-          CCCD: this.tinhNguyenVienForm.value.CCCD,
+          cccd: this.tinhNguyenVienForm.value.cccd,
           hoTen: this.tinhNguyenVienForm.value.hoTen,
           ngaySinh: this.tinhNguyenVienForm.value.ngaySinh,
           gioiTinh: this.tinhNguyenVienForm.value.gioiTinh,

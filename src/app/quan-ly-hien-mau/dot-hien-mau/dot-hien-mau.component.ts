@@ -169,7 +169,7 @@ export class DotHienMauComponent implements OnInit {
           saveAs(data, 'DanhSachDotHienMau.xlsx');
         },
         error: (error) => {
-          console.error('Lỗi khi tải danh sách tình nguyện viên tham gia hiến máu:', error);
+          console.error('Lỗi khi tải danh sách đợt hiến máu:', error);
         }
       });
   }

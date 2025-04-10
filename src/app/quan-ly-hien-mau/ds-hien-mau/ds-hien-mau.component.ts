@@ -446,7 +446,7 @@ export class TTHienMauComponent implements OnInit {
       const tt_hien_mau_data = {
         id: 0,
         maDot: this.maDot,
-        CCCD: '',
+        cccd: '',
         maTheTich: Number(this.selectedTheTich),
         maDV: this.selectedCoQuanID,
         ngheNghiep: this.editForm.value.ngheNghiep,
@@ -459,7 +459,7 @@ export class TTHienMauComponent implements OnInit {
         id: 0,
         hoTen: this.editForm.value.hoTen,
         ngaySinh: this.editForm.value.ngaySinh,
-        CCCD: this.editForm.value.cccd,
+        cccd: this.editForm.value.cccd,
         gioiTinh: this.editForm.value.gioiTinh,
         soDienThoai: this.editForm.value.dien_thoai,
         email: this.editForm.value.email,
@@ -471,11 +471,13 @@ export class TTHienMauComponent implements OnInit {
       this.tinhNguyenVienService.createTinhNguyenVien(tinh_nguyen_vien_data).subscribe({
         next: (response) => {
           if (response.code === 200) {
-            tt_hien_mau_data.CCCD = response.data.id
+            tt_hien_mau_data.cccd = response.data.id
             this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {
                   this.isReadOnlyAutoFill = false;
+                  this.isEditModalOpen=false;
+                  this.editForm.reset();
                   this.searchTTHienMau();
                   alert('Gửi đăng ký thành công.');
                 }

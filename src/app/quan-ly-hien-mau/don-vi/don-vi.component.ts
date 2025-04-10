@@ -117,14 +117,14 @@ export class DonViComponent implements OnInit {
           const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
 
           const wb: XLSX.WorkBook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, 'Danh Sách Đợt Hiến Máu');
+          XLSX.utils.book_append_sheet(wb, ws, 'Danh Sách Đơn Vị');
 
           const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
           const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
           saveAs(data, 'DanhSachDonVi.xlsx');
         },
         error: (error) => {
-          console.error('Lỗi khi tải danh sách tình nguyện viên tham gia hiến máu:', error);
+          console.error('Lỗi khi tải danh sách đơn vị:', error);
         }
       });
   }

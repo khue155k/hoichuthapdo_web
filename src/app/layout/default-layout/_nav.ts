@@ -50,6 +50,11 @@ export const navItems: INavDataExtended[] = [
         url: '/qua-tang/quan-ly-qua-tang',
         icon: 'nav-icon-bullet',
       },
+      {
+        name: 'Tặng quà',
+        url: '/qua-tang/tang-qua',
+        icon: 'nav-icon-bullet',
+      },
     ]
   },
   {

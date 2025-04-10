@@ -21,6 +21,14 @@ export const routes: Routes = [
           roles: ['all'],
         }
       },
+      {
+        path: 'tang-qua',
+        loadComponent: () => import('./tang-qua/tang-qua.component').then(m => m.TangQuaComponent),
+        data: {
+          title: 'Tặng quà',
+          roles: ['all'],
+        }
+      },
     ]
   }
 ];
