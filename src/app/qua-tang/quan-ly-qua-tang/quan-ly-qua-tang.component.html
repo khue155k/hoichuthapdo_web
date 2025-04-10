@@ -1,0 +1,122 @@
+<div class="mx-5">
+    <form [formGroup]="searchForm">
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="OpenCreateModal()">Thêm quà tặng</button>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Nhập tên quà tặng"
+                    formControlName="searchTerm" (input)="searchQuaTangFormDelay()" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" (click)="exportExcel()">
+                    Xuất Excel
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <table cTable [striped]="true">
+            <thead>
+                <tr>
+                    <th scope="col">TT</th>
+                    <th scope="col">Tên quà tặng</th>
+                    <th scope="col">Giá trị  (VNĐ)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="quaTangList.length == 0">
+                    <tr class="table-danger">
+                        <th colspan="100%">
+                            Không có quà tặng nào
+                        </th>
+                    </tr>
+                </ng-container>
+                <ng-container *ngFor="let quaTang of quaTangList; let i = index">
+                    <tr>
+                        <td>{{i+1+(currentPage-1)*pageSize}}</td>
+                        <td>{{quaTang.tenQua}}</td>
+                        <td>{{quaTang.giaTri}}</td>
+                        <td>
+                            <div class="d-flex justify-content-center flex-wrap">
+                                <button class="btn btn-warning mx-1" (click)="OpenEditModal(quaTang)">Sửa</button>
+                                <button class="btn btn-danger mx-1" (click)="OpenDeleteModal(quaTang)">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+        <div *ngIf="isEditModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg custom-dialog" role="document">
+                <div class="modal-content custom-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" *ngIf="isAdd"> {{addTitle}}</h5>
+                        <h5 class="modal-title" *ngIf="isEdit"> {{editTitle}} </h5>
+                    </div>
+                    <div class="modal-body">
+                        <form [formGroup]="quaTangForm" novalidate>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label for="tenQua">Tên quà tặng</label><span class="text-danger">
+                                            *</span>
+                                        <input formControlName="tenQua" placeholder="Tên quà tặng" class="form-control"
+                                            id="tenQua">
+                                        <div *ngIf="quaTangForm.controls['tenQua'].invalid && quaTangForm.controls['tenQua'].touched"
+                                            class="invalid-feedback">
+                                            Tên quà tặng không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="giaTri">Giá trị (VNĐ)</label><span class="text-danger"> *</span>
+                                        <input formControlName="giaTri" placeholder="Giá trị" class="form-control"
+                                            id="giaTri">
+                                        <div *ngIf="quaTangForm.controls['giaTri'].invalid && quaTangForm.controls['giaTri'].touched"
+                                            class="invalid-feedback">
+                                            Giá trị không được bỏ trống.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Hủy</button>
+                        <button type="button" class="btn btn-primary" (click)="saveChanges()">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
+                *ngIf="currentPage > 1">«</button>
+
+            <ng-container *ngFor="let page of getLimitedPageNumbers()">
+                <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
+                *ngIf="currentPage * pageSize < totalCount">»</button>
+
+            <div class="float-end">
+                <span style="margin: 0; margin-right: 1rem;">Số dòng mỗi trang: </span>
+                <select style="padding: 5px;" [(ngModel)]="pageSize" (change)="searchQuaTangForm()">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

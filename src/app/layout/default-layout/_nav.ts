@@ -40,6 +40,19 @@ export const navItems: INavDataExtended[] = [
     ]
   },
   {
+    name: 'Quà tặng',
+    url: '/qua-tang',
+    iconComponent: { name: 'cil-gift' },
+    roles: ['all'],
+    children:[
+      {
+        name: 'Quản lý quà tặng',
+        url: '/qua-tang/quan-ly-qua-tang',
+        icon: 'nav-icon-bullet',
+      },
+    ]
+  },
+  {
     name: 'Tài khoản',
     url: '/tai-khoan',
     iconComponent: { name: 'cil-user' },

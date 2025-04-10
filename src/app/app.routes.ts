@@ -48,6 +48,14 @@ export const routes: Routes = [
         }
       },
       {
+        path: 'qua-tang',
+        canActivate: [AuthGuard],
+        loadChildren: () => import('./qua-tang/routes').then((m) => m.routes),
+        data:{
+          roles: ['']
+        }
+      },
+      {
         path: 'tai-khoan',
         canActivate: [AuthGuard],
         loadChildren: () => import('./tai-khoan/routes').then((m) => m.routes),
