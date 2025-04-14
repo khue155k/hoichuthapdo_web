@@ -20,6 +20,7 @@
                     <th scope="col">CCCD</th>
                     <th scope="col">Mã quà</th>
                     <th scope="col">Nội dung</th>
+                    <th scope="col">Thời gian gửi</th>
                     <th></th>
                 </tr>
             </thead>
@@ -37,6 +38,7 @@
                         <td>{{lichSu.cccd}}</td>
                         <td>{{lichSu.maQua}}</td>
                         <td>{{lichSu.noiDung}}</td>
+                        <td>{{lichSu.thoiGianGui | date:'HH:mm dd/MM/yyyy' }}</td>
                         <td>
                             <div class="d-flex justify-content-center flex-wrap">
                                 <button class="btn btn-warning mx-1" (click)="OpenEditModal(lichSu)">Sửa</button>

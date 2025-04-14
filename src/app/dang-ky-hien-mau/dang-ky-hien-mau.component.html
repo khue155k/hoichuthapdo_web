@@ -4,19 +4,16 @@
 </div>
 
 <div class="container mt-5">
-    <header class="text-center mb-4">
-        <h3>ĐĂNG KÝ HIẾN MÁU</h3>
-        <p *ngIf="tenDot">
-            <strong>{{ tenDot }}</strong>
-        </p>
-        <p *ngIf="getDotHienMauStatus() === 'Chưa diễn ra'">(Sự kiện chưa diễn ra)</p>
-        <p *ngIf="getDotHienMauStatus() === 'Đang diễn ra'">(Sự kiện đang diễn ra)</p>
-
-        <div *ngIf="getDotHienMauStatus() === 'Đã kết thúc'" class="alert alert-warning">
-            Sự kiện này đã kết thúc.
-        </div>
+    <header class="mb-4">
+        <h3 class="text-center mb-4">ĐĂNG KÝ HIẾN MÁU</h3>
+            <div class="justify-content-center" *ngIf="dotHienMauList.length != 0">
+                <select2 class="form-control" [overlay]="false" [data]="dotHienMauList" [value]="maDot" [styleMode]="'borderless'"
+                    placeholder="Chọn đợt hiến máu" (update)="updateDotHM($event)">
+                </select2>
+            </div>
+        <p *ngIf="dotHienMauList.length == 0">(Hiện tại không có đợt hiến máu nào)</p>
     </header>
-    <form [formGroup]="registerForm" *ngIf="getDotHienMauStatus() !== 'Đã kết thúc'" (ngSubmit)="onSubmit()" novalidate>
+    <form [formGroup]="registerForm" *ngIf="selectedDotHM" (ngSubmit)="onSubmit()" novalidate>
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">
@@ -64,10 +61,11 @@
                     <label for="gioiTinh">Giới tính</label><span class="text-danger"> *</span>
                     <select2 class="form-control" formControlName="gioiTinh" [overlay]="false"
                         placeholder="Chọn giới tính" [data]="gioiTinhOptions" [styleMode]="'borderless'"
-                        [value]="gioiTinh" (update)="update('gioiTinh', $event)" id="gioiTinh" [readonly]="true" [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
+                        [value]="gioiTinh" (update)="update('gioiTinh', $event)" id="gioiTinh" [readonly]="true"
+                        [ngStyle]="{ 'display': isReadOnlyAutoFill ? 'none' : 'block' }">
                     </select2>
-                    <input class="form-control" formControlName="gioiTinh_text" type="text" [value]="gioiTinh"
-                        readonly [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
+                    <input class="form-control" formControlName="gioiTinh_text" type="text" [value]="gioiTinh" readonly
+                        [ngStyle]="{ 'display': !isReadOnlyAutoFill ? 'none' : 'block' }">
                     <div *ngIf="registerForm.controls['gioiTinh'].invalid && registerForm.controls['gioiTinh'].touched"
                         class="invalid-feedback">
                         Giới tính không được bỏ trống.
@@ -135,15 +133,6 @@
                     <input formControlName="email" placeholder="Địa chỉ email" class="form-control" id="email"
                         [readonly]="isReadOnlyAutoFill">
                 </div>
-                <div class="col-md-6">
-                    <label for="soLanHien">Số lần đã hiến máu</label><span class="text-danger"> *</span>
-                    <input formControlName="soLanHien" placeholder="Số lần đã hiến máu" class="form-control" id="soLanHien"
-                        [readonly]="isReadOnlyAutoFill">
-                    <div *ngIf="registerForm.controls['soLanHien'].invalid && registerForm.controls['soLanHien'].touched"
-                        class="invalid-feedback">
-                        Số lần đã hiến máu không được bỏ trống.
-                    </div>
-                </div>
             </div>
         </div>
         <div class="form-group">
@@ -183,11 +172,13 @@
                 <div class="col-md-3">
                     <label for="thoi_gian">Thời gian đăng ký</label><span class="text-danger"> *</span>
                     <input type="datetime-local" id="thoi_gian" formControlName="thoi_gian" class="form-control"
-                        [min]="thoiGianBatDau" [max]="thoiGianKetThuc" (input)="validateDate()"
+                        [min]="selectedDotHM.thoiGianBatDau" [max]="selectedDotHM.thoiGianKetThuc"
+                        (input)="validateDate()"
                         [ngClass]="{'is-invalid': registerForm.controls['thoi_gian'].invalid && registerForm.controls['thoi_gian'].touched}" />
                     <div *ngIf="registerForm.controls['thoi_gian'].hasError('outOfRange') && registerForm.controls['thoi_gian'].touched"
                         class="invalid-feedback">
-                        Thời gian đăng ký phải nằm trong khoảng từ {{ thoiGianBatDau | date: 'dd/MM/yyyy' }} đến {{ thoiGianKetThuc |
+                        Thời gian đăng ký phải nằm trong khoảng từ {{ selectedDotHM.thoiGianBatDau | date: 'dd/MM/yyyy'
+                        }} đến {{ selectedDotHM.thoiGianKetThuc |
                         date: 'dd/MM/yyyy' }}.
                     </div>
                 </div>

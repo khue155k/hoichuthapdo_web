@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DotHienMauService } from '../services/dot-hien-mau.service';
@@ -20,8 +20,8 @@ import { DonViService } from '../services';
 })
 export class DangKyHienMauComponent {
   constructor(private fb: FormBuilder, private locationService: LocationService,
-    private route: ActivatedRoute, private dotHienMauService: DotHienMauService, private donViService: DonViService,
-    private router: Router, private tinhNguyenVienService: TinhNguyenVienService,
+    private dotHienMauService: DotHienMauService, private donViService: DonViService,
+    private tinhNguyenVienService: TinhNguyenVienService,
     private dsHienMauService: TTHienMauService) {
     this.registerForm = this.fb.group({
       hoTen: ['', Validators.required],
@@ -35,7 +35,6 @@ export class DangKyHienMauComponent {
       noiO: ['', Validators.required],
       don_vi: ['', Validators.required],
       don_vi_mau: ['', Validators.required],
-      soLanHien: ['', Validators.required],
       thoi_gian: ['', Validators.required],
       email: [''],
       dien_thoai: ['', Validators.required],
@@ -48,28 +47,25 @@ export class DangKyHienMauComponent {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.maDot = Number(params.get('maDot'));
-      this.loadDotHienMau();
-      this.loadDonVis();
-      this.loadTheTichMauHien();
-    });
+    this.loadDotHienMau();
+    this.loadDonVis();
+    this.loadTheTichMauHien();
     this.loadProvinces()
   }
 
   isReadOnlyAutoFill: boolean = false;
+  dotHienMauList: any[] = [];
   maDot: number = 0;
-  tenDot: string = '';
-  thoiGianBatDau: Date | null = null;
-  thoiGianKetThuc: Date | null = null;
+  selectedDotHM: any;
+
   registerForm: FormGroup;
   showScanner: boolean = false;
   qrResultString: string = '';
+
   provinces: any[] = [];
   districts: any[] = [];
   wards: any[] = [];
 
-  // Địa chỉ thường trú ID
   selectedProvince: string = '';
   selectedDistrict: string = '';
   selectedWard: string = '';
@@ -91,6 +87,10 @@ export class DangKyHienMauComponent {
   sl2_quan_huyen: any[] = []
   sl2_phuong_xa: any[] = []
 
+  updateDotHM(event: Select2UpdateEvent<any>) {
+    this.maDot = event.value;
+    this.selectedDotHM = this.dotHienMauList.find(dot => dot.value === this.maDot);
+  }
 
   update(key: string, event: Select2UpdateEvent<any>) {
     if (key === 'gioiTinh') {
@@ -128,33 +128,25 @@ export class DangKyHienMauComponent {
   private formatToISO(date: Date): string {
     return date.toISOString().slice(0, 16);
   }
-  thoiGianBatDau_str: string = ''
-  thoiGianKetThuc_str: string = ''
 
   loadDotHienMau(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.dotHienMauService.getAllDotHienMau().subscribe({
         next: (response) => {
           if (response.code === 200) {
-            var dotHienMauList: any;
-            dotHienMauList = response.data.map((dotHM: any) => ({
-              maDot: dotHM.maDot,
+            const now = new Date();
+            console.log(response.data);
+            console.log(now);
+
+            this.dotHienMauList = response.data.map((dotHM: any) => ({
+              value: dotHM.maDot,
+              label: dotHM.tenDot + " từ " + formatDate(dotHM.thoiGianBatDau, 'HH:mm dd-MM-yyyy', 'en-US') + " đến " + formatDate(dotHM.thoiGianKetThuc, 'HH:mm dd-MM-yyyy', 'en-US'),
               tenDot: dotHM.tenDot,
               diaDiem: dotHM.diaDiem,
               thoiGianBatDau: dotHM.thoiGianBatDau,
               thoiGianKetThuc: dotHM.thoiGianKetThuc
-            }));
-
-            if (dotHienMauList.length > 0) {
-              const lastDotHienMau = dotHienMauList[dotHienMauList.length - 1];
-              this.tenDot = lastDotHienMau.tenDot;
-              this.thoiGianBatDau = new Date(lastDotHienMau.thoiGianBatDau);
-              this.thoiGianKetThuc = new Date(lastDotHienMau.thoiGianKetThuc);
-              this.thoiGianBatDau_str = this.formatToISO(this.thoiGianBatDau);
-              this.thoiGianKetThuc_str = this.formatToISO(this.thoiGianKetThuc);
-            } else {
-              this.router.navigate(['/404']);
-            }
+            })).filter(dot => new Date(dot.thoiGianKetThuc) > now);
+            console.log(this.dotHienMauList);
           } else {
             console.error('Lỗi khi tải đợt hiến máu');
           }
@@ -167,34 +159,17 @@ export class DangKyHienMauComponent {
       });
     });
   }
-  // getDotHienMau() {
-  //   if (this.maDot == 0) this.maDot = 1
-  //   this.dotHienMauService.getDotHienMau(this.maDot).subscribe({
-  //     next: (response) => {
-  //       if (response.code === 200) {
-  //         this.tenDot = response.data.tenDot;
-  //         this.thoiGianBatDau = new Date(response.data.thoiGianBatDau);
-  //         this.thoiGianKetThuc = new Date(response.data.thoiGianKetThuc);
-  //         this.thoiGianBatDau_str = this.formatToISO(this.thoiGianBatDau);
-  //         this.thoiGianKetThuc_str = this.formatToISO(this.thoiGianKetThuc);
-  //       }
-  //       if (response.code === 404) {
-  //         this.router.navigate(['/404']);
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error('Lỗi khi lấy thông tin đợt hiến máu:', err);
-  //     }
-  //   });
-  // }
+
   validateDate(): void {
     const thoiGianControl = this.registerForm.controls['thoi_gian'];
     const thoiGianValue = thoiGianControl.value;
 
-    if (thoiGianValue) {
+    if (thoiGianValue && this.maDot) {
+      if (!this.selectedDotHM) return;
+
       const ngayNhap = new Date(thoiGianValue);
-      const ngayBd = new Date(this.thoiGianBatDau_str);
-      const ngayKt = new Date(this.thoiGianKetThuc_str);
+      const ngayBd = new Date(this.selectedDotHM.thoiGianBatDau);
+      const ngayKt = new Date(this.selectedDotHM.thoiGianKetThuc);
 
       if (ngayNhap < ngayBd || ngayNhap > ngayKt) {
         thoiGianControl.setErrors({ outOfRange: true });
@@ -203,6 +178,7 @@ export class DangKyHienMauComponent {
       }
     }
   }
+
 
   loadDonVis() {
     this.donViService.getDonVis().subscribe({
@@ -220,19 +196,6 @@ export class DangKyHienMauComponent {
     });
   }
 
-  getDotHienMauStatus(): string {
-    const now = new Date();
-    if (this.thoiGianBatDau && now < this.thoiGianBatDau) {
-      return 'Chưa diễn ra';
-    }
-    if (this.thoiGianBatDau && this.thoiGianKetThuc && now >= this.thoiGianBatDau && now <= this.thoiGianKetThuc) {
-      return 'Đang diễn ra';
-    }
-    if (this.thoiGianKetThuc && now > this.thoiGianKetThuc) {
-      return 'Đã kết thúc';
-    }
-    return '';
-  }
   loadProvinces() {
     this.locationService.getProvinces().subscribe(data => {
       this.provinces = data;
@@ -306,7 +269,6 @@ export class DangKyHienMauComponent {
                     ngaySinh: response.data.ngaySinh.substring(0, 10),
                     gioiTinh: response.data.gioiTinh,
                     email: response.data.email,
-                    soLanHien: response.data.soLanHien
                   });
                 }, 100)
               }, 100);
@@ -320,7 +282,6 @@ export class DangKyHienMauComponent {
             this.registerForm.controls['tinh_thanh'].markAsUntouched();
             this.registerForm.controls['quan_huyen'].markAsUntouched();
             this.registerForm.controls['phuong_xa'].markAsUntouched();
-            this.registerForm.controls['soLanHien'].markAsUntouched();
 
             this.selectedProvince = '';
             this.selectedDistrict = '';
@@ -331,7 +292,6 @@ export class DangKyHienMauComponent {
               ngaySinh: '',
               gioiTinh: '',
               email: '',
-              soLanHien: ''
             });
             this.isReadOnlyAutoFill = false;
           }
@@ -370,7 +330,6 @@ export class DangKyHienMauComponent {
         maTinhThanh: this.selectedProvince,
         maQuanHuyen: this.selectedDistrict,
         maPhuongXa: this.selectedWard,
-        soLanHien: this.registerForm.value.soLanHien
       }
       this.tinhNguyenVienService.createTinhNguyenVien(tinh_nguyen_vien_data).subscribe({
         next: (response) => {

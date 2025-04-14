@@ -271,8 +271,9 @@ export class DotHienMauComponent implements OnInit {
         next: (response) => {
           if (response.code === 200) {
             this.searchDotHienMau();
-            alert('Tạo đợt hiến máu thành công.');
             this.isEditModalOpen = false;
+            this.dotHMForm.reset();
+            alert('Tạo đợt hiến máu thành công.');
           }
           if (response.code === 400 || response.code === 404) {
             alert(response.message);

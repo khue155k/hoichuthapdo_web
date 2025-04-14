@@ -420,8 +420,9 @@ export class TinhNguyenVienComponent implements OnInit {
         next: (response) => {
           if (response.code === 200) {
             this.searchTinhNguyenVien();
-            alert('Tạo tình nguyện viên thành công.');
             this.isEditModalOpen = false;
+            this.tinhNguyenVienForm.reset();
+            alert('Tạo tình nguyện viên thành công.');
           }
           if (response.code === 400 || response.code === 404) {
             alert(response.message);

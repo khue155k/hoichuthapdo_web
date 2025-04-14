@@ -18,10 +18,6 @@ export const routes: Routes = [
     loadComponent: () => import('./dang-ky-hien-mau/dang-ky-hien-mau.component').then(m => m.DangKyHienMauComponent)
   },
   {
-    path: 'dang-ky-hien-mau/:maDot',
-    loadComponent: () => import('./dang-ky-hien-mau/dang-ky-hien-mau.component').then(m => m.DangKyHienMauComponent)
-  },
-  {
     path: '',
     component: DefaultLayoutComponent,
     data: {
@@ -52,6 +48,15 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         loadChildren: () => import('./qua-tang/routes').then((m) => m.routes),
         data:{
+          roles: ['']
+        }
+      },
+      {
+        path: 'thong-bao',
+        canActivate: [AuthGuard],
+        loadChildren: () => import('./quan-ly-thong-bao/routes').then((m) => m.routes),
+        data:{
+          title: 'Thông báo',
           roles: ['']
         }
       },

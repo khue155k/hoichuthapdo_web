@@ -214,8 +214,9 @@ export class QuaTangComponent implements OnInit {
         next: (response) => {
           if (response.code === 200) {
             this.searchQuaTang();
-            alert('Tạo quà tặng thành công.');
             this.isEditModalOpen = false;
+            this.quaTangForm.reset();
+            alert('Tạo quà tặng thành công.');
           }
           if (response.code === 400 || response.code === 404) {
             alert(response.message);

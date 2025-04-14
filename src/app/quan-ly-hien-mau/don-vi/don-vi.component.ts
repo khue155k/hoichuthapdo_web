@@ -220,8 +220,9 @@ export class DonViComponent implements OnInit {
         next: (response) => {
           if (response.code === 200) {
             this.searchDonVi();
-            alert('Tạo đơn vị thành công.');
             this.isEditModalOpen = false;
+            this.donViForm.reset();
+            alert('Tạo đơn vị thành công.');
           }
           if (response.code === 400 || response.code === 404) {
             alert(response.message);

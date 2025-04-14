@@ -51,7 +51,6 @@ export class TTHienMauComponent implements OnInit {
       quan_huyen: ['', Validators.required],
       phuong_xa: ['', Validators.required],
       email: ['', Validators.email],
-      soLanHien: ['', Validators.required],
       noiO: ['', Validators.required],
       ngheNghiep: ['', Validators.required],
       don_vi: ['', Validators.required],
@@ -364,7 +363,6 @@ export class TTHienMauComponent implements OnInit {
                     ngaySinh: response.data.ngaySinh.substring(0, 10),
                     gioiTinh: response.data.gioiTinh,
                     email: response.data.email,
-                    soLanHien: response.data.soLanHien
                   });
                 }, 100)
               }, 100);
@@ -380,7 +378,6 @@ export class TTHienMauComponent implements OnInit {
               ngaySinh: '',
               gioiTinh: '',
               email: '',
-              soLanHien: ''
             });
             this.isReadOnlyAutoFill = false;
           }
@@ -466,7 +463,6 @@ export class TTHienMauComponent implements OnInit {
         maTinhThanh: this.selectedProvince,
         maQuanHuyen: this.selectedDistrict,
         maPhuongXa: this.selectedWard,
-        soLanHien: this.editForm.value.soLanHien
       }
       this.tinhNguyenVienService.createTinhNguyenVien(tinh_nguyen_vien_data).subscribe({
         next: (response) => {
@@ -520,7 +516,6 @@ export class TTHienMauComponent implements OnInit {
         ngaySinh: this.tnv_Selected.ngaySinh.substring(0, 10),
         gioiTinh: this.tnv_Selected.gioiTinh,
         email: this.tnv_Selected.email,
-        soLanHien: this.tnv_Selected.soLanHien,
         noiO: this.tnv_Selected.noiO,
         ngheNghiep: this.tnv_Selected.ngheNghiep,
         thoi_gian: this.tnv_Selected.thoiGianDangKy,
@@ -639,7 +634,6 @@ export class TTHienMauComponent implements OnInit {
           maQuanHuyen: this.selectedDistrict,
           maPhuongXa: this.selectedWard,
           email: this.editForm.value.email,
-          soLanHien: this.editForm.value.soLanHien,
           noiO: this.editForm.value.noiO,
           ngheNghiep: this.editForm.value.ngheNghiep,
           maDV: Number(this.selectedCoQuanID),

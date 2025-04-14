@@ -78,6 +78,7 @@ export class LichSuTangQuaComponent implements OnInit {
         next: (response: TemplateResult<PaginatedResult<any>>) => {
           this.totalCount = response.data.totalCount;
           this.lichSuList = response.data.items;
+          console.log(this.lichSuList);
         },
         error: (error) => {
           console.error('Error fetching data:', error);

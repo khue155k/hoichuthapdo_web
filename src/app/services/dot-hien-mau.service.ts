@@ -42,7 +42,7 @@ export class DotHienMauService {
   }
 
   getTheTichMauHien(): Observable<TemplateResult<any[]>> {
-    return this.http.get<TemplateResult<any[]>>(`${this.baseUrl}/the_tich_mau_hien`);
+    return this.http.get<TemplateResult<any[]>>(`${this.baseUrl}/TheTichMH`);
   }
   getAllDotHienMau(): Observable<TemplateResult<any[]>> {
     return this.http.get<TemplateResult<any[]>>(`${this.baseUrl}`);
