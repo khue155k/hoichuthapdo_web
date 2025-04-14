@@ -63,6 +63,12 @@ export const navItems: INavDataExtended[] = [
     ]
   },
   {
+    name: 'Thông báo',
+    url: '/thong-bao',
+    iconComponent: { name: 'cil-bell' },
+    roles: ['all'],
+  },
+  {
     name: 'Tài khoản',
     url: '/tai-khoan',
     iconComponent: { name: 'cil-user' },
