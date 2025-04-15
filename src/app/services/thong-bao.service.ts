@@ -25,12 +25,12 @@ export class ThongBaoService {
     return this.http.get<TemplateResult<PaginatedResult<ThongBao>>>(this.baseUrl + '/search', { params });
   }
 
-  createThongBao(quaTang: any): Observable<TemplateResult<any>> {
-    return this.http.post<TemplateResult<any>>(`${this.baseUrl}/createThongBao`, quaTang);
+  createThongBao(thongBao: any): Observable<TemplateResult<any>> {
+    return this.http.post<TemplateResult<any>>(`${this.baseUrl}/createThongBao`, thongBao);
   }
 
-  updateThongBao(id : number, quaTang: any){
-    return this.http.put<TemplateResult<any>>(`${this.baseUrl}/updateThongBao/${id}`, quaTang);
+  updateThongBao(id : number, thongBao: any){
+    return this.http.put<TemplateResult<any>>(`${this.baseUrl}/updateThongBao/${id}`, thongBao);
   }
 
   deleteThongBao(id : number){

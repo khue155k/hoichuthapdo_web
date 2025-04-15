@@ -1,0 +1,100 @@
+<div class="container">
+    <form class="mt-5" [formGroup]="taoAdminForm" novalidate>
+        <h3 class="text-center mb-4">Nhập thông tin quản trị viên</h3>
+        <div class="form-group">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="tenQTV">Tên quản trị viên</label><span class="text-danger">
+                        *</span>
+                    <input formControlName="tenQTV" placeholder="Tên quản trị viên" class="form-control" id="tenQTV">
+                    <div *ngIf="taoAdminForm.controls['tenQTV'].invalid && taoAdminForm.controls['tenQTV'].touched"
+                        class="invalid-feedback">
+                        Tên quản trị viên không được bỏ trống.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="userName">Tên tài khoản</label><span class="text-danger">
+                        *</span>
+                    <input formControlName="userName" placeholder="Tên tài khoản" class="form-control" id="userName">
+                    <div *ngIf="taoAdminForm.controls['userName'].invalid && taoAdminForm.controls['userName'].touched"
+                        class="invalid-feedback">
+                        Tên tài khoản không được bỏ trống.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="password">Mật khẩu</label><span class="text-danger">
+                        *</span>
+                    <input formControlName="password" placeholder="Mật khẩu" class="form-control" id="password"
+                        type="password">
+
+                    <ng-container *ngIf="taoAdminForm.controls['password'] as passwordCtrl">
+                        <div *ngIf="passwordCtrl.errors?.['weakPassword'] && passwordCtrl.touched"
+                            class="invalid-feedback">
+                            {{ passwordCtrl.errors?.['weakPassword'] }}
+                        </div>
+                    </ng-container>
+                </div>
+                <div class="col-md-6">
+                    <label for="passwordConfirm">Xác nhận mật khẩu</label><span class="text-danger">
+                        *</span>
+                    <input formControlName="passwordConfirm" placeholder="Xác nhận mật khẩu" class="form-control"
+                        id="passwordConfirm" type="password">
+                    <div *ngIf="taoAdminForm.errors?.['passwordMismatch'] && taoAdminForm.controls['passwordConfirm'].touched"
+                        class="invalid-feedback">
+                        Mật khẩu và xác nhận mật khẩu không khớp.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="boPhan">Bộ phận</label><span class="text-danger">
+                        *</span>
+                    <input formControlName="boPhan" placeholder="Bộ phận" class="form-control" id="boPhan">
+                    <div *ngIf="taoAdminForm.controls['boPhan'].invalid && taoAdminForm.controls['boPhan'].touched"
+                        class="invalid-feedback">
+                        Bộ phận không được bỏ trống.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="chucVu">Chức vụ</label><span class="text-danger"> *</span>
+                    <input formControlName="chucVu" placeholder="Chức vụ" class="form-control" id="chucVu">
+                    <div *ngIf="taoAdminForm.controls['chucVu'].invalid && taoAdminForm.controls['chucVu'].touched"
+                        class="invalid-feedback">
+                        Chức vụ không được bỏ trống.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="email">Email</label><span class="text-danger">
+                        *</span>
+                    <input formControlName="email" placeholder="Email" class="form-control" id="email">
+                    <div *ngIf="taoAdminForm.controls['email'].invalid && taoAdminForm.controls['email'].touched"
+                        class="invalid-feedback">
+                        Email không được bỏ trống.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="soDienThoai">Số điện thoại</label><span class="text-danger"> *</span>
+                    <input formControlName="soDienThoai" placeholder="Số điện thoại" class="form-control"
+                        id="soDienThoai">
+                    <div *ngIf="taoAdminForm.controls['soDienThoai'].invalid && taoAdminForm.controls['soDienThoai'].touched"
+                        class="invalid-feedback">
+                        Số điện thoại không được bỏ trống.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mx-auto">
+            <button class="btn btn-primary w-100  mt-3" (click)="AddAdmin()">Tạo tài khoản</button>
+        </div>
+    </form>
+</div>
