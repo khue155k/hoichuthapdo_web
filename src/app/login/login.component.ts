@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  ma_nv: string = '';
+  userName: string = '';
   password: string = '';
   rememberMe: boolean = false;
   loginFalse: boolean = false;
@@ -28,11 +28,11 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    const storedEmail = localStorage.getItem('email');
+    const storedUserName = localStorage.getItem('userName');
     const storedPassword = localStorage.getItem('password');
 
-    if (storedEmail && storedPassword) {
-      this.ma_nv = storedEmail;
+    if (storedUserName && storedPassword) {
+      this.userName = storedUserName;
       this.password = storedPassword;
       this.rememberMe = true;
     }
@@ -86,16 +86,16 @@ export class LoginComponent implements OnInit {
       this.refreshCaptcha();
       return;
     }
-    if (!this.ma_nv || !this.password) {
+    if (!this.userName || !this.password) {
       this.loginFalse = true;
       this.connectFalse = false;
       return;
     }
-    this.authService.login(this.ma_nv, this.password).subscribe(
+    this.authService.login(this.userName, this.password).subscribe(
       (isLoggedIn: boolean) => {
         if (isLoggedIn) {
           if (this.rememberMe) {
-            localStorage.setItem('email', this.ma_nv);
+            localStorage.setItem('userName', this.userName);
             localStorage.setItem('password', this.password);
           } else {
             localStorage.removeItem('password');

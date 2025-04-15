@@ -314,7 +314,7 @@ export class TTHienMauComponent implements OnInit {
             }));
 
             if (this.dotHienMauList.length > 0) {
-              const lastDotHienMau = this.dotHienMauList[this.dotHienMauList.length - 1];
+              const lastDotHienMau = this.dotHienMauList[0];
               this.maDot = lastDotHienMau.value;
               this.searchForm.get('dot_hm_id')?.setValue(this.maDot);
             }

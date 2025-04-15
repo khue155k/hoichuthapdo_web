@@ -30,6 +30,14 @@ export const routes: Routes = [
         }
       },
       {
+        path: 'create-admin',
+        loadComponent: () => import('./create-admin/create-admin.component').then(m => m.TaoAdminComponent),
+        data: {
+          title: 'Tạo quản trị viên',
+          roles: ['all'],
+        }
+      },
+      {
         path: 'dat-lai-mat-khau',
         loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
         data: {

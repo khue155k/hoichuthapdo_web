@@ -33,7 +33,6 @@ export class ThongBaoComponent implements OnInit {
     this.thongBaoForm = this.fb.group({
       tieuDe: ['', Validators.required],
       noiDung: ['', Validators.required],
-      thoiGianGui: ['', Validators.required],
     });
   }
 
@@ -140,7 +139,6 @@ export class ThongBaoComponent implements OnInit {
     this.thongBaoForm.patchValue({
       tieuDe: this.thongBaoSelected.tieuDe,
       noiDung: this.thongBaoSelected.noiDung,
-      thoiGianGui: this.thongBaoSelected.thoiGianGui,
     });
   }
 
@@ -182,7 +180,6 @@ export class ThongBaoComponent implements OnInit {
         const updatedData = {
           tieuDe: this.thongBaoForm.value.tieuDe,
           noiDung: this.thongBaoForm.value.noiDung,
-          thoiGianGui: this.thongBaoForm.value.thoiGianGui,
         };
         this.thongBaoService.updateThongBao(this.thongBaoSelected.maTB, updatedData).subscribe({
           next: (response) => {
@@ -212,12 +209,14 @@ export class ThongBaoComponent implements OnInit {
     if (this.thongBaoForm.valid) {
       const thongBaodata = {
         tieuDe: this.thongBaoForm.value.tieuDe,
-        noiDung: this.thongBaoForm.value.noiDung,      }
-
+        noiDung: this.thongBaoForm.value.noiDung,     
+        thoiGianGui: Date.now, 
+      }
       this.thongBaoService.createThongBao(thongBaodata).subscribe({
         next: (response) => {
           if (response.code === 200) {
             this.searchThongBao();
+            this.isAdd = false;
             this.isEditModalOpen = false;
             this.thongBaoForm.reset();
             alert('Tạo thông báo thành công.');

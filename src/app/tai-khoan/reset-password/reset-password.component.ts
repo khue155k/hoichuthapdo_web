@@ -66,7 +66,8 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   resetPassword(user: any) {
-    const confirmReset = window.confirm('Xác nhận đặt lại mật khẩu cho tài khoản ' + user.username);
+    console.log(user);
+    const confirmReset = window.confirm('Xác nhận đặt lại mật khẩu cho tài khoản ' + user.userName);
     if (confirmReset) {
       this.userService.resetPassword(user.id).subscribe({
         next: (response) => {
@@ -75,7 +76,7 @@ export class ResetPasswordComponent implements OnInit {
             if (user1) {
               user1.ketQua = "Đã đặt lại";
             }
-            alert(`Mật khẩu mới của tài khoản: ${user.username} là ${response.data}`);
+            alert(`Mật khẩu mới của tài khoản: ${user.userName} là ${response.data}`);
           }
           if (response.code === 404 || response.code === 400) {
             alert(response.message)

@@ -163,7 +163,7 @@ export class DashboardChartsData {
       },
       {
         data: this.mainChart['Data3'],
-        label: 'Số người đăng kí mà không hiến',
+        label: 'Số người không hiến',
         ...colors[2]
       }
     ];

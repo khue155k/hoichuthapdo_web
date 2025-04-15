@@ -23,6 +23,7 @@ export class UserInfoComponent implements OnInit {
     private authService: AuthService
   ) {
     this.userInfo = this.authService.getDecodedToken();
+    this.idTaiKhoan = this.userInfo.nameid;
 
     this.QTVForm = this.fb.group({
       maQTV: [''],
@@ -35,6 +36,7 @@ export class UserInfoComponent implements OnInit {
     });
   }
 
+  idTaiKhoan:string
   TTQTV: any;
   userInfo: any;
 
@@ -48,7 +50,7 @@ export class UserInfoComponent implements OnInit {
   }
 
   loadTTQTV() {
-    this.taiKhoanService.getTTQTV(1).subscribe({
+    this.taiKhoanService.getTTQTV(this.idTaiKhoan).subscribe({
       next: (response) => {
         if (response.code === 200) {
           this.TTQTV = response.data;

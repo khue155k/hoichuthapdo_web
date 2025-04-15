@@ -11,7 +11,7 @@ import { TemplateResult } from './template-result.interface';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl + '/Login';
+  private baseUrl = environment.apiUrl + '/Account';
 
   constructor(private http: HttpClient, private router: Router) { 
   }
@@ -20,9 +20,12 @@ export class AuthService {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const body = { username, password };
 
-    return this.http.post<{ message: string; data: any }>(this.apiUrl, body, { headers }).pipe(
+    return this.http.post<{ message: string; data: any }>(`${this.baseUrl}/Login`, body, { headers }).pipe(
       map((response) => {
         if (response.message === 'Login complete!') {
+          var userInfo = jwtDecode<any>(response.data.token);
+          if ( userInfo.role != 'admin')
+            return false;
           localStorage.setItem('token', response.data.token);
           return true;
         } else {
@@ -66,7 +69,7 @@ export class AuthService {
   changePassword(username: string, oldPassword: string, newPassword: string): Observable<boolean> {
     const body = { username, oldPassword, newPassword };
 
-    return this.http.post<TemplateResult<any>>(`${this.apiUrl}/ChangePassword`, body).pipe(
+    return this.http.post<TemplateResult<any>>(`${this.baseUrl}/ChangePassword`, body).pipe(
       map((response) => {
         return response.message === 'Đổi mật khẩu thành công!';
       }),
@@ -81,7 +84,7 @@ export class AuthService {
   resetPassword(ma_nv: string, newPassword: string): Observable<boolean> {
     const body = { ma_nv, newPassword };
 
-    return this.http.post<TemplateResult<any>>(`${this.apiUrl}/ResetPassword`, body).pipe(
+    return this.http.post<TemplateResult<any>>(`${this.baseUrl}/ResetPassword`, body).pipe(
       map((response) => {
         return response.message === 'Đặt lại mật khẩu thành công!';
       }),
@@ -90,6 +93,10 @@ export class AuthService {
         return of(false);
       })
     );
+  }
+
+  createAdmin(admin: any): Observable<TemplateResult<any>> {
+    return this.http.post<TemplateResult<any>>(`${this.baseUrl}/CreateAdmin`, admin);
   }
 
   getDecodedToken(): any {

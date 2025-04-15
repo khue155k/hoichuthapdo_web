@@ -15,17 +15,19 @@ export class TaiKhoanService {
         return this.http.get<TemplateResult<PaginatedResult<any>>>(`${this.baseUrl}/search?string_tim_kiem=${string_tim_kiem}&pageSize=${pageSize}&currentPage=${currentPage}`);
     }
 
-    resetPassword(id: number): Observable<TemplateResult<any>> {
+    resetPassword(id: string): Observable<TemplateResult<any>> {
         return this.http.put<TemplateResult<any>>(`${this.baseUrl}/resetPassword/${id}`, {});
     }
 
-    getTTQTV(id: number): Observable<TemplateResult<any>> {
+    getTTQTV(id: string): Observable<TemplateResult<any>> {
         return this.http.get<TemplateResult<any>>(`${this.baseUrl}/TTQTV?id=${id}`);
     }
 
-    updateQTV(id: number, quanTriVien: any) {
+    updateQTV(id: string, quanTriVien: any) {
         return this.http.put<TemplateResult<any>>(`${this.baseUrl}/updateQTV/${id}`, quanTriVien);
     }
 
-
+    createAdmin(admin: any): Observable<TemplateResult<any>> {
+        return this.http.post<TemplateResult<any>>(`${this.baseUrl}/CreateAdmin`, admin);
+      }
 }

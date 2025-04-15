@@ -47,7 +47,7 @@
         <c-progress class="mt-2" thin color="info" value="100" aria-label="User visits" />
       </c-col>
       <c-col>
-        <div class="text-body-secondary">Số người đi hiến</div>
+        <div class="text-body-secondary">Số người đã hiến</div>
         <div class="fw-semibold text-truncate">{{mainChart['TongSoNguoiHienMau']}} Người
           ({{mainChart['TongSoNguoiHienMau']/mainChart['TongSoNguoiDangKy']*100 | number:'1.2-2'}}%)</div>
         <c-progress class="mt-2" thin color="success"
@@ -55,7 +55,7 @@
           aria-label="Unique users" />
       </c-col>
       <c-col>
-        <div class="text-body-secondary">Số người không đi</div>
+        <div class="text-body-secondary">Số người không hiến</div>
         <div class="fw-semibold text-truncate">{{mainChart['TongSoNguoiDangKy']-mainChart['TongSoNguoiHienMau']}} Người
           ({{(mainChart['TongSoNguoiDangKy']-mainChart['TongSoNguoiHienMau'])/mainChart['TongSoNguoiDangKy']*100 |
           number:'1.2-2'}}%)</div>

@@ -86,6 +86,11 @@ export const navItems: INavDataExtended[] = [
         // iconComponent: { name: 'cil-lock-locked' },
       },
       {
+        name: 'Tạo quản trị viên',
+        url: '/tai-khoan/create-admin',
+        icon: 'nav-icon-bullet',
+      },
+      {
         name: 'Đặt lại mật khẩu',
         url: '/tai-khoan/dat-lai-mat-khau',
         icon: 'nav-icon-bullet',
