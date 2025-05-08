@@ -33,6 +33,7 @@ export class ThongBaoComponent implements OnInit {
     this.thongBaoForm = this.fb.group({
       tieuDe: ['', Validators.required],
       noiDung: ['', Validators.required],
+      linkAnh: [''],
     });
   }
 
@@ -48,7 +49,7 @@ export class ThongBaoComponent implements OnInit {
 
   totalCount: number = 0;
   currentPage: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 5;
 
   isEditModalOpen: boolean = false;
   isEdit: boolean = false;
@@ -61,7 +62,7 @@ export class ThongBaoComponent implements OnInit {
         next: (response) => {
           if (response.code === 200) {
             this.totalCount = response.data.totalCount;
-            this.thongBaoList = response.data.items.filter((item: any) => item.tieuDe !== "Đợt hiến máu mới");
+            this.thongBaoList = response.data.items;
           }
           if (response.code === 404 || response.code === 400) {
             console.error(response.message);
@@ -80,7 +81,7 @@ export class ThongBaoComponent implements OnInit {
       .subscribe({
         next: (response: TemplateResult<PaginatedResult<any>>) => {
           this.totalCount = response.data.totalCount;
-          this.thongBaoList = response.data.items.filter((item: any) => item.tieuDe !== "Đợt hiến máu mới");
+          this.thongBaoList = response.data.items;
         },
         error: (error) => {
           console.error('Error fetching data:', error);
@@ -110,6 +111,7 @@ export class ThongBaoComponent implements OnInit {
             'STT': index + 1,
             'Tiêu đề': thongBao.tieuDe,
             'Nội dung': thongBao.noiDung,
+            'Link ảnh': thongBao.linkAnh,
             'Thời gian gửi': thongBao.thoiGianGui,
           }));
 
@@ -139,6 +141,7 @@ export class ThongBaoComponent implements OnInit {
     this.thongBaoForm.patchValue({
       tieuDe: this.thongBaoSelected.tieuDe,
       noiDung: this.thongBaoSelected.noiDung,
+      linkAnh: this.thongBaoSelected.linkAnh,
     });
   }
 
@@ -180,6 +183,7 @@ export class ThongBaoComponent implements OnInit {
         const updatedData = {
           tieuDe: this.thongBaoForm.value.tieuDe,
           noiDung: this.thongBaoForm.value.noiDung,
+          linkAnh: this.thongBaoForm.value.linkAnh,
         };
         this.thongBaoService.updateThongBao(this.thongBaoSelected.maTB, updatedData).subscribe({
           next: (response) => {
@@ -209,7 +213,8 @@ export class ThongBaoComponent implements OnInit {
     if (this.thongBaoForm.valid) {
       const thongBaodata = {
         tieuDe: this.thongBaoForm.value.tieuDe,
-        noiDung: this.thongBaoForm.value.noiDung,     
+        noiDung: this.thongBaoForm.value.noiDung,   
+        linkAnh: this.thongBaoForm.value.linkAnh,       
         thoiGianGui: Date.now, 
       }
       this.thongBaoService.createThongBao(thongBaodata).subscribe({
@@ -249,6 +254,21 @@ export class ThongBaoComponent implements OnInit {
   prePage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.searchThongBao();
+    }
+  }
+
+  goFirstPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage = 1;
+      this.searchThongBao();
+    }
+  }
+
+  goLastPage(): void {
+    const totalPages = Math.ceil(this.totalCount / this.pageSize);
+    if (this.currentPage * this.pageSize < this.totalCount) {
+      this.currentPage = totalPages;
       this.searchThongBao();
     }
   }

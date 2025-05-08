@@ -15,96 +15,96 @@
             </div>
         </div>
     </form>
-    <div class="row">
-        <table cTable [striped]="true">
-            <thead>
-                <tr>
-                    <th scope="col">TT</th>
-                    <th scope="col">Tiêu đề</th>
-                    <th scope="col">Nội dung</th>
-                    <th scope="col">Thời gian gửi</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="thongBaoList.length == 0">
-                    <tr class="table-danger">
-                        <th colspan="100%">
-                            Không có thông báo nào
-                        </th>
-                    </tr>
-                </ng-container>
-                <ng-container *ngFor="let thongBao of thongBaoList; let i = index">
-                    <tr>
-                        <td>{{i+1+(currentPage-1)*pageSize}}</td>
-                        <td>{{thongBao.tieuDe}}</td>
-                        <td>{{thongBao.noiDung}}</td>
-                        <td>{{thongBao.thoiGianGui | date:'HH:mm dd/MM/yyyy' }}</td>
-                        <td>
-                            <div class="d-flex justify-content-center flex-wrap">
-                                <button class="btn btn-warning mx-1" (click)="OpenEditModal(thongBao)">Sửa</button>
-                                <button class="btn btn-danger mx-1" (click)="OpenDeleteModal(thongBao)">Xóa</button>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-container>
-            </tbody>
-        </table>
-        <div *ngIf="isEditModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg custom-dialog" role="document">
-                <div class="modal-content custom-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" *ngIf="isAdd"> {{addTitle}}</h5>
-                        <h5 class="modal-title" *ngIf="isEdit"> {{editTitle}} </h5>
+
+    <ng-container *ngIf="thongBaoList.length == 0">
+        <div>
+            <h5>Không có thông báo nào</h5>
+        </div>
+    </ng-container>
+
+    <div class="row mt-5">
+        <ng-container *ngFor="let thongBao of thongBaoList; let i = index">
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ thongBao.tieuDe }}</h5>
+                        <p class="card-text">Nội dung: {{ thongBao.noiDung }}</p>
+                        <p class="card-text" *ngIf="thongBao.linkAnh">
+                            <img [src]="thongBao.linkAnh" style="width: 100%; aspect-ratio: 6 / 1; object-fit: cover;">
+                        </p>
+                        <p class="card-text">Thời gian gửi: {{thongBao.thoiGianGui | date:'HH:mm dd/MM/yyyy' }}</p>
+                        <div class="d-flex justify-content-center flex-wrap">
+                            <button class="btn btn-warning mx-1" (click)="OpenEditModal(thongBao)">Sửa</button>
+                            <button class="btn btn-danger mx-1" (click)="OpenDeleteModal(thongBao)">Xóa</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <form [formGroup]="thongBaoForm" novalidate>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label for="tieuDe">Tiêu đề</label><span class="text-danger">
-                                            *</span>
-                                        <input formControlName="tieuDe" placeholder="Tiêu đề" class="form-control"
-                                            id="tieuDe">
-                                        <div *ngIf="thongBaoForm.controls['tieuDe'].invalid && thongBaoForm.controls['tieuDe'].touched"
-                                            class="invalid-feedback">
-                                            Tiêu đề không được bỏ trống.
-                                        </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <div *ngIf="isEditModalOpen" class="modal fade show d-block custom-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg custom-dialog" role="document">
+            <div class="modal-content custom-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" *ngIf="isAdd"> {{addTitle}}</h5>
+                    <h5 class="modal-title" *ngIf="isEdit"> {{editTitle}} </h5>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="thongBaoForm" novalidate>
+                        <div class="form-group mb-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="tieuDe">Tiêu đề</label><span class="text-danger">
+                                        *</span>
+                                    <input formControlName="tieuDe" placeholder="Tiêu đề" class="form-control" id="tieuDe">
+                                    <div *ngIf="thongBaoForm.controls['tieuDe'].invalid && thongBaoForm.controls['tieuDe'].touched"
+                                        class="invalid-feedback">
+                                        Tiêu đề không được bỏ trống.
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label for="noiDung">Nội dung</label><span class="text-danger"> *</span>
-                                        <textarea formControlName="noiDung" 
-                                        placeholder="Nội dung" 
-                                        class="form-control" 
-                                        id="noiDung" 
-                                        rows="5"
-                                        style="resize: vertical;"></textarea>
-                                        <div *ngIf="thongBaoForm.controls['noiDung'].invalid && thongBaoForm.controls['noiDung'].touched"
-                                            class="invalid-feedback">
-                                            Nội dung không được bỏ trống.
-                                        </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="noiDung">Nội dung</label><span class="text-danger"> *</span>
+                                    <textarea formControlName="noiDung" placeholder="Nội dung" class="form-control"
+                                        id="noiDung" rows="5" style="resize: vertical;"></textarea>
+                                    <div *ngIf="thongBaoForm.controls['noiDung'].invalid && thongBaoForm.controls['noiDung'].touched"
+                                        class="invalid-feedback">
+                                        Nội dung không được bỏ trống.
                                     </div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Hủy</button>
-                        <button type="button" class="btn btn-primary" (click)="saveChanges()">Lưu</button>
-                    </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="linkAnh">Link ảnh (Nếu có)</label>
+                                    <input formControlName="linkAnh" placeholder="Link ảnh" class="form-control"
+                                        id="linkAnh">
+                                        <img [src]="thongBaoForm.get('linkAnh')?.value"
+                                        class="mx-auto d-block mt-3"
+                                        style="max-height: 300px; width: auto; object-fit: contain;">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Hủy</button>
+                    <button type="button" class="btn btn-primary" (click)="saveChanges()">Lưu</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row">
+    <div class="row" *ngIf="thongBaoList.length != 0">
         <div class="col-md-12 text-center">
+            <button class="pagination-button" (click)="goFirstPage()" [disabled]="currentPage === 1"
+                *ngIf="currentPage > 3">«</button>
+
             <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
-                *ngIf="currentPage > 1">«</button>
+                *ngIf="currentPage > 1">‹</button>
 
             <ng-container *ngFor="let page of getLimitedPageNumbers()">
                 <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
@@ -113,7 +113,10 @@
             </ng-container>
 
             <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
-                *ngIf="currentPage * pageSize < totalCount">»</button>
+                *ngIf="currentPage * pageSize < totalCount">›</button>
+
+            <button class="pagination-button" (click)="goLastPage()" [disabled]="currentPage * pageSize >= totalCount"
+                *ngIf="currentPage * pageSize < totalCount - 2 * pageSize">»</button>
 
             <div class="float-end">
                 <span style="margin: 0; margin-right: 1rem;">Số dòng mỗi trang: </span>
@@ -126,3 +129,4 @@
         </div>
     </div>
 </div>
+

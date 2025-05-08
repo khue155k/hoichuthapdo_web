@@ -24,14 +24,6 @@
     background-color: rgba(13, 110, 253, 0.1);
 }
 
-.table td {
-    vertical-align: middle;
-}
-
-.table th {
-    vertical-align: middle;
-}
-
 .custom-modal {
     background: rgba(0, 0, 0, 0.5);
     display: flex;
