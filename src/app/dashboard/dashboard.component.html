@@ -16,9 +16,9 @@
       <c-col class="d-none d-md-block" sm="5">
 
         <form [formGroup]="trafficRadioGroup">
-          <button cButton class="float-end" color="primary" aria-label="Download">
+          <!-- <button cButton class="float-end" color="primary" aria-label="Download">
             <svg cIcon name="cilCloudDownload"></svg>
-          </button>
+          </button> -->
           <c-button-group class="float-end me-3" role="group">
             <input class="btn-check" formControlName="trafficRadio" type="radio" value="Dot" id="radioDot" />
             <label (click)="setTrafficPeriod('Dot')" cButton cFormCheckLabel color="secondary" variant="outline"

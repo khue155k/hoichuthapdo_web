@@ -32,7 +32,7 @@ export class LichSuTangQuaComponent implements OnInit {
     });
     this.lichSuForm = this.fb.group({
       cccd: ['', Validators.required],
-      maQua: ['', Validators.required],
+      tenQua: ['', Validators.required],
       noiDung: ['', Validators.required],
     });
   }
@@ -78,7 +78,6 @@ export class LichSuTangQuaComponent implements OnInit {
         next: (response: TemplateResult<PaginatedResult<any>>) => {
           this.totalCount = response.data.totalCount;
           this.lichSuList = response.data.items;
-          console.log(this.lichSuList);
         },
         error: (error) => {
           console.error('Error fetching data:', error);
@@ -107,8 +106,9 @@ export class LichSuTangQuaComponent implements OnInit {
           const excelData = lichSu.map((lichSu, index) => ({
             'STT': index + 1,
             'CCCD': lichSu.cccd,
-            'Mã quà': lichSu.maQua,
+            'Tên quà': lichSu.tenQua,
             'Nội dung': lichSu.noiDung,
+            'Thời gian gửi': lichSu.thoiGianGui,
           }));
 
           const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
@@ -131,7 +131,7 @@ export class LichSuTangQuaComponent implements OnInit {
     this.isEditModalOpen = true;
     this.lichSuForm.patchValue({
       cccd: this.lichSuSelected.cccd,
-      maQua: this.lichSuSelected.maQua,
+      tenQua: this.lichSuSelected.tenQua,
       noiDung: this.lichSuSelected.noiDung,
     });
   }
@@ -140,7 +140,7 @@ export class LichSuTangQuaComponent implements OnInit {
     this.lichSuSelected = lichSu;
     const confirmDelete = window.confirm('Xác nhận xóa lịch sử tặng quà đã chọn?');
     if (confirmDelete) {
-      this.lichSuService.deleteLSTQ(this.lichSuSelected.cccd, this.lichSuSelected.maQua).subscribe({
+      this.lichSuService.deleteLSTQ(this.lichSuSelected.cccd, this.lichSuSelected.tenQua).subscribe({
         next: (response) => {
           if (response.code == 200) {
             this.searchLSTQ();
@@ -167,10 +167,10 @@ export class LichSuTangQuaComponent implements OnInit {
     if (this.lichSuForm.valid) {
       const updatedData = {
         cccd: this.lichSuForm.value.cccd,
-        maQua: this.lichSuForm.value.maQua,
+        tenQua: this.lichSuForm.value.tenQua,
         noiDung: this.lichSuForm.value.noiDung,
       };
-      this.lichSuService.updateLSTQ(this.lichSuSelected.cccd, this.lichSuSelected.maQua, updatedData).subscribe({
+      this.lichSuService.updateLSTQ(this.lichSuSelected.cccd, this.lichSuSelected.tenQua, updatedData).subscribe({
         next: (response) => {
           if (response.code == 200) {
             this.isEditModalOpen = false;
@@ -208,6 +208,21 @@ export class LichSuTangQuaComponent implements OnInit {
   prePage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.searchLSTQ();
+    }
+  }
+
+  goFirstPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage = 1;
+      this.searchLSTQ();
+    }
+  }
+
+  goLastPage(): void {
+    const totalPages = Math.ceil(this.totalCount / this.pageSize);
+    if (this.currentPage * this.pageSize < this.totalCount) {
+      this.currentPage = totalPages;
       this.searchLSTQ();
     }
   }

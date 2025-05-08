@@ -51,7 +51,7 @@ export class DashboardComponent implements OnInit {
   });
 
   public mainChart: IChartProps = { type: 'line' };
-  namSelected = new Date(Date.now()).getFullYear();
+  namSelected: any;
   namList: any[] = [];
 
   ngOnInit(): void {
@@ -68,6 +68,7 @@ export class DashboardComponent implements OnInit {
             value: dotHM.nam,
             label: dotHM.nam,
           }));
+          this.namSelected = new Date(Date.now()).getFullYear();
         }
       },
       error: (err) => {

@@ -80,8 +80,8 @@ export class TTHienMauComponent implements OnInit {
   addTitle: string = 'Đăng ký hiến máu'
 
   dotHienMauList: any[] = [];
-  tenDotHM: string = '';
   dotHienMauStatus: string = '';
+  selectedDotHM: any;
   ds_hien_mau: any[] = [];
   totalCount: number = 0;
   currentPage: number = 1;
@@ -148,18 +148,15 @@ export class TTHienMauComponent implements OnInit {
         this.onWardChange()
     }
   }
-  thoiGianBatDau_str: string = ''
-  thoiGianKetThuc_str: string = ''
-  thoiGianBatDau: any | null = null;
-  thoiGianKetThuc: any | null = null;
+
   validateDate(): void {
     const thoiGianControl = this.editForm.controls['thoi_gian'];
     const thoiGianValue = thoiGianControl.value;
 
     if (thoiGianValue) {
       const ngayNhap = new Date(thoiGianValue);
-      const ngayBd = new Date(this.thoiGianBatDau_str);
-      const ngayKt = new Date(this.thoiGianKetThuc_str);
+      const ngayBd = new Date(this.selectedDotHM.thoiGianBatDau);
+      const ngayKt = new Date(this.selectedDotHM.thoiGianKetThuc);
 
       if (ngayNhap < ngayBd || ngayNhap > ngayKt) {
         thoiGianControl.setErrors({ outOfRange: true });
@@ -169,10 +166,10 @@ export class TTHienMauComponent implements OnInit {
     }
   }
 
-  getDotHienMauStatus(maDot: number): string {
+  getDotHienMauStatus(): string {
     const now = new Date();
-    const thoiGianBatDau = new Date(this.dotHienMauList.find(dot => dot.value === maDot).thoiGianBatDau)
-    const thoiGianKetThuc = new Date(this.dotHienMauList.find(dot => dot.value === maDot).thoiGianKetThuc)
+    const thoiGianBatDau = new Date(this.selectedDotHM.thoiGianBatDau);
+    const thoiGianKetThuc = new Date(this.selectedDotHM.thoiGianKetThuc);
 
     if (thoiGianBatDau && now < thoiGianBatDau) {
       return 'Chưa diễn ra';
@@ -310,12 +307,15 @@ export class TTHienMauComponent implements OnInit {
               label: dotHM.tenDot,
               diaDiem: dotHM.diaDiem,
               thoiGianBatDau: dotHM.thoiGianBatDau,
-              thoiGianKetThuc: dotHM.thoiGianKetThuc
+              thoiGianKetThuc: dotHM.thoiGianKetThuc,
+              soNguoiDangKy: dotHM.soNguoiDangKy,
+              donViMau: dotHM.donViMau,
             }));
 
             if (this.dotHienMauList.length > 0) {
               const lastDotHienMau = this.dotHienMauList[0];
               this.maDot = lastDotHienMau.value;
+              this.selectedDotHM = this.dotHienMauList.find(dot => dot.value === this.maDot);
               this.searchForm.get('dot_hm_id')?.setValue(this.maDot);
             }
           }
@@ -329,10 +329,10 @@ export class TTHienMauComponent implements OnInit {
     });
   }
   updateDotHM(event: Select2UpdateEvent<any>) {
+    console.log(event.value);
     this.maDot = event.value;
-    this.tenDotHM = this.dotHienMauList.find(dot => dot.value === this.maDot).label;
-    console.log(this.dotHienMauList.find(dot => dot.value === this.maDot));
-    this.dotHienMauStatus = this.getDotHienMauStatus(this.maDot);
+    this.selectedDotHM = this.dotHienMauList.find(dot => dot.value === this.maDot);
+    this.dotHienMauStatus = this.getDotHienMauStatus();
     this.searchTTHienMauForm();
   }
 
@@ -441,19 +441,16 @@ export class TTHienMauComponent implements OnInit {
   DangKy() {
     if (this.editForm.valid) {
       const tt_hien_mau_data = {
-        id: 0,
         maDot: this.maDot,
-        cccd: '',
+        cccd: this.editForm.value.cccd,
         maTheTich: Number(this.selectedTheTich),
         maDV: this.selectedCoQuanID,
         ngheNghiep: this.editForm.value.ngheNghiep,
         noiO: this.editForm.value.noiO,
         thoiGianDangKy: this.editForm.value.thoi_gian,
-        ketQua: 'Chưa hiến'
       }
 
       const tinh_nguyen_vien_data = {
-        id: 0,
         hoTen: this.editForm.value.hoTen,
         ngaySinh: this.editForm.value.ngaySinh,
         cccd: this.editForm.value.cccd,
@@ -467,12 +464,11 @@ export class TTHienMauComponent implements OnInit {
       this.tinhNguyenVienService.createTinhNguyenVien(tinh_nguyen_vien_data).subscribe({
         next: (response) => {
           if (response.code === 200) {
-            tt_hien_mau_data.cccd = response.data.id
             this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {
                   this.isReadOnlyAutoFill = false;
-                  this.isEditModalOpen=false;
+                  this.isEditModalOpen = false;
                   this.editForm.reset();
                   this.searchTTHienMau();
                   alert('Gửi đăng ký thành công.');
@@ -491,7 +487,7 @@ export class TTHienMauComponent implements OnInit {
           }
         },
         error: (err) => {
-          alert("Có lỗi xảy ra. Vui lòng thử lại sau")   
+          alert("Có lỗi xảy ra. Vui lòng thử lại sau")
         }
       });
     } else {
@@ -504,7 +500,6 @@ export class TTHienMauComponent implements OnInit {
   }
 
   OpenEditModal(ttHM: any) {
-    console.log(ttHM);
     this.tnv_Selected = ttHM;
     this.isEdit = true;
     this.loadDonVis().then(() => {
@@ -555,6 +550,28 @@ export class TTHienMauComponent implements OnInit {
       value: item.wardId,
       label: item.name,
     }));
+  }
+
+  OpenDeleteModal(ttHM: any) {
+    this.tnv_Selected = ttHM;
+    const confirmDelete = window.confirm('Xác nhận xóa thông tin hiến máu của ' + this.tnv_Selected.cccd + ' ?');
+    if (confirmDelete) {
+      this.dotHienMauService.deleteDotHienMau(this.tnv_Selected.maDot).subscribe({
+        next: (response) => {
+          if (response.code == 200) {
+            this.searchTTHienMau();
+            alert('Xóa thông tin hiến máu của thành công!')
+          }
+          if (response.code === 404 || response.code === 400) {
+            alert(response.message);
+          }
+        },
+        error: (err) => {
+          alert('Có lỗi xảy ra khi cập nhật thông tin.');
+          console.error('Lỗi khi cập nhật:', err);
+        },
+      });
+    }
   }
 
   closeViewModal() {
@@ -737,6 +754,21 @@ export class TTHienMauComponent implements OnInit {
   prePage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.searchTTHienMau();
+    }
+  }
+
+  goFirstPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage = 1;
+      this.searchTTHienMau();
+    }
+  }
+
+  goLastPage(): void {
+    const totalPages = Math.ceil(this.totalCount / this.pageSize);
+    if (this.currentPage * this.pageSize < this.totalCount) {
+      this.currentPage = totalPages;
       this.searchTTHienMau();
     }
   }

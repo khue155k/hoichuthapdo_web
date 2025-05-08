@@ -2,7 +2,7 @@
     <form [formGroup]="searchForm">
         <div class="row mb-4">
             <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Nhập tên lịch sử tặng quà"
+                <input type="text" class="form-control" placeholder="Nhập CCCD, tên quà hoặc nội dung"
                     formControlName="searchTerm" (input)="searchLSTQFormDelay()" />
             </div>
             <div class="col-md-2">
@@ -18,10 +18,10 @@
                 <tr>
                     <th scope="col">TT</th>
                     <th scope="col">CCCD</th>
-                    <th scope="col">Mã quà</th>
+                    <th scope="col">Tên quà</th>
                     <th scope="col">Nội dung</th>
                     <th scope="col">Thời gian gửi</th>
-                    <th></th>
+                    <!-- <th></th> -->
                 </tr>
             </thead>
             <tbody>
@@ -36,15 +36,15 @@
                     <tr>
                         <td>{{i+1+(currentPage-1)*pageSize}}</td>
                         <td>{{lichSu.cccd}}</td>
-                        <td>{{lichSu.maQua}}</td>
+                        <td>{{lichSu.tenQua}}</td>
                         <td>{{lichSu.noiDung}}</td>
                         <td>{{lichSu.thoiGianGui | date:'HH:mm dd/MM/yyyy' }}</td>
-                        <td>
+                        <!-- <td>
                             <div class="d-flex justify-content-center flex-wrap">
                                 <button class="btn btn-warning mx-1" (click)="OpenEditModal(lichSu)">Sửa</button>
                                 <button class="btn btn-danger mx-1" (click)="OpenDeleteModal(lichSu)">Xóa</button>
                             </div>
-                        </td>
+                        </td> -->
                     </tr>
                 </ng-container>
             </tbody>
@@ -65,9 +65,9 @@
                                             id="cccd" readonly>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="maQua">Mã quà</label>
-                                        <input formControlName="maQua" placeholder="Mã quà" class="form-control"
-                                            id="maQua" readonly>
+                                        <label for="tenQua">Tên quà</label>
+                                        <input formControlName="tenQua" placeholder="Tên quà" class="form-control"
+                                            id="tenQua" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -97,8 +97,11 @@
 
     <div class="row">
         <div class="col-md-12 text-center">
+            <button class="pagination-button" (click)="goFirstPage()" [disabled]="currentPage === 1"
+                *ngIf="currentPage > 3">«</button>
+
             <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
-                *ngIf="currentPage > 1">«</button>
+                *ngIf="currentPage > 1">‹</button>
 
             <ng-container *ngFor="let page of getLimitedPageNumbers()">
                 <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
@@ -107,7 +110,10 @@
             </ng-container>
 
             <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
-                *ngIf="currentPage * pageSize < totalCount">»</button>
+                *ngIf="currentPage * pageSize < totalCount">›</button>
+
+            <button class="pagination-button" (click)="goLastPage()" [disabled]="currentPage * pageSize >= totalCount"
+                *ngIf="currentPage * pageSize < totalCount - 2 * pageSize">»</button>
 
             <div class="float-end">
                 <span style="margin: 0; margin-right: 1rem;">Số dòng mỗi trang: </span>

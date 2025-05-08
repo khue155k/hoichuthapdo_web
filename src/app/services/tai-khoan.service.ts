@@ -27,7 +27,5 @@ export class TaiKhoanService {
         return this.http.put<TemplateResult<any>>(`${this.baseUrl}/updateQTV/${id}`, quanTriVien);
     }
 
-    createAdmin(admin: any): Observable<TemplateResult<any>> {
-        return this.http.post<TemplateResult<any>>(`${this.baseUrl}/CreateAdmin`, admin);
-      }
+
 }

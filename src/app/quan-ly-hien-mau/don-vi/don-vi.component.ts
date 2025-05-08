@@ -256,6 +256,21 @@ export class DonViComponent implements OnInit {
     }
   }
 
+  goFirstPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage = 1;
+      this.searchDonVi();
+    }
+  }
+
+  goLastPage(): void {
+    const totalPages = Math.ceil(this.totalCount / this.pageSize);
+    if (this.currentPage * this.pageSize < this.totalCount) {
+      this.currentPage = totalPages;
+      this.searchDonVi();
+    }
+  }
+
   getLimitedPageNumbers(): number[] {
     const totalPages = Math.ceil(this.totalCount / this.pageSize);
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);

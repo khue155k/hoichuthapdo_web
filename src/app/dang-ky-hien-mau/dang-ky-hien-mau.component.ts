@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2, OnDestroy } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -18,11 +18,11 @@ import { DonViService } from '../services';
   templateUrl: './dang-ky-hien-mau.component.html',
   styleUrl: './dang-ky-hien-mau.component.css'
 })
-export class DangKyHienMauComponent {
+export class DangKyHienMauComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder, private locationService: LocationService,
     private dotHienMauService: DotHienMauService, private donViService: DonViService,
     private tinhNguyenVienService: TinhNguyenVienService,
-    private dsHienMauService: TTHienMauService) {
+    private dsHienMauService: TTHienMauService, private renderer: Renderer2) {
     this.registerForm = this.fb.group({
       hoTen: ['', Validators.required],
       ngaySinh: ['', Validators.required],
@@ -47,11 +47,48 @@ export class DangKyHienMauComponent {
   }
 
   ngOnInit() {
+    this.loadChatbaseScript();
     this.loadDotHienMau();
     this.loadDonVis();
     this.loadTheTichMauHien();
     this.loadProvinces()
   }
+
+  ngOnDestroy(): void {
+    // Xoá phần tử <script> nếu bạn đã lưu nó trong this.chatbaseScriptElement
+    if (this.chatbaseScriptElement) {
+      this.renderer.removeChild(document.body, this.chatbaseScriptElement);
+      console.log("Đã xoá script Chatbase");
+    }
+  
+    // Xoá các phần tử chatbot render ra DOM
+    const bubbleButton = document.getElementById('chatbase-bubble-button');
+    const bubbleWindow = document.getElementById('chatbase-bubble-window');
+    const messageBubbles = document.getElementById('chatbase-message-bubbles');
+  
+    if (bubbleButton) bubbleButton.remove();
+    if (bubbleWindow) bubbleWindow.remove();
+    if (messageBubbles) messageBubbles.remove();
+  
+    console.log('Đã xoá các phần tử chatbot');
+  }
+
+  private chatbaseScriptElement!: HTMLScriptElement;
+
+  loadChatbaseScript(): void {
+    (window as any).chatbaseConfig = {
+      chatbotId: '-ktwfWa9LS8aglwUTjFf-',
+    };
+
+    this.chatbaseScriptElement = this.renderer.createElement('script');
+    this.chatbaseScriptElement.src = 'https://www.chatbase.co/embed.min.js';
+    this.chatbaseScriptElement.defer = true;
+    this.chatbaseScriptElement.setAttribute('chatbotId', '-ktwfWa9LS8aglwUTjFf-');
+
+    this.renderer.appendChild(document.body, this.chatbaseScriptElement);
+  }
+
+
 
   isReadOnlyAutoFill: boolean = false;
   dotHienMauList: any[] = [];
@@ -135,18 +172,17 @@ export class DangKyHienMauComponent {
         next: (response) => {
           if (response.code === 200) {
             const now = new Date();
-            console.log(response.data);
-            console.log(now);
-
+            
             this.dotHienMauList = response.data.map((dotHM: any) => ({
               value: dotHM.maDot,
-              label: dotHM.tenDot + " từ " + formatDate(dotHM.thoiGianBatDau, 'HH:mm dd-MM-yyyy', 'en-US') + " đến " + formatDate(dotHM.thoiGianKetThuc, 'HH:mm dd-MM-yyyy', 'en-US'),
+              label: dotHM.tenDot + " từ " + formatDate(dotHM.thoiGianBatDau, 'HH:mm dd-MM-yyyy', 'en-US') 
+                                  + " đến " + formatDate(dotHM.thoiGianKetThuc, 'HH:mm dd-MM-yyyy', 'en-US')
+                                  + ` (${dotHM.soNguoiDangKy}/${dotHM.donViMau} người)`,
               tenDot: dotHM.tenDot,
               diaDiem: dotHM.diaDiem,
               thoiGianBatDau: dotHM.thoiGianBatDau,
               thoiGianKetThuc: dotHM.thoiGianKetThuc
             })).filter(dot => new Date(dot.thoiGianKetThuc) > now);
-            console.log(this.dotHienMauList);
           } else {
             console.error('Lỗi khi tải đợt hiến máu');
           }
@@ -308,19 +344,16 @@ export class DangKyHienMauComponent {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      const tt_hien_mau_data = {
-        id: 0,
+      var tt_hien_mau_data = {
         maDot: this.maDot,
-        CCCD: '',
+        cccd: this.registerForm.value.cccd,
         maTheTich: Number(this.selectedTheTich),
         maDV: this.selectedCoQuanID,
         ngheNghiep: this.registerForm.value.ngheNghiep,
         noiO: this.registerForm.value.noiO,
         thoiGianDangKy: this.registerForm.value.thoi_gian,
-        ketQua: 'Chưa hiến'
       }
       const tinh_nguyen_vien_data = {
-        id: 0,
         hoTen: this.registerForm.value.hoTen,
         ngaySinh: this.registerForm.value.ngaySinh,
         cccd: this.registerForm.value.cccd,
@@ -334,7 +367,6 @@ export class DangKyHienMauComponent {
       this.tinhNguyenVienService.createTinhNguyenVien(tinh_nguyen_vien_data).subscribe({
         next: (response) => {
           if (response.code === 200) {
-            tt_hien_mau_data.CCCD = response.data.CCCD
             this.dsHienMauService.createTTHienMau(tt_hien_mau_data).subscribe({
               next: (response) => {
                 if (response.code === 200) {

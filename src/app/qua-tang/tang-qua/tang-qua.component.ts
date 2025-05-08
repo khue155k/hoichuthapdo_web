@@ -68,7 +68,6 @@ export class TangQuaComponent implements OnInit {
             value: quaTang.maQua,
             label: quaTang.tenQua + " : " + quaTang.giaTri + " VNĐ",
           }));
-          console.log(this.quaTangList);
         }
         if (response.code === 404 || response.code === 400) {
           console.error(response.message);
@@ -189,29 +188,30 @@ export class TangQuaComponent implements OnInit {
 
   saveChanges() {
     if (this.tangQuaForm.valid) {
-      const updatedData = {
-        cccd: this.TNVSelected.cccd,
-        maQua: this.tangQuaForm.value.quaTang,
-        noiDung: this.tangQuaForm.value.noiDung,
-      };
-      this.quaTangService.tangQua(updatedData).subscribe({
-        next: (response) => {
-          if (response.code == 200) {
-            this.isEditModalOpen = false;
-            this.tangQuaForm.reset();
-            this.searchTinhNguyenVien();
-            alert('Tặng quà thành công!')
-          }
-          if (response.code === 404 || response.code === 400) {
-            alert(response.message);
-          }
-        },
-        error: (err) => {
-          alert('Có lỗi xảy ra khi tậng quà!');
-        },
-      });
-    }
-    else {
+      if (confirm(`Bạn có chắc chắn muốn tặng ${this.quaTangList.find(q => q.value == this.tangQuaForm.value.quaTang).label} cho ${this.TNVSelected.hoTen} không?`)) {
+        const data = {
+          cccd: this.TNVSelected.cccd,
+          maQua: this.tangQuaForm.value.quaTang,
+          noiDung: this.tangQuaForm.value.noiDung,
+        };
+        this.quaTangService.tangQua(data).subscribe({
+          next: (response) => {
+            if (response.code == 200) {
+              this.isEditModalOpen = false;
+              this.tangQuaForm.reset();
+              this.searchTinhNguyenVien();
+              alert('Tặng quà thành công!');
+            }
+            if (response.code === 404 || response.code === 400) {
+              alert(response.message);
+            }
+          },
+          error: (err) => {
+            alert('Có lỗi xảy ra khi tặng quà!');
+          },
+        });
+      }
+    } else {
       this.tangQuaForm.markAllAsTouched();
     }
   }
@@ -231,6 +231,21 @@ export class TangQuaComponent implements OnInit {
   prePage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.searchTinhNguyenVien();
+    }
+  }
+
+  goFirstPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage = 1;
+      this.searchTinhNguyenVien();
+    }
+  }
+
+  goLastPage(): void {
+    const totalPages = Math.ceil(this.totalCount / this.pageSize);
+    if (this.currentPage * this.pageSize < this.totalCount) {
+      this.currentPage = totalPages;
       this.searchTinhNguyenVien();
     }
   }

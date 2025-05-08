@@ -109,6 +109,21 @@ export class ResetPasswordComponent implements OnInit {
     }
   }
 
+  goFirstPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage = 1;
+      this.searchTaiKhoan();
+    }
+  }
+
+  goLastPage(): void {
+    const totalPages = Math.ceil(this.totalCount / this.pageSize);
+    if (this.currentPage * this.pageSize < this.totalCount) {
+      this.currentPage = totalPages;
+      this.searchTaiKhoan();
+    }
+  }
+
   getLimitedPageNumbers(): number[] {
     const totalPages = Math.ceil(this.totalCount / this.pageSize);
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);

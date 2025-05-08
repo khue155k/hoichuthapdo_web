@@ -6,12 +6,12 @@
 <div class="container mt-5">
     <header class="mb-4">
         <h3 class="text-center mb-4">ĐĂNG KÝ HIẾN MÁU</h3>
-            <div class="justify-content-center" *ngIf="dotHienMauList.length != 0">
-                <select2 class="form-control" [overlay]="false" [data]="dotHienMauList" [value]="maDot" [styleMode]="'borderless'"
-                    placeholder="Chọn đợt hiến máu" (update)="updateDotHM($event)">
-                </select2>
-            </div>
-        <p *ngIf="dotHienMauList.length == 0">(Hiện tại không có đợt hiến máu nào)</p>
+        <div class="justify-content-center" *ngIf="dotHienMauList.length != 0">
+            <select2 class="form-control" [overlay]="false" [data]="dotHienMauList" [value]="maDot"
+                [styleMode]="'borderless'" placeholder="Chọn đợt hiến máu" (update)="updateDotHM($event)">
+            </select2>
+        </div>
+        <p class="text-center" *ngIf="dotHienMauList.length == 0">(Hiện tại không có đợt hiến máu nào)</p>
     </header>
     <form [formGroup]="registerForm" *ngIf="selectedDotHM" (ngSubmit)="onSubmit()" novalidate>
         <div class="form-group">
@@ -171,9 +171,9 @@
                 </div>
                 <div class="col-md-3">
                     <label for="thoi_gian">Thời gian đăng ký</label><span class="text-danger"> *</span>
-                    <input type="datetime-local" id="thoi_gian" formControlName="thoi_gian" class="form-control"
-                        [min]="selectedDotHM.thoiGianBatDau" [max]="selectedDotHM.thoiGianKetThuc"
-                        (input)="validateDate()"
+                    <input type="date" id="thoi_gian" formControlName="thoi_gian" class="form-control"
+                        [min]="selectedDotHM.thoiGianBatDau.slice(0, 10)"
+                        [max]="selectedDotHM.thoiGianKetThuc.slice(0, 10)" (input)="validateDate()"
                         [ngClass]="{'is-invalid': registerForm.controls['thoi_gian'].invalid && registerForm.controls['thoi_gian'].touched}" />
                     <div *ngIf="registerForm.controls['thoi_gian'].hasError('outOfRange') && registerForm.controls['thoi_gian'].touched"
                         class="invalid-feedback">
@@ -207,3 +207,10 @@
         <button type="submit" class="btn btn-primary">Đăng ký</button>
     </form>
 </div>
+<script>
+    window.chatbaseConfig = {
+        chatbotId: "-ktwfWa9LS8aglwUTjFf-",
+    };
+</script>
+<script src="https://www.chatbase.co/embed.min.js" chatbotId="-ktwfWa9LS8aglwUTjFf-" defer>
+</script>

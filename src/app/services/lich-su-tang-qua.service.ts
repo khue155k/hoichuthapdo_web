@@ -53,5 +53,6 @@ export class LichSuTangQuaService {
 export interface LichSuTangQua {
   cccd: number;
   maQua: string;
+  tenQua: string;
   noiDung: string;
 }

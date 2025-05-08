@@ -250,6 +250,21 @@ export class QuaTangComponent implements OnInit {
     }
   }
 
+  goFirstPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage = 1;
+      this.searchQuaTang();
+    }
+  }
+
+  goLastPage(): void {
+    const totalPages = Math.ceil(this.totalCount / this.pageSize);
+    if (this.currentPage * this.pageSize < this.totalCount) {
+      this.currentPage = totalPages;
+      this.searchQuaTang();
+    }
+  }
+
   getLimitedPageNumbers(): number[] {
     const totalPages = Math.ceil(this.totalCount / this.pageSize);
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);

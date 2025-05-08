@@ -24,7 +24,7 @@
                     <th scope="col">Địa điểm</th>
                     <th scope="col">Thời gian bắt đầu</th>
                     <th scope="col">Thời gian kết thúc</th>
-                    <th scope="col">Đơn vị máu đăng ký</th>
+                    <th scope="col">Số người đăng ký</th>
                     <th></th>
                 </tr>
             </thead>
@@ -43,7 +43,7 @@
                         <td>{{dotHm.diaDiem}}</td>
                         <td>{{dotHm.thoiGianBatDau | date:'HH:mm dd/MM/yyyy'}}</td>
                         <td>{{dotHm.thoiGianKetThuc | date:'HH:mm dd/MM/yyyy'}}</td>
-                        <td>{{dotHm.donViMau}}</td>
+                        <td>{{dotHm.soNguoiDangKy}} / {{dotHm.donViMau}}</td>
                         <td>
                             <div class="d-flex justify-content-center flex-wrap">
                                 <button class="btn btn-warning mx-1" (click)="OpenEditModal(dotHm)">Sửa</button>
@@ -140,17 +140,23 @@
 
     <div class="row">
         <div class="col-md-12 text-center">
-            <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
-                *ngIf="currentPage > 1">«</button>
+            <button class="pagination-button" (click)="goFirstPage()" [disabled]="currentPage === 1"
+            *ngIf="currentPage > 3">«</button>
 
-            <ng-container *ngFor="let page of getLimitedPageNumbers()">
-                <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
-                    {{ page }}
-                </button>
-            </ng-container>
+        <button class="pagination-button" (click)="prePage()" [disabled]="currentPage === 1"
+            *ngIf="currentPage > 1">‹</button>
 
-            <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
-                *ngIf="currentPage * pageSize < totalCount">»</button>
+        <ng-container *ngFor="let page of getLimitedPageNumbers()">
+            <button class="pagination-button" [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">
+                {{ page }}
+            </button>
+        </ng-container>
+
+        <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount"
+            *ngIf="currentPage * pageSize < totalCount">›</button>
+
+        <button class="pagination-button" (click)="goLastPage()" [disabled]="currentPage * pageSize >= totalCount"
+            *ngIf="currentPage * pageSize < totalCount - 2 * pageSize">»</button>
 
             <div class="float-end">
                 <span style="margin: 0; margin-right: 1rem;">Số dòng mỗi trang: </span>

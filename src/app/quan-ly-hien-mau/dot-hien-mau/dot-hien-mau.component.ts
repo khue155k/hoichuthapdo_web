@@ -142,6 +142,7 @@ export class DotHienMauComponent implements OnInit {
             'Địa điểm': dotHM.diaDiem,
             'Thời gian bắt đầu': dotHM.thoiGianBatDau,
             'Thời gian kết thúc': dotHM.thoiGianKetThuc,
+            'Số người đăng ký': dotHM.soNguoiDangKy,
             'Đơn vị máu đăng ký': dotHM.donViMau,
           }));
 
@@ -156,6 +157,7 @@ export class DotHienMauComponent implements OnInit {
             'Địa điểm': '',
             'Thời gian bắt đầu': '',
             'Thời gian kết thúc': '',
+            'Số người đăng ký': '',
             'Đơn vị máu đăng ký': tong_theTich_mau,
           });
 
@@ -303,6 +305,21 @@ export class DotHienMauComponent implements OnInit {
   prePage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.searchDotHienMau();
+    }
+  }
+
+  goFirstPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage = 1;
+      this.searchDotHienMau();
+    }
+  }
+
+  goLastPage(): void {
+    const totalPages = Math.ceil(this.totalCount / this.pageSize);
+    if (this.currentPage * this.pageSize < this.totalCount) {
+      this.currentPage = totalPages;
       this.searchDotHienMau();
     }
   }

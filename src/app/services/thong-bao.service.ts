@@ -55,5 +55,6 @@ export interface ThongBao {
   maTB: number;
   tieuDe: string;
   noiDung: string;
+  linkAnh: string;
   thoiGianGui: string;
 }
