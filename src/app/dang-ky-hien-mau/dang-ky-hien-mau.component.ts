@@ -70,7 +70,6 @@ export class DangKyHienMauComponent implements OnInit, OnDestroy {
     if (bubbleWindow) bubbleWindow.remove();
     if (messageBubbles) messageBubbles.remove();
   
-    console.log('Đã xoá các phần tử chatbot');
   }
 
   private chatbaseScriptElement!: HTMLScriptElement;

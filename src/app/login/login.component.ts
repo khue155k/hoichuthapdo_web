@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
       this.rememberMe = true;
     }
   }
-  refreshCaptcha(){
+  refreshCaptcha() {
     this.generateCaptcha();
     this.userCaptcha = ''
   }
@@ -102,6 +102,8 @@ export class LoginComponent implements OnInit {
           }
           this.authService.redirectBasedOnRole();
         } else {
+          this.refreshCaptcha()
+          this.userCaptcha = '';
           this.loginFalse = true;
           this.connectFalse = false;
         }

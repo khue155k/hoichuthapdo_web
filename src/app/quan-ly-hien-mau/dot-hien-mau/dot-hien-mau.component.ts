@@ -40,6 +40,7 @@ export class DotHienMauComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.thoiGianHienTai = this.toDateTimeLocalString(new Date());
     this.loadDotHienMau();
   }
 
@@ -58,6 +59,20 @@ export class DotHienMauComponent implements OnInit {
   isAdd: boolean = false
   editTitle: string = 'Chỉnh sửa thông tin'
   addTitle: string = 'Tạo đợt hiến máu'
+
+  thoiGianBatDau = '';
+  thoiGianKetThuc = '';
+  thoiGianHienTai = '';
+
+  toDateTimeLocalString(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const yyyy = date.getFullYear();
+    const MM = pad(date.getMonth() + 1);
+    const dd = pad(date.getDate());
+    const hh = pad(date.getHours());
+    const mm = pad(date.getMinutes());
+    return `${yyyy}-${MM}-${dd}T${hh}:${mm}`;
+  }
 
   loadDotHienMau(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -179,16 +194,19 @@ export class DotHienMauComponent implements OnInit {
   OpenCreateModal() {
     this.isAdd = true;
     this.isEditModalOpen = true;
+    this.thoiGianBatDau = this.thoiGianHienTai;
   }
   OpenEditModal(dotHm: any) {
     this.dotHMSelected = dotHm;
     this.isEdit = true;
     this.isEditModalOpen = true;
+
+    this.thoiGianBatDau = this.dotHMSelected.thoiGianBatDau;
+    this.thoiGianKetThuc = this.dotHMSelected.thoiGianKetThuc;
+
     this.dotHMForm.patchValue({
       tenDot: this.dotHMSelected.tenDot,
       diaDiem: this.dotHMSelected.diaDiem,
-      thoiGianBatDau: this.dotHMSelected.thoiGianBatDau,
-      thoiGianKetThuc: this.dotHMSelected.thoiGianKetThuc,
       donViMau: this.dotHMSelected.donViMau
     });
   }
