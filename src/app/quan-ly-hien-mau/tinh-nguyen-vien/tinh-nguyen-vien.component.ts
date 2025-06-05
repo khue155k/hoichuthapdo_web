@@ -279,7 +279,6 @@ export class TinhNguyenVienComponent implements OnInit {
     this.tinhNguyenVienForm.controls['maPhuongXa'].markAsUntouched();
     this.locationService.getDistricts(this.selectedProvince).subscribe(data => {
       this.districts = data;
-      console.log(data);
       this.wards = [];
       this.selectedDistrict = '';
       this.selectedWard = '';
@@ -308,7 +307,6 @@ export class TinhNguyenVienComponent implements OnInit {
     this.TNVSelected = tinhNguyenVien;
     this.isEdit = true;
     this.isEditModalOpen = true;
-    console.log(this.TNVSelected)
     this.tinhNguyenVienForm.patchValue({
       cccd: this.TNVSelected.cccd,
       hoTen: this.TNVSelected.hoTen,
@@ -322,7 +320,6 @@ export class TinhNguyenVienComponent implements OnInit {
     this.selectedProvince = this.TNVSelected.maTinhThanh;
     setTimeout(() => {
       this.selectedDistrict = this.TNVSelected.maQuanHuyen
-      console.log(this.selectedDistrict);
 
       setTimeout(() => {
         this.selectedWard = this.TNVSelected.maPhuongXa

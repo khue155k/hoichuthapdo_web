@@ -22,4 +22,8 @@ export class DashboardService {
   getNamHMs(): Observable<TemplateResult<any[]>> {
     return this.http.get<TemplateResult<any>>(`${this.baseUrl}/DotHienMau/getNamHMs`);
   }
+
+  soTNVCoTheHM(): Observable<TemplateResult<any[]>> {
+    return this.http.get<TemplateResult<any>>(`${this.baseUrl}/TTHienMau/soTNVCoTheHM`);
+  }
 }

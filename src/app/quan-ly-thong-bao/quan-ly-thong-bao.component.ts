@@ -61,10 +61,8 @@ export class ThongBaoComponent implements OnInit {
     this.thongBaoService.getAllThongBaoPaginated(this.pageSize, this.currentPage).subscribe({
       next: (response) => {
         if (response.code === 200) {
-          this.thongBaoList = response.data.items.filter((item: { tieuDe: string }) =>
-            item.tieuDe !== "Chúc mừng sinh nhật!" && item.tieuDe !== "Nhắc nhở hiến máu"
-          );
-          this.totalCount = this.thongBaoList.length;
+            this.totalCount = response.data.totalCount;
+            this.thongBaoList = response.data.items;
         }
         if (response.code === 404 || response.code === 400) {
           console.error(response.message);
@@ -82,10 +80,8 @@ export class ThongBaoComponent implements OnInit {
     this.thongBaoService.search(searchTerm, this.pageSize, this.currentPage)
       .subscribe({
         next: (response: TemplateResult<PaginatedResult<any>>) => {
-          this.thongBaoList = response.data.items.filter((item: { tieuDe: string }) =>
-            item.tieuDe !== "Chúc mừng sinh nhật!" && item.tieuDe !== "Nhắc nhở hiến máu"
-          );
-          this.totalCount = this.thongBaoList.length;
+            this.totalCount = response.data.totalCount;
+            this.thongBaoList = response.data.items;
         },
         error: (error) => {
           console.error('Error fetching data:', error);
@@ -109,10 +105,8 @@ export class ThongBaoComponent implements OnInit {
     this.thongBaoService.search(searchTerm, 1000, 1)
       .subscribe({
         next: (response: TemplateResult<PaginatedResult<any>>) => {
-          thongBao = response.data.items.filter((item: { tieuDe: string }) =>
-            item.tieuDe !== "Chúc mừng sinh nhật!" && item.tieuDe !== "Nhắc nhở hiến máu"
-          );
-          
+          thongBao = response.data.items;
+
           const excelData = thongBao.map((thongBao, index) => ({
             'STT': index + 1,
             'Tiêu đề': thongBao.tieuDe,

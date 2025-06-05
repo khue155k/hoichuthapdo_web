@@ -34,7 +34,7 @@
         </form>
       </c-col>
     </c-row>
-    <c-chart [data]="mainChart.data" [height]="300" [ngStyle]="{ 'marginTop.px': 40 }" [options]="mainChart.options"
+    <c-chart [data]="mainChart.data" [height]="400" [ngStyle]="{ 'marginTop.px': 40 }" [options]="mainChart.options"
       [type]="mainChart.type">
       Main chart
     </c-chart>
@@ -65,4 +65,22 @@
       </c-col>
     </c-row>
   </c-card-footer>
+</c-card>
+
+<c-card class="mx-4 mt-5">
+  <c-card-body>
+    <c-row>
+      <c-col sm="12">
+        <c-row>
+          <c-col sm="12" class="pe-0">
+            <h5 class="card-title mb-0" id="traffic">Thống kê số tình nguyện viên có thể tham gia hiến máu theo ngày: </h5>
+          </c-col>
+        </c-row>
+      </c-col>
+    </c-row>
+    <c-chart [data]="soTNVCoTheHMChart.data" [height]="400" [ngStyle]="{ 'marginTop.px': 40 }" [options]="soTNVCoTheHMChart.options"
+      [type]="soTNVCoTheHMChart.type">
+      SoTNVCoTheHMChart
+    </c-chart>
+  </c-card-body>
 </c-card>

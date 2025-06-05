@@ -33,6 +33,7 @@ export class DashboardChartsData {
   }
 
   public dsHM: any[] = [];
+  public dsSoLuongTNVCoTheHM: any[] = [];
 
   ttHMTheoDot(year: number): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -69,9 +70,7 @@ export class DashboardChartsData {
   }
 
   public mainChart: IChartProps = { type: 'line' };
-  public random(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
+
   max = 0;
 
   async initMainChart(period: string = 'Dot', year: number = new Date(Date.now()).getFullYear()) {
@@ -93,7 +92,7 @@ export class DashboardChartsData {
     this.mainChart['TongSoNguoiDangKy'] = 0;
     this.mainChart['TongSoNguoiHienMau'] = 0;
     this.max = 100;
-    
+
     for (let i = 0; i < this.mainChart['elements']; i++) {
       this.mainChart['Data1'].push(this.dsHM.at(i).soNguoiDangKy);
       if (this.dsHM.at(i).soNguoiDangKy > this.max) this.max = this.dsHM.at(i).soNguoiDangKy;
@@ -113,7 +112,7 @@ export class DashboardChartsData {
       }
     } else if (period === 'Dot') {
       for (let i = 1; i <= this.mainChart['elements']; i++) {
-        labels.push(this.dsHM.at(i-1).tenDot);
+        labels.push(this.dsHM.at(i - 1).tenDot);
       }
     }
 
@@ -234,6 +233,172 @@ export class DashboardChartsData {
           color: colorBody,
           maxTicksLimit: 5,
           stepSize: Math.ceil(this.max / 5)
+        }
+      }
+    };
+    return scales;
+  }
+
+  soTNVCoTheHM(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.dashboardService.soTNVCoTheHM().subscribe({
+        next: (response) => {
+          if (response.code === 200) {
+            this.dsSoLuongTNVCoTheHM = response.data;
+          }
+          resolve();
+        },
+        error: (err) => {
+          alert(`Có lỗi khi lấy số tình nguyện viên có thể hiến máu: ${err}`);
+          reject();
+        },
+      });
+    });
+  }
+
+  public soTNVCoTheHMChart: IChartProps = { type: 'line' };
+  max1 = 1000;
+
+  async initSoTNVCoTheHMChart(period: string = 'Dot', year: number = new Date(Date.now()).getFullYear()) {
+    const brandSuccess = getStyle('--cui-success') ?? '#4dbd74';
+    const brandInfo = getStyle('--cui-info') ?? '#20a8d8';
+    const brandInfoBg = hexToRgba(getStyle('--cui-info') ?? '#20a8d8', 10);
+    const brandDanger = getStyle('--cui-danger') ?? '#f86c6b';
+
+    if (period == 'Dot') {
+      await this.soTNVCoTheHM();
+    }
+    if (period == 'Thang') {
+      await this.soTNVCoTheHM();
+    }
+    this.soTNVCoTheHMChart['elements'] = this.dsSoLuongTNVCoTheHM.length;
+    this.soTNVCoTheHMChart['Data1'] = [];
+
+    this.max1 = 1000;
+
+    for (let i = 0; i < this.soTNVCoTheHMChart['elements']; i++) {
+      this.soTNVCoTheHMChart['Data1'].push(this.dsSoLuongTNVCoTheHM.at(i).soLuong);
+      if (this.dsSoLuongTNVCoTheHM.at(i).soLuong > this.max1) this.max1 = this.dsSoLuongTNVCoTheHM.at(i).soLuong;
+    }
+    this.max1 = ceil(this.max1 / 1000) * 1000;
+
+    let labels: string[] = [];
+
+    if (period === 'Thang') {
+      for (let i = 1; i <= this.soTNVCoTheHMChart['elements']; i++) {
+        labels.push(`Tháng ${this.dsSoLuongTNVCoTheHM.at(i - 1).month}`);
+      }
+    } else if (period === 'Dot') {
+      for (let i = 1; i <= this.soTNVCoTheHMChart['elements']; i++) {
+        labels.push(this.dsSoLuongTNVCoTheHM.at(i - 1).ngay);
+      }
+    }
+
+    if (this.soTNVCoTheHMChart['elements'] == 1) {
+      this.soTNVCoTheHMChart['elements'] = 2;
+      this.soTNVCoTheHMChart['Data1'].push(this.soTNVCoTheHMChart['Data1'].at(0));
+      labels.push(labels[0]);
+    }
+
+    const colors = [
+      {
+        // brandInfo
+        backgroundColor: brandInfoBg,
+        borderColor: brandInfo,
+        pointHoverBackgroundColor: brandInfo,
+        borderWidth: 2,
+        fill: true
+      },
+      {
+        // brandSuccess
+        backgroundColor: 'transparent',
+        borderColor: brandSuccess || '#4dbd74',
+        pointHoverBackgroundColor: '#fff'
+      },
+      {
+        // brandDanger
+        backgroundColor: 'transparent',
+        borderColor: brandDanger || '#f86c6b',
+        pointHoverBackgroundColor: brandDanger,
+        borderWidth: 1,
+        borderDash: [8, 5]
+      }
+    ];
+
+    const datasets: ChartDataset[] = [
+      {
+        data: this.soTNVCoTheHMChart['Data1'],
+        label: 'Số người có thể đi hiến',
+        ...colors[0]
+      },
+    ];
+    const plugins: any = {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        callbacks: {
+          labelColor: (context: TooltipItem<'line'>) => ({
+            backgroundColor: context.dataset.borderColor as string
+          } as TooltipLabelStyle)
+        },
+      }
+    };
+
+    const scales = this.getScales1();
+
+    const options: ChartOptions = {
+      maintainAspectRatio: false,
+      plugins,
+      scales,
+      elements: {
+        line: {
+          tension: 0.4
+        },
+        point: {
+          radius: 0,
+          hitRadius: 10,
+          hoverRadius: 4,
+          hoverBorderWidth: 3
+        }
+      }
+    };
+
+    this.soTNVCoTheHMChart.type = 'line';
+    this.soTNVCoTheHMChart.options = options;
+    this.soTNVCoTheHMChart.data = {
+      datasets,
+      labels
+    };
+  }
+
+  getScales1() {
+    const colorBorderTranslucent = getStyle('--cui-border-color-translucent');
+    const colorBody = getStyle('--cui-body-color');
+
+    const scales: ScaleOptions<any> = {
+      x: {
+        grid: {
+          color: colorBorderTranslucent,
+          drawOnChartArea: false
+        },
+        ticks: {
+          color: colorBody
+        }
+      },
+      y: {
+        border: {
+          color: colorBorderTranslucent
+        },
+        grid: {
+          color: colorBorderTranslucent
+        },
+        max: this.max1,
+        beginAtZero: true,
+        ticks: {
+          color: colorBody,
+          maxTicksLimit: 5,
+          stepSize: Math.ceil(this.max1 / 5)
         }
       }
     };

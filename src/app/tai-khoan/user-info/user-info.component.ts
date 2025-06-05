@@ -54,7 +54,6 @@ export class UserInfoComponent implements OnInit {
       next: (response) => {
         if (response.code === 200) {
           this.TTQTV = response.data;
-          console.log(response.data);
         }
         if (response.code === 404 || response.code === 400) {
           alert(response.message)

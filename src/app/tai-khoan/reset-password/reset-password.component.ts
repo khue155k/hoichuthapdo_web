@@ -52,8 +52,6 @@ export class ResetPasswordComponent implements OnInit {
         if (response.code === 200) {
           this.userList = response.data.items;
           this.totalCount = response.data.totalCount;
-
-          console.log(this.userList);
         }
         if (response.code === 404 || response.code === 400) {
           alert(response.message)
@@ -66,7 +64,6 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   resetPassword(user: any) {
-    console.log(user);
     const confirmReset = window.confirm('Xác nhận đặt lại mật khẩu cho tài khoản ' + user.userName);
     if (confirmReset) {
       this.userService.resetPassword(user.id).subscribe({

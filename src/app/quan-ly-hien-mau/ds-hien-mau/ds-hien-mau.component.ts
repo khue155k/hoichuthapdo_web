@@ -329,7 +329,6 @@ export class TTHienMauComponent implements OnInit {
     });
   }
   updateDotHM(event: Select2UpdateEvent<any>) {
-    console.log(event.value);
     this.maDot = event.value;
     this.selectedDotHM = this.dotHienMauList.find(dot => dot.value === this.maDot);
     this.dotHienMauStatus = this.getDotHienMauStatus();
@@ -389,6 +388,18 @@ export class TTHienMauComponent implements OnInit {
           alert(err);
         },
       })
+    } else {
+      this.selectedProvince = '';
+      this.selectedDistrict = '';
+      this.selectedWard = '';
+      this.editForm.patchValue({
+        hoTen: '',
+        dien_thoai: '',
+        ngaySinh: '',
+        gioiTinh: '',
+        email: '',
+      });
+      this.isReadOnlyAutoFill = false;
     }
   }
   onSelectAllChange() {
@@ -585,6 +596,9 @@ export class TTHienMauComponent implements OnInit {
     this.selectedTheTich = '';
     this.gioiTinh = '';
     this.isReadOnlyAutoFill = false;
+    this.selectedProvinceName = '';
+    this.selectedDistrictName = '';
+    this.selectedWardName = '';
     this.editForm.reset();
   }
 
@@ -690,7 +704,6 @@ export class TTHienMauComponent implements OnInit {
   }
 
   searchTTHienMau(): void {
-    console.log("tim kiem")
     this.selectedItemList.clear();
     this.selectAllValue = false;
     this.selectAllIndeterminate = false;

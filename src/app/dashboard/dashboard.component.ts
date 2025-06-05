@@ -51,12 +51,15 @@ export class DashboardComponent implements OnInit {
   });
 
   public mainChart: IChartProps = { type: 'line' };
+  public soTNVCoTheHMChart: IChartProps = { type: 'line' };
+
   namSelected: any;
   namList: any[] = [];
 
   ngOnInit(): void {
     this.getNamHMs();
     this.setTrafficPeriod(this.trafficRadioGroup.get("trafficRadio")?.value!)
+    this.setTrafficPeriod1(this.trafficRadioGroup.get("trafficRadio")?.value!)
     this.updateChartOnColorModeChange();
   }
 
@@ -125,6 +128,42 @@ export class DashboardComponent implements OnInit {
         const scales = this.#chartsData.getScales();
         this.mainChartRef().options.scales = { ...options.scales, ...scales };
         this.mainChartRef().update();
+      });
+    }
+  }
+  // update color
+
+  initCharts1(): void {
+    this.soTNVCoTheHMChart = this.#chartsData.soTNVCoTheHMChart;
+  }
+
+  setTrafficPeriod1(value: string) {
+    this.trafficRadioGroup.setValue({ trafficRadio: value });
+    this.#chartsData.initSoTNVCoTheHMChart(value, this.namSelected);
+    this.initCharts1();
+  }
+
+  public soTNVCoTheHMChartRef: WritableSignal<any> = signal(undefined);
+  #soTNVCoTheHMChartRefEffect = effect(() => {
+    if (this.soTNVCoTheHMChartRef()) {
+      this.setChartStyles();
+    }
+  });
+
+  handleChartRef1($chartRef: any) {
+
+    if ($chartRef) {
+      this.soTNVCoTheHMChartRef.set($chartRef);
+    }
+  }
+
+  setChartStyles1() {
+    if (this.soTNVCoTheHMChartRef()) {
+      setTimeout(() => {
+        const options: ChartOptions = { ...this.soTNVCoTheHMChart.options };
+        const scales = this.#chartsData.getScales();
+        this.soTNVCoTheHMChartRef().options.scales = { ...options.scales, ...scales };
+        this.soTNVCoTheHMChartRef().update();
       });
     }
   }

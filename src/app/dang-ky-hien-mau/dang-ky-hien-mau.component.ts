@@ -55,13 +55,11 @@ export class DangKyHienMauComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Xoá phần tử <script> nếu bạn đã lưu nó trong this.chatbaseScriptElement
     if (this.chatbaseScriptElement) {
       this.renderer.removeChild(document.body, this.chatbaseScriptElement);
-      console.log("Đã xoá script Chatbase");
+      // console.log("Đã xoá script Chatbase");
     }
   
-    // Xoá các phần tử chatbot render ra DOM
     const bubbleButton = document.getElementById('chatbase-bubble-button');
     const bubbleWindow = document.getElementById('chatbase-bubble-window');
     const messageBubbles = document.getElementById('chatbase-message-bubbles');
