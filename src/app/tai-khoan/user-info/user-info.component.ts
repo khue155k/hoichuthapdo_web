@@ -66,6 +66,7 @@ export class UserInfoComponent implements OnInit {
   }
 
   OpenEditModal() {
+    console.log(this.TTQTV);
     this.isEdit = true;
     this.isEditModalOpen = true;
     this.QTVForm.patchValue({
@@ -75,7 +76,7 @@ export class UserInfoComponent implements OnInit {
       chucVu: this.TTQTV.chucVu,
       email: this.TTQTV.email,
       soDienThoai: this.TTQTV.soDienThoai,
-      tenTaiKhoan: this.userInfo.unique_name
+      tenTaiKhoan: this.userInfo.unique_name,
     });
   }
 
@@ -94,6 +95,7 @@ export class UserInfoComponent implements OnInit {
         chucVu: this.QTVForm.value.chucVu,
         email: this.QTVForm.value.email,
         soDienThoai: this.QTVForm.value.soDienThoai,
+        taiKhoan_ID: this.TTQTV.taiKhoan_ID,
       };
       this.taiKhoanService.updateQTV(this.TTQTV.maQTV, updatedData).subscribe({
         next: (response) => {

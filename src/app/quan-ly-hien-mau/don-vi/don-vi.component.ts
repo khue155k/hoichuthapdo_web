@@ -221,6 +221,7 @@ export class DonViComponent implements OnInit {
           if (response.code === 200) {
             this.searchDonVi();
             this.isEditModalOpen = false;
+            this.isAdd = false;
             this.donViForm.reset();
             alert('Tạo đơn vị thành công.');
           }

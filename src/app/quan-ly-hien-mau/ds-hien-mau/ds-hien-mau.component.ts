@@ -313,8 +313,16 @@ export class TTHienMauComponent implements OnInit {
             }));
 
             if (this.dotHienMauList.length > 0) {
-              const lastDotHienMau = this.dotHienMauList[0];
-              this.maDot = lastDotHienMau.value;
+              this.maDot = this.dotHienMauList[0].value;
+              const today = new Date();
+
+              const dotHMSapDen = this.dotHienMauList.filter(dot =>
+                new Date(dot.thoiGianKetThuc) > today
+              );
+              if (dotHMSapDen.length > 0) {
+                this.maDot = dotHMSapDen[dotHMSapDen.length - 1].value;
+              }
+
               this.selectedDotHM = this.dotHienMauList.find(dot => dot.value === this.maDot);
               this.searchForm.get('dot_hm_id')?.setValue(this.maDot);
             }
@@ -480,6 +488,7 @@ export class TTHienMauComponent implements OnInit {
                 if (response.code === 200) {
                   this.isReadOnlyAutoFill = false;
                   this.isEditModalOpen = false;
+                  this.isAdd = false;
                   this.editForm.reset();
                   this.searchTTHienMau();
                   alert('Gửi đăng ký thành công.');

@@ -259,7 +259,7 @@ export class DotHienMauComponent implements OnInit {
               this.isEditModalOpen = false;
               this.dotHMForm.reset();
               this.searchDotHienMau();
-              this.isEdit = false
+              this.isEdit = false;
               alert('Cập nhật thông tin thành công!')
             }
             if (response.code === 404 || response.code === 400) {
@@ -292,6 +292,7 @@ export class DotHienMauComponent implements OnInit {
           if (response.code === 200) {
             this.searchDotHienMau();
             this.isEditModalOpen = false;
+            this.isAdd = false;
             this.dotHMForm.reset();
             alert('Tạo đợt hiến máu thành công.');
           }

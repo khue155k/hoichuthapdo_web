@@ -380,7 +380,7 @@ export class TinhNguyenVienComponent implements OnInit {
               this.isEditModalOpen = false;
               this.tinhNguyenVienForm.reset();
               this.searchTinhNguyenVien();
-              this.isEdit = false
+              this.isEdit = false;
               alert('Cập nhật thông tin thành công!')
             }
             if (response.code === 404 || response.code === 400) {
@@ -418,6 +418,7 @@ export class TinhNguyenVienComponent implements OnInit {
           if (response.code === 200) {
             this.searchTinhNguyenVien();
             this.isEditModalOpen = false;
+            this.isAdd = false;
             this.tinhNguyenVienForm.reset();
             alert('Tạo tình nguyện viên thành công.');
           }
